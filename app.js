@@ -1,12 +1,9 @@
 // =======================================================
-// CẤU HÌNH API & TÀI KHOẢN (ĐIỀN LINK WEB APP THẬT CỦA CÔ VÀO ĐÂY)
+// CẤU HÌNH API & TÀI KHOẢN (THAY LINK WEB APP MỚI NHẤT VÀO ĐÂY)
 // =======================================================
-
 const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbwo0e6Wz_zQFih0X3FhizMBNNSt8SVzf-F-sc9YSLdVPX4ra_-tSUXa2TrvMIkHA5RX/exec";
 const GOOGLE_CLIENT_ID = "575102440654-fvv1hcq0p7buoh4ov3rgjk4p56o2d3bk.apps.googleusercontent.com";
 
-
-// State lưu trữ dữ liệu đồng bộ từ Sheet
 let appData = {
   staff: [], tasks: [], registrations: [], bghEmails: []
 };
@@ -18,9 +15,10 @@ let bghPage = 1, bghItemsPerPage = 10;
 let currentKpiTab = "all", currentPage = 1, itemsPerPage = 10;
 
 // =======================================================
-// KHỞI TẠO ỨNG DỤNG
+// KHỞI TẠO ỨNG DỤNG & DEBUG TOÀN BỘ
 // =======================================================
 window.onload = function() {
+  console.log("🚀 [DEBUG] Web đang khởi động...");
   const now = new Date();
   const badge = document.getElementById("current-date-badge");
   if (badge) badge.innerText = `📅 Ngày ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
@@ -28,13 +26,55 @@ window.onload = function() {
   if (window.google) {
     google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleGoogleLoginResponse });
     google.accounts.id.renderButton(document.getElementById("google-signin-btn"), { theme: "outline", size: "large", width: 280, text: "signin_with" });
+    console.log("✅ [DEBUG] Google Sign-In SDK đã sẵn sàng.");
   }
   goToHome();
-  fetchRemoteData(); // Gọi lấy dữ liệu thật từ Google Sheet
+  fetchRemoteDataViaJsonp(); // Gọi dữ liệu bằng JSONP để tránh triệt để lỗi CORS và 404
 };
 
 // =======================================================
-// ĐĂNG NHẬP GOOGLE & XÁC THỰC PHÂN QUYỀN
+// GỌI DỮ LIỆU BẰNG JSONP (KHÔNG BAO GIỜ BỊ LỖI CORS HAY 404)
+// =======================================================
+function fetchRemoteDataViaJsonp() {
+  console.log("📡 [DEBUG] Đang tải dữ liệu từ Google Sheet qua JSONP...");
+  const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+
+  window[callbackName] = function(json) {
+    delete window[callbackName];
+    document.body.removeChild(script);
+
+    console.log("📥 [DEBUG] Dữ liệu thô nhận từ Google Sheet:", json);
+
+    if (json && json.success) {
+      appData.tasks = json.tasks || [];
+      appData.registrations = json.registrations || [];
+      appData.staff = json.staff || [];
+      appData.bghEmails = json.bghEmails || [];
+
+      // 🔍 IN RA TOÀN BỘ DANH SÁCH TÀI KHOẢN GIÁO VIÊN VÀ BGH ĐỂ KIỂM TRA TRỰC QUAN
+      console.log("==================================================");
+      console.log("📋 DANH SÁCH NHÂN SỰ ĐÃ TẢI XUỐNG TỪ SHEET:");
+      console.table(appData.staff);
+      console.log("👑 DANH SÁCH EMAIL BGH ĐÃ TẢI XUỐNG:", appData.bghEmails);
+      console.log("==================================================");
+
+    } else {
+      console.error("❌ [DEBUG] Lỗi dữ liệu từ Sheet:", json ? json.error : "Không có phản hồi");
+    }
+
+    if (currentUser) renderAppView();
+  };
+
+  const script = document.createElement('script');
+  script.src = `${SCRIPT_API_URL}?action=getInitialData&callback=${callbackName}`;
+  script.onerror = function(err) {
+    console.error("❌ [DEBUG] Không thể kết nối tới Google Script API. Hãy kiểm tra lại link Web App!", err);
+  };
+  document.body.appendChild(script);
+}
+
+// =======================================================
+// ĐĂNG NHẬP & PHÂN QUYỀN
 // =======================================================
 function parseJwt(token) {
   try {
@@ -44,29 +84,36 @@ function parseJwt(token) {
 
 function handleGoogleLoginResponse(response) {
   const payload = parseJwt(response.credential);
-  if (payload) processUserSession(payload.email, payload.name, payload.picture);
+  if (payload) {
+    console.log("👤 [DEBUG] Người dùng vừa bấm đăng nhập với email:", payload.email);
+    processUserSession(payload.email, payload.name, payload.picture);
+  }
 }
 
 function processUserSession(email, name, avatar) {
-  const lowerEmail = email.toLowerCase();
+  const lowerEmail = email.toLowerCase().trim();
+  console.log("🔎 [DEBUG] Đang tìm email:", lowerEmail, "trong danh sách nhân sự...");
 
-  // 1. Dò xem email này có nằm trong danh sách BGH lấy từ Sheet hay không
-  const isBgh = appData.bghEmails && appData.bghEmails.includes(lowerEmail);
+  // Kiểm tra BGH
+  const isBgh = appData.bghEmails.map(e => e.toLowerCase().trim()).includes(lowerEmail);
 
-  // 2. Dò xem email này có nằm trong bảng 'KPI cố định / Nhân sự' của trường không
-  let staffProfile = appData.staff.find(s => s.email === lowerEmail);
+  // Tìm trong staff
+  let staffProfile = appData.staff.find(s => s.email && s.email.toLowerCase().trim() === lowerEmail);
 
   let role = isBgh ? "BGH" : "GV";
+  let code = staffProfile ? staffProfile.code : (isBgh ? "BGH" : "GV_NEW");
+  let realName = staffProfile ? staffProfile.name : name;
 
   if (!staffProfile) {
-    // Nếu giáo viên chưa có trong bảng nhân sự, tạo profile tạm để tránh sập web
-    staffProfile = { code: isBgh ? "BGH" : "GV_NEW", name: name, email: lowerEmail, subject: "Chung" };
+    console.warn(`⚠️ [DEBUG] CẢNH BÁO: Email '${lowerEmail}' KHÔNG TỒN TẠI trong bảng Nhân sự/KPI cố định của Sheet! Trạng thái hiện tại sẽ là GV_NEW.`);
+  } else {
+    console.log(`✅ [DEBUG] KHỚP THÀNH CÔNG! Mã: ${code} | Tên: ${realName} | Vai trò: ${role}`);
   }
 
   currentUser = {
     email: lowerEmail,
-    name: staffProfile.name || name,
-    code: staffProfile.code,
+    name: realName,
+    code: code,
     role: role,
     avatar: avatar
   };
@@ -83,32 +130,10 @@ function logout() {
 }
 
 // =======================================================
-// LẤY DỮ LIỆU TỪ GOOGLE SCRIPT
-// =======================================================
-async function fetchRemoteData() {
-  if (SCRIPT_API_URL.includes("AKfycb...")) {
-    console.warn("Chưa cấu hình đúng link SCRIPT_API_URL!");
-    return;
-  }
-  try {
-    const res = await fetch(`${SCRIPT_API_URL}?action=getInitialData`);
-    const json = await res.json();
-    if (json.success) {
-      if (json.tasks) appData.tasks = json.tasks;
-      if (json.staff) appData.staff = json.staff;
-      if (json.registrations) appData.registrations = json.registrations;
-      if (json.bghEmails) appData.bghEmails = json.bghEmails;
-    }
-    if (currentUser) renderAppView();
-  } catch (err) {
-    console.warn("Lỗi tải dữ liệu từ Google Sheet:", err);
-  }
-}
-
-// =======================================================
-// ĐIỀU HƯỚNG & HIỂN THỊ GIAO DIỆN
+// ĐIỀU HƯỚNG & GIAO DIỆN
 // =======================================================
 function renderAppView() {
+  if (!currentUser) return;
   document.getElementById("nav-guest-box").classList.add("hidden");
   document.getElementById("user-info-bar").classList.remove("hidden");
   document.getElementById("user-display-name").innerText = currentUser.name;
@@ -123,7 +148,6 @@ function renderAppView() {
     roleBadge.className = "inline-block mt-1 text-[11px] px-2 py-0.5 rounded font-medium bg-indigo-100 text-indigo-700";
   }
 
-  // Ẩn/Hiện thẻ BGH ngoài trang chủ dựa vào quyền lấy từ Sheet
   const bghCard = document.getElementById("card-kpi-bgh");
   if (bghCard) bghCard.classList.toggle("hidden", currentUser.role !== "BGH");
 
@@ -157,23 +181,25 @@ function navigateToModule(moduleKey) {
     if (currentUser.role !== "BGH") { alert("⛔ Phân hệ dành riêng cho BGH."); goToHome(); return; }
     document.getElementById("bgh-section").classList.remove("hidden");
     switchBghTab(bghActiveTab);
-  } else if (moduleKey === "students") {
-    document.getElementById("students-section").classList.remove("hidden");
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Modal controls
 function openLoginModal(msg) { if(msg) document.getElementById("login-modal-msg").innerText = msg; document.getElementById("login-modal").classList.remove("hidden"); }
 function closeLoginModal() { document.getElementById("login-modal").classList.add("hidden"); }
 function openEvidenceModal(taskId) { document.getElementById("evidence-task-id").value = taskId; document.getElementById("evidence-modal").classList.remove("hidden"); }
 function closeEvidenceModal() { document.getElementById("evidence-modal").classList.add("hidden"); }
-function openCreateTaskModal() { document.getElementById("task-modal").classList.remove("hidden"); }
-function closeCreateTaskModal() { document.getElementById("task-modal").classList.add("hidden"); }
 
-// =======================================================
-// RENDER DỮ LIỆU LÊN GIAO DIỆN
-// =======================================================
+// Các hàm tab dashboard
+function switchKpiTab(tabName) {
+  currentKpiTab = tabName; currentPage = 1;
+  ["all", "available", "registered"].forEach(t => {
+    const btn = document.getElementById("tab-" + t);
+    if (btn) btn.className = (t === tabName) ? "px-3.5 py-1.5 rounded-lg bg-white text-indigo-600 shadow-sm font-bold" : "px-3.5 py-1.5 rounded-lg text-slate-600";
+  });
+  renderTeacherDashboard();
+}
+
 function renderTeacherDashboard() {
   const myRegs = appData.registrations.filter(r => r.teacherCode === currentUser.code);
   const totalScore = myRegs.reduce((sum, r) => sum + (r.finalScore ? Number(r.finalScore) : 0), 0);
@@ -196,7 +222,6 @@ function renderTeacherDashboard() {
     });
   }
 
-  // Kho việc
   const tbody = document.getElementById("available-tasks-table");
   tbody.innerHTML = "";
   appData.tasks.forEach(task => {
@@ -217,10 +242,8 @@ async function registerKPI(taskId) {
     const json = await res.json();
     if (json.success) {
       alert("Đăng ký thành công!");
-      fetchRemoteData(); // Tải lại dữ liệu mới nhất từ Sheet
-    } else {
-      alert("Lỗi: " + json.error);
-    }
+      fetchRemoteDataViaJsonp();
+    } else { alert("Lỗi: " + json.error); }
   } catch (err) { alert("Lỗi kết nối server!"); }
 }
 
@@ -256,7 +279,7 @@ async function saveBghScore(idx) {
     const json = await res.json();
     if (json.success) {
       alert("Đã lưu điểm!");
-      fetchRemoteData();
+      fetchRemoteDataViaJsonp();
     } else { alert("Lỗi: " + json.error); }
   } catch (e) { alert("Lỗi kết nối!"); }
 }
@@ -282,58 +305,7 @@ async function assignTaskToTeacher(gvCode, gvName) {
     const json = await res.json();
     if (json.success) {
       alert("Giao việc thành công!");
-      fetchRemoteData();
+      fetchRemoteDataViaJsonp();
     } else { alert("Lỗi: " + json.error); }
   } catch (e) { alert("Lỗi kết nối!"); }
 }
-// Bổ sung các hàm điều hướng tab và mở modal còn thiếu vào app.js:
-function switchKpiTab(tabName) {
-  currentKpiTab = tabName;
-  currentPage = 1;
-  ["all", "available", "registered"].forEach(t => {
-    const btn = document.getElementById("tab-" + t);
-    if (btn) {
-      btn.className = (t === tabName) ? "px-3.5 py-1.5 rounded-lg bg-white text-indigo-600 shadow-sm font-bold" : "px-3.5 py-1.5 rounded-lg text-slate-600";
-    }
-  });
-  renderTeacherDashboard();
-}
-
-function changePageSize(size) {
-  itemsPerPage = Number(size);
-  currentPage = 1;
-  renderTeacherDashboard();
-}
-
-function prevPage() {
-  if (currentPage > 1) { currentPage--; renderTeacherDashboard(); }
-}
-
-function nextPage() {
-  currentPage++;
-  renderTeacherDashboard();
-}
-
-function switchBghTab(tab) {
-  bghActiveTab = tab;
-  ["grading", "assign", "stats"].forEach(t => {
-    const btn = document.getElementById(`bgh-tab-${t}-btn`);
-    const content = document.getElementById(`bgh-tab-content-${t}`);
-    if(btn) btn.className = (t === tab) ? "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold" : "px-5 py-3 border-b-2 border-transparent text-slate-500";
-    if(content) content.classList.toggle("hidden", t !== tab);
-  });
-  if (tab === "grading") renderBGHGradingTable();
-  if (tab === "assign") renderBghAssignTable();
-}
-
-function changeBghPageSize(val) { bghItemsPerPage = Number(val); bghPage = 1; renderBGHGradingTable(); }
-function prevBghPage() { if (bghPage > 1) { bghPage--; renderBGHGradingTable(); } }
-function nextBghPage() { bghPage++; renderBGHGradingTable(); }
-
-// Các hàm mở/đóng modal phụ trợ
-function openAddDisciplineModal() { const el = document.getElementById("discipline-modal"); if(el) el.classList.remove("hidden"); }
-function closeAddDisciplineModal() { const el = document.getElementById("discipline-modal"); if(el) el.classList.add("hidden"); }
-function openLeaveModal() { const el = document.getElementById("leave-modal"); if(el) el.classList.remove("hidden"); }
-function closeLeaveModal() { const el = document.getElementById("leave-modal"); if(el) el.classList.add("hidden"); }
-function openEquipmentModal() { const el = document.getElementById("equipment-modal"); if(el) el.classList.remove("hidden"); }
-function closeEquipmentModal() { const el = document.getElementById("equipment-modal"); if(el) el.classList.add("hidden"); }
