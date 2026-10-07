@@ -4,10 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cổng Thông Tin & Quản Lý Toàn Diện - THPT Trần Phú</title>
+  <!-- Tailwind CSS & Google Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Chart.js Thư viện vẽ biểu đồ cho BGH -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Thư viện SheetJS xuất Excel đa sheet chuẩn hóa -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Google Sign-In SDK -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     body { font-family: 'Inter', sans-serif; }
@@ -25,31 +29,38 @@
   <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm no-print">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3 cursor-pointer" onclick="goToHome()">
-        <div class="bg-indigo-600 text-white p-2 rounded-xl font-black text-lg shadow-md flex items-center justify-center w-10 h-10">TP</div>
+        <div class="bg-indigo-600 text-white p-2 rounded-xl font-black text-lg shadow-md flex items-center justify-center w-10 h-10">
+          TP
+        </div>
         <div>
           <h1 class="text-base font-bold text-slate-900 leading-tight">CỔNG THÔNG TIN & ĐIỀU HÀNH</h1>
           <p class="text-xs text-slate-500">Trường THPT Trần Phú - Tỉnh Lào Cai</p>
         </div>
       </div>
 
+      <!-- Action & User Panel -->
       <div class="flex items-center gap-3">
         <button id="nav-home-btn" onclick="goToHome()" class="inline-flex items-center gap-1.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-1.5 rounded-lg border border-slate-200 transition">
           🏠 Trang Chủ
         </button>
 
+        <!-- Trạng thái khi chưa đăng nhập -->
         <div id="nav-guest-box">
           <button onclick="openLoginModal()" class="inline-flex items-center gap-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3.5 py-2 rounded-xl shadow-sm transition">
             🔑 Đăng nhập GV / BGH
           </button>
         </div>
 
+        <!-- Trạng thái khi đã đăng nhập -->
         <div id="user-info-bar" class="hidden flex items-center gap-3">
           <div class="text-right hidden sm:block">
             <div id="user-display-name" class="font-semibold text-sm text-slate-800 leading-none">--</div>
             <span id="user-role-badge" class="inline-block mt-1 text-[11px] px-2 py-0.5 rounded font-medium bg-indigo-100 text-indigo-700">--</span>
           </div>
           <img id="user-avatar" class="w-9 h-9 rounded-full border border-slate-300 object-cover" src="" alt="avatar">
-          <button onclick="logout()" class="text-xs bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 px-3 py-1.5 rounded-md border border-slate-200 transition font-medium">Đăng xuất</button>
+          <button onclick="logout()" class="text-xs bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 px-3 py-1.5 rounded-md border border-slate-200 transition font-medium">
+            Đăng xuất
+          </button>
         </div>
       </div>
     </div>
@@ -57,9 +68,10 @@
 
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-8">
-    
-    <!-- 1: TRANG CHỦ -->
+
+    <!-- ==================== VIEW 1: TRANG CHỦ PORTAL HUB ==================== -->
     <section id="portal-section" class="space-y-8">
+      <!-- HERO BANNER -->
       <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 text-white shadow-xl">
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(99,102,241,0.25),transparent)]"></div>
         <div class="relative p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -67,306 +79,1764 @@
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
               ✨ Cổng Giáo Dục Trực Tuyến & Quản Trị Toàn Diện
             </span>
-            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">TRƯỜNG THPT TRẦN PHÚ</h2>
-            <p class="text-indigo-200 text-sm leading-relaxed">Hệ thống chuyển đổi số hỗ trợ giáo viên quản lý KPI, đăng ký nghỉ và xếp lịch dạy thay bù, theo dõi nề nếp học sinh và sổ mượn thiết bị trực tuyến.</p>
+            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+              TRƯỜNG THPT TRẦN PHÚ
+            </h2>
+            <p class="text-indigo-200 text-sm leading-relaxed">
+              Hệ thống chuyển đổi số hỗ trợ giáo viên quản lý KPI, đăng ký nghỉ và xếp lịch dạy thay bù, theo dõi nề nếp học sinh và sổ mượn thiết bị trực tuyến.
+            </p>
             <div class="pt-2 flex flex-wrap gap-4 text-xs text-indigo-300 font-medium justify-center md:justify-start">
-              <span>📍 Tỉnh Lào Cai</span><span>📅 Năm học 2026 - 2027</span><span id="current-date-badge">📅 Ngày hôm nay</span>
+              <span>📍 Tỉnh Lào Cai</span>
+              <span>📅 Năm học 2026 - 2027</span>
+              <span id="current-date-badge">📅 Ngày hôm nay</span>
             </div>
           </div>
+
           <div class="w-full md:w-80 h-48 rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl relative bg-indigo-950 flex-shrink-0">
-            <img src="https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=600&q=80" alt="Khuôn viên" class="w-full h-full object-cover opacity-90 hover:scale-105 transition duration-500">
+            <img src="https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=600&q=80"
+                 alt="Khuôn viên THPT Trần Phú"
+                 class="w-full h-full object-cover opacity-90 hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end p-3">
+              <span class="text-[11px] font-semibold text-slate-200">Khuôn viên THPT Trần Phú</span>
+            </div>
           </div>
         </div>
       </div>
 
+      <!-- DANH MỤC CÁC PHÂN HỆ NGHIỆP VỤ -->
       <div>
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">🚀 Danh Mục Phân Hệ Nghiệp Vụ</h3>
+          <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            🚀 Danh Mục Phân Hệ Nghiệp Vụ
+          </h3>
           <span class="text-xs text-slate-500">Bấm vào phân hệ để truy cập</span>
         </div>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          <!-- KPI TÔI -->
+          <!-- 1. KPI CỦA TÔI -->
           <div onclick="navigateToModule('kpi_me')" class="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-indigo-500 hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between">
             <div class="space-y-3">
-              <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl group-hover:bg-indigo-600 group-hover:text-white transition">📊</div>
+              <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl group-hover:bg-indigo-600 group-hover:text-white transition">
+                📊
+              </div>
               <div class="flex items-center justify-between">
                 <h4 class="font-bold text-slate-900 text-base group-hover:text-indigo-600 transition">KPI CỦA TÔI</h4>
-                <span class="text-[10px] bg-blue-100 text-blue-700 font-semibold px-2 py-0.5 rounded-full">Mọi người</span>
+                <span class="text-[10px] bg-blue-100 text-blue-700 font-semibold px-2 py-0.5 rounded-full">Tất cả mọi người</span>
               </div>
-              <p class="text-xs text-slate-500">Xem bảng phân công nhiệm vụ cá nhân, nộp link minh chứng, nhận điểm và đăng ký việc.</p>
+              <p class="text-xs text-slate-500 leading-relaxed">
+                Xem bảng phân công nhiệm vụ cá nhân, nộp link minh chứng Drive, nhận điểm đánh giá và đăng ký việc linh hoạt.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-indigo-600">
+              <span>Mở bảng cá nhân</span>
+              <span class="group-hover:translate-x-1 transition">➔</span>
             </div>
           </div>
 
-          <!-- QUẢN LÝ KPI (BGH) - Ẩn mặc định -->
+          <!-- 2. QUẢN LÝ KPI (CHỈ BGH HIỆN) -->
           <div id="card-kpi-bgh" onclick="navigateToModule('kpi_bgh')" class="hidden group bg-white p-6 rounded-2xl border border-slate-200 hover:border-amber-500 hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between">
             <div class="space-y-3">
-              <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl group-hover:bg-amber-600 group-hover:text-white transition">👑</div>
+              <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl group-hover:bg-amber-600 group-hover:text-white transition">
+                👑
+              </div>
               <div class="flex items-center justify-between">
                 <h4 class="font-bold text-slate-900 text-base group-hover:text-amber-600 transition">QUẢN LÝ KPI</h4>
                 <span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">Chỉ BGH</span>
               </div>
-              <p class="text-xs text-slate-500">Bàn giao việc tự động, duyệt minh chứng, chấm điểm công việc, xuất báo cáo.</p>
+              <p class="text-xs text-slate-500 leading-relaxed">
+                Bàn giao việc tự động, duyệt minh chứng, chấm điểm công việc, giám sát quá hạn và xuất báo cáo Excel đa chiều.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-amber-600">
+              <span>Bảng điều hành BGH</span>
+              <span class="group-hover:translate-x-1 transition">➔</span>
             </div>
           </div>
 
-          <!-- HS -->
+          <!-- 3. QUẢN LÝ HỌC SINH -->
           <div onclick="navigateToModule('students')" class="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between">
             <div class="space-y-3">
-              <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl group-hover:bg-emerald-600 group-hover:text-white transition">📋</div>
+              <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl group-hover:bg-emerald-600 group-hover:text-white transition">
+                📋
+              </div>
               <div class="flex items-center justify-between">
                 <h4 class="font-bold text-slate-900 text-base group-hover:text-emerald-600 transition">QUẢN LÝ HỌC SINH</h4>
+                <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">GVCN & BGH</span>
               </div>
-              <p class="text-xs text-slate-500">Theo dõi điểm thi đua lớp chủ nhiệm, ghi nhận vi phạm nội quy và xếp loại hạnh kiểm.</p>
+              <p class="text-xs text-slate-500 leading-relaxed">
+                Theo dõi điểm thi đua lớp chủ nhiệm, theo dõi chuyên cần, ghi nhận vi phạm nội quy và xếp loại hạnh kiểm học sinh.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-emerald-600">
+              <span>Vào sổ nề nếp học sinh</span>
+              <span class="group-hover:translate-x-1 transition">➔</span>
             </div>
           </div>
 
-          <!-- XIN NGHỈ -->
+          <!-- 4. QUẢN LÝ XIN NGHỈ -->
           <div onclick="navigateToModule('leave')" class="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-sky-500 hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between">
             <div class="space-y-3">
-              <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-2xl group-hover:bg-sky-600 group-hover:text-white transition">📝</div>
+              <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-2xl group-hover:bg-sky-600 group-hover:text-white transition">
+                📝
+              </div>
               <div class="flex items-center justify-between">
                 <h4 class="font-bold text-slate-900 text-base group-hover:text-sky-600 transition">QUẢN LÝ XIN NGHỈ</h4>
+                <span class="text-[10px] bg-sky-100 text-sky-800 font-semibold px-2 py-0.5 rounded-full">Giáo viên</span>
               </div>
-              <p class="text-xs text-slate-500">Nộp đơn xin nghỉ trực tuyến, đề xuất phân công dạy thay hoặc lịch dạy bù.</p>
+              <p class="text-xs text-slate-500 leading-relaxed">
+                Nộp đơn xin nghỉ dạy trực tuyến, đề xuất phân công dạy thay hoặc gửi lịch báo giảng bù theo kế hoạch nhà trường.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-sky-600">
+              <span>Nộp đơn & duyệt nghỉ</span>
+              <span class="group-hover:translate-x-1 transition">➔</span>
             </div>
           </div>
 
-          <!-- MƯỢN THIẾT BỊ -->
+          <!-- 5. SỔ MƯỢN THIẾT BỊ -->
           <div onclick="navigateToModule('equipment')" class="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-purple-500 hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between">
             <div class="space-y-3">
-              <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl group-hover:bg-purple-600 group-hover:text-white transition">🔬</div>
+              <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl group-hover:bg-purple-600 group-hover:text-white transition">
+                🔬
+              </div>
               <div class="flex items-center justify-between">
                 <h4 class="font-bold text-slate-900 text-base group-hover:text-purple-600 transition">SỔ MƯỢN THIẾT BỊ</h4>
+                <span class="text-[10px] bg-purple-100 text-purple-800 font-semibold px-2 py-0.5 rounded-full">GVBM & Thiết bị</span>
               </div>
-              <p class="text-xs text-slate-500">Đăng ký mượn phòng chức năng, thiết bị thí nghiệm, máy chiếu, đồ dùng dạy học.</p>
+              <p class="text-xs text-slate-500 leading-relaxed">
+                Đăng ký mượn phòng chức năng, thiết bị thí nghiệm, máy chiếu, đồ dùng dạy học và theo dõi lịch sử hoàn trả.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-purple-600">
+              <span>Đăng ký mượn thiết bị</span>
+              <span class="group-hover:translate-x-1 transition">➔</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 2: TEACHER DASHBOARD (KPI CỦA TÔI) -->
+    <!-- ==================== VIEW 2: TEACHER DASHBOARD (KPI CỦA TÔI) ==================== -->
     <section id="teacher-section" class="hidden space-y-6">
       <div class="flex items-center justify-between">
-        <button onclick="goToHome()" class="text-xs font-semibold bg-white px-3.5 py-2 rounded-xl border shadow-sm">← Quay lại Trang Chủ</button>
-        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border">Phân hệ: KPI Cá Nhân</span>
+        <button onclick="goToHome()" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-sm hover:bg-slate-50 transition">
+          ← Quay lại Trang Chủ
+        </button>
+        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+          Phân hệ: KPI Cá Nhân
+        </span>
       </div>
+
+      <!-- STATS OVERVIEW CARDS -->
       <div>
-        <h3 class="text-lg font-bold mb-4">📊 Tổng Hợp KPI Của Tôi</h3>
+        <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+          📊 Tổng Hợp KPI Của Tôi
+        </h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div class="bg-white p-5 rounded-xl border shadow-sm"><span class="text-xs font-semibold text-slate-400">Nhiệm Vụ Đã Đăng Ký</span><div id="stat-tasks-count" class="text-3xl font-extrabold mt-2">0</div></div>
-          <div class="bg-white p-5 rounded-xl border shadow-sm"><span class="text-xs font-semibold text-slate-400">Tổng Điểm KPI</span><div id="stat-total-score" class="text-3xl font-extrabold text-indigo-600 mt-2">0</div></div>
-          <div class="bg-white p-5 rounded-xl border shadow-sm"><span class="text-xs font-semibold text-slate-400">Xếp Hạng Điểm KPI</span><div id="stat-potential-score" class="text-3xl font-extrabold text-amber-600 mt-2">--</div><p id="stat-rank-desc" class="text-xs text-slate-500 mt-1">Xếp hạng toàn trường</p></div>
-        </div>
-      </div>
-      <div class="bg-white rounded-xl border shadow-sm p-5">
-        <h4 class="font-bold mb-3">Chi Tiết Nhiệm Vụ & Điểm Số</h4>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-sm">
-            <thead><tr class="bg-slate-50 border-b text-xs font-semibold uppercase"><th class="py-3 px-4">Mã việc</th><th class="py-3 px-4">Tên nhiệm vụ</th><th class="py-3 px-4 text-center">Định mức</th><th class="py-3 px-4 text-center">Trạng thái</th><th class="py-3 px-4 text-center">Minh chứng</th><th class="py-3 px-4 text-center">Điểm</th><th class="py-3 px-4 text-center">Thao tác</th></tr></thead>
-            <tbody id="my-tasks-table" class="divide-y divide-slate-100"></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="bg-white rounded-xl border shadow-sm p-5">
-        <div class="flex justify-between items-center mb-4">
-          <h4 class="font-bold">Kho KPI Linh Hoạt</h4>
-          <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-semibold">
-            <button id="tab-all" onclick="switchKpiTab('all')" class="px-3.5 py-1.5 rounded-lg bg-white text-indigo-600 shadow-sm font-bold">Tất cả (<span id="count-all">0</span>)</button>
-            <button id="tab-available" onclick="switchKpiTab('available')" class="px-3.5 py-1.5 rounded-lg text-slate-600">Còn việc (<span id="count-available">0</span>)</button>
-            <button id="tab-registered" onclick="switchKpiTab('registered')" class="px-3.5 py-1.5 rounded-lg text-slate-600">Đã nhận (<span id="count-registered">0</span>)</button>
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <span class="text-xs font-semibold uppercase text-slate-400">Nhiệm Vụ Đã Đăng Ký</span>
+            <div id="stat-tasks-count" class="text-3xl font-extrabold text-slate-900 mt-2">0</div>
+            <p class="text-xs text-slate-500 mt-1">Ghi nhận từ sheet Data</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <span class="text-xs font-semibold uppercase text-slate-400">Tổng Điểm KPI Đã Chấm</span>
+            <div id="stat-total-score" class="text-3xl font-extrabold text-indigo-600 mt-2">0 <span class="text-sm font-normal text-slate-500">điểm</span></div>
+            <p class="text-xs text-emerald-600 mt-1">Điểm chính thức từ BGH</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <span class="text-xs font-semibold uppercase text-slate-400">Xếp Hạng Điểm KPI</span>
+            <div id="stat-potential-score" class="text-3xl font-extrabold text-amber-600 mt-2">--</div>
+            <p id="stat-rank-desc" class="text-xs text-slate-500 mt-1">Xếp hạng trong toàn trường</p>
           </div>
         </div>
-        <div class="overflow-x-auto mb-4">
-          <table class="w-full text-left border-collapse text-sm">
-            <thead><tr class="bg-slate-50 border-b text-xs font-semibold uppercase"><th class="py-3 px-4">Mã việc</th><th class="py-3 px-4">Tên & Mô tả</th><th class="py-3 px-4 text-center">Điểm</th><th class="py-3 px-4 text-center">Hạn chót</th><th class="py-3 px-4 text-center">Chỉ tiêu</th><th class="py-3 px-4 text-center">Trạng thái</th><th class="py-3 px-4 text-center">Hành động</th></tr></thead>
-            <tbody id="available-tasks-table" class="divide-y divide-slate-100"></tbody>
-          </table>
-        </div>
-        <div class="flex justify-between text-xs text-slate-600">
-          <div>Hiển thị: <select id="page-size-select" onchange="changePageSize(this.value)" class="border rounded px-2 py-1"><option value="5">5</option><option value="10" selected>10</option><option value="20">20</option><option value="999">Tất cả</option></select></div>
-          <div class="flex items-center gap-2"><span id="pagination-info">Trang 1 / 1</span><button id="btn-prev-page" onclick="prevPage()" class="border px-2 py-1 rounded">◀ Trước</button><button id="btn-next-page" onclick="nextPage()" class="border px-2 py-1 rounded">Sau ▶</button></div>
-        </div>
       </div>
-    </section>
 
-    <!-- 3: BGH DASHBOARD -->
-    <section id="bgh-section" class="hidden space-y-6">
-      <div class="flex items-center justify-between"><button onclick="goToHome()" class="text-xs font-semibold bg-white px-3.5 py-2 rounded-xl border shadow-sm">← Quay lại Trang Chủ</button></div>
-      <div class="flex justify-between items-center">
-        <div><h2 class="text-2xl font-extrabold">Bảng Điều Hành Ban Giám Hiệu</h2></div>
-        <button onclick="openCreateTaskModal()" class="bg-indigo-600 text-white font-semibold px-4 py-2.5 rounded-xl">+ Thêm Nhiệm Vụ</button>
-      </div>
-      <div class="flex gap-2 border-b text-sm font-semibold pt-2 overflow-x-auto no-print">
-        <button id="bgh-tab-grading-btn" onclick="switchBghTab('grading')" class="px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold">📝 Chấm Điểm KPI</button>
-        <button id="bgh-tab-assign-btn" onclick="switchBghTab('assign')" class="px-5 py-3 border-b-2 border-transparent text-slate-500">🎯 Giao Việc</button>
-        <button id="bgh-tab-stats-btn" onclick="switchBghTab('stats')" class="px-5 py-3 border-b-2 border-transparent text-slate-500">📊 Thống Kê</button>
-      </div>
-      <div id="bgh-tab-content-grading" class="bg-white rounded-xl border p-5">
-        <div class="overflow-x-auto mb-4">
-          <table class="w-full text-left text-sm border-collapse">
-            <thead><tr class="bg-slate-50 border-b text-xs font-bold uppercase"><th class="py-3 px-4">Mã</th><th class="py-3 px-4">Giáo viên</th><th class="py-3 px-4 text-center">Định mức</th><th class="py-3 px-4 text-center">Hạn chót</th><th class="py-3 px-4 text-center">Minh chứng</th><th class="py-3 px-4 text-center">Trạng thái</th><th class="py-3 px-4 text-center">Điểm</th><th class="py-3 px-4 text-center">Thao tác</th></tr></thead>
-            <tbody id="bgh-grading-table" class="divide-y divide-slate-100"></tbody>
-          </table>
+      <!-- MY REGISTERED TASKS -->
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex flex-wrap justify-between items-center gap-2">
+          <div>
+            <h4 class="font-bold text-slate-900">Chi Tiết Nhiệm Vụ & Điểm Số</h4>
+            <p class="text-xs text-slate-500 mt-0.5">Tự động ưu tiên: <b class="text-rose-600">🚨 Quá hạn</b> → <b class="text-blue-600">⚙️ Đang thực hiện / Chờ nghiệm thu</b> → <b class="text-emerald-600">✓ Đã nghiệm thu</b></p>
+          </div>
+          <span class="text-xs text-slate-400">Dữ liệu đồng bộ trực tiếp</span>
         </div>
-        <div class="flex justify-between text-xs text-slate-600">
-          <div>Hiển thị: <select id="bgh-page-size" onchange="changeBghPageSize(this.value)" class="border rounded px-2.5 py-1"><option value="5">5</option><option value="10" selected>10</option><option value="999">Tất cả</option></select></div>
-          <div class="flex gap-2"><span id="bgh-pagination-info"></span><button id="bgh-btn-prev" onclick="prevBghPage()" class="border px-3 py-1 rounded">◀ Trước</button><button id="bgh-btn-next" onclick="nextBghPage()" class="border px-3 py-1 rounded">Sau ▶</button></div>
-        </div>
-      </div>
-      <div id="bgh-tab-content-assign" class="hidden bg-white rounded-xl border p-5">
         <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm border-collapse">
-            <thead><tr class="bg-slate-50 border-b text-xs font-bold uppercase"><th class="py-3 px-4">STT</th><th class="py-3 px-4">Mã GV</th><th class="py-3 px-4">Họ Tên</th><th class="py-3 px-4">Bộ Môn</th><th class="py-3 px-4 text-center">Đã Nhận</th><th class="py-3 px-4 text-center">Tổng Điểm</th><th class="py-3 px-4">Chọn việc</th><th class="py-3 px-4 text-center">Hành động</th></tr></thead>
-            <tbody id="bgh-assign-table" class="divide-y divide-slate-100"></tbody>
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase">
+                <th class="py-3 px-4">Mã việc</th>
+                <th class="py-3 px-4">Tên nhiệm vụ</th>
+                <th class="py-3 px-4 text-center">Định mức</th>
+                <th class="py-3 px-4 text-center">Mức độ hoàn thành</th>
+                <th class="py-3 px-4 text-center">Minh chứng</th>
+                <th class="py-3 px-4 text-center">Điểm BGH chấm</th>
+                <th class="py-3 px-4 text-center">Báo cáo hoàn thành</th>
+              </tr>
+            </thead>
+            <tbody id="my-tasks-table" class="divide-y divide-slate-100">
+              <!-- Render via JS -->
+            </tbody>
           </table>
         </div>
       </div>
-      <div id="bgh-tab-content-stats" class="hidden space-y-6">
-        <div class="bg-white p-5 rounded-xl border flex justify-between"><h3 class="font-bold">Báo Cáo Toàn Trường</h3><button onclick="exportToExcel()" class="bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl">📊 Xuất Excel</button></div>
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          <div class="bg-white p-5 rounded-2xl border"><span class="text-[11px] font-bold uppercase text-slate-400">CHƯA GIAO HẾT</span><div id="stat-tasks-available" class="text-3xl font-extrabold text-amber-500 mt-2">0</div></div>
-          <div class="bg-white p-5 rounded-2xl border"><span class="text-[11px] font-bold uppercase text-slate-400">XONG TRƯỚC HẠN</span><div id="stat-completed-early" class="text-3xl font-extrabold text-emerald-600 mt-2">0</div></div>
-          <div class="bg-white p-5 rounded-2xl border"><span class="text-[11px] font-bold uppercase text-slate-400">CHẬM TIẾN ĐỘ</span><div id="stat-tasks-overdue" class="text-3xl font-extrabold text-rose-600 mt-2">0</div></div>
-          <div class="bg-white p-5 rounded-2xl border"><span class="text-[11px] font-bold uppercase text-slate-400">TỔNG PHÂN CÔNG</span><div id="stat-tasks-assigned" class="text-3xl font-extrabold text-indigo-600 mt-2">0</div></div>
+
+      <!-- TASK CATALOG (KHO KPI CÓ CHIA TAB & PHÂN TRANG) -->
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h4 class="font-bold text-slate-900 text-base">Kho KPI Linh Hoạt</h4>
+            <p class="text-xs text-slate-500 mt-0.5">Tìm kiếm và đăng ký các nhiệm vụ chuyên môn theo đợt.</p>
+          </div>
+
+          <div class="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+            <button id="tab-all" onclick="switchKpiTab('all')" class="px-3.5 py-1.5 rounded-lg bg-white text-indigo-600 shadow-sm transition font-bold">
+              Tất cả (<span id="count-all">0</span>)
+            </button>
+            <button id="tab-available" onclick="switchKpiTab('available')" class="px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">
+              Còn việc (<span id="count-available">0</span>)
+            </button>
+            <button id="tab-registered" onclick="switchKpiTab('registered')" class="px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">
+              Đã nhận (<span id="count-registered">0</span>)
+            </button>
+          </div>
         </div>
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="bg-white p-5 rounded-2xl border lg:col-span-2"><h4 class="font-bold text-sm mb-4">📈 Biểu Đồ Tổng Điểm</h4><div class="h-72"><canvas id="kpiBarChart"></canvas></div></div>
-          <div class="bg-white p-5 rounded-2xl border"><h4 class="font-bold text-sm mb-4">🎯 Tỷ Lệ Tiến Độ</h4>
-            <div class="space-y-4 pt-2">
-              <div><div class="flex justify-between text-xs font-semibold mb-1"><span><span class="w-3 h-3 rounded bg-emerald-500 inline-block"></span> Xong sớm</span><span id="rate-early-text">0%</span></div><div class="w-full bg-slate-100 rounded-full h-2.5"><div id="bar-rate-early" class="bg-emerald-500 h-2.5 rounded-full" style="width: 0%"></div></div></div>
-              <div><div class="flex justify-between text-xs font-semibold mb-1"><span><span class="w-3 h-3 rounded bg-rose-500 inline-block"></span> Quá hạn</span><span id="rate-late-text">0%</span></div><div class="w-full bg-slate-100 rounded-full h-2.5"><div id="bar-rate-late" class="bg-rose-500 h-2.5 rounded-full" style="width: 0%"></div></div></div>
-              <div><div class="flex justify-between text-xs font-semibold mb-1"><span><span class="w-3 h-3 rounded bg-amber-500 inline-block"></span> Đúng hạn</span><span id="rate-ontime-text">0%</span></div><div class="w-full bg-slate-100 rounded-full h-2.5"><div id="bar-rate-ontime" class="bg-amber-500 h-2.5 rounded-full" style="width: 0%"></div></div></div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase">
+                <th class="py-3 px-4">Mã việc</th>
+                <th class="py-3 px-4">Tên & Mô tả nhiệm vụ</th>
+                <th class="py-3 px-4 text-center">Điểm định mức</th>
+                <th class="py-3 px-4 text-center">Hạn chót</th>
+                <th class="py-3 px-4 text-center">Chỉ tiêu</th>
+                <th class="py-3 px-4 text-center">Trạng thái</th>
+                <th class="py-3 px-4 text-center">Hành động</th>
+              </tr>
+            </thead>
+            <tbody id="available-tasks-table" class="divide-y divide-slate-100">
+              <!-- Render tự động qua JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
+          <div class="flex items-center gap-2">
+            <span>Hiển thị mỗi trang:</span>
+            <select id="page-size-select" onchange="changePageSize(this.value)" class="border border-slate-300 rounded px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
+              <option value="5">5 việc</option>
+              <option value="10" selected>10 việc</option>
+              <option value="20">20 việc</option>
+              <option value="999">Tất cả</option>
+            </select>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span id="pagination-info">Trang 1 / 1</span>
+            <div class="flex gap-1">
+              <button id="btn-prev-page" onclick="prevPage()" class="px-2.5 py-1 rounded border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed">
+                ◀ Trước
+              </button>
+              <button id="btn-next-page" onclick="nextPage()" class="px-2.5 py-1 rounded border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed">
+                Sau ▶
+              </button>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 4: QUẢN LÝ HỌC SINH -->
+    <!-- ==================== VIEW 3: BGH MANAGEMENT DASHBOARD ==================== -->
+    <section id="bgh-section" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <button onclick="goToHome()" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-sm hover:bg-slate-50 transition">
+          ← Quay lại Trang Chủ
+        </button>
+        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+          Phân hệ: Ban Giám Hiệu
+        </span>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Bảng Điều Hành Ban Giám Hiệu</h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">Phân công nhiệm vụ, chấm điểm KPI, quản lý minh chứng và phân tích số liệu thi đua.</p>
+        </div>
+        <button onclick="openCreateTaskModal()" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow transition">
+          <span class="text-base font-bold">+</span> Thêm Nhiệm Vụ Mới
+        </button>
+      </div>
+
+      <!-- 3 TABS ĐIỀU HƯỚNG BGH -->
+      <div class="flex items-center gap-2 border-b border-slate-200 text-sm font-semibold pt-2 overflow-x-auto no-print">
+        <button id="bgh-tab-grading-btn" onclick="switchBghTab('grading')" class="px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-2 whitespace-nowrap transition font-bold">
+          📝 Chấm Điểm KPI
+        </button>
+        <button id="bgh-tab-assign-btn" onclick="switchBghTab('assign')" class="px-5 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap transition">
+          🎯 Giao Việc Cho Giáo Viên
+        </button>
+        <button id="bgh-tab-stats-btn" onclick="switchBghTab('stats')" class="px-5 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap transition">
+          📊 Thống Kê Tiến Độ & KPI
+        </button>
+      </div>
+
+      <!-- TAB 1: CHẤM ĐIỂM KPI -->
+      <div id="bgh-tab-content-grading" class="space-y-4">
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="font-bold text-slate-900 text-base">Danh Sách Nhiệm Vụ Cần Chấm Điểm</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Tự động ưu tiên: Chờ nghiệm thu, Quá hạn, Chưa đến hạn, Đã xong.</p>
+            </div>
+            <span class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full font-medium border border-slate-200">
+              Thời gian thực
+            </span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  <th class="py-3.5 px-4">MÃ VIỆC</th>
+                  <th class="py-3.5 px-4">GIÁO VIÊN THỰC HIỆN</th>
+                  <th class="py-3.5 px-4 text-center">ĐỊNH MỨC</th>
+                  <th class="py-3.5 px-4 text-center">HẠN CHÓT</th>
+                  <th class="py-3.5 px-4 text-center">MINH CHỨNG</th>
+                  <th class="py-3.5 px-4 text-center">TRẠNG THÁI</th>
+                  <th class="py-3.5 px-4 text-center">ĐIỂM CHẤM</th>
+                  <th class="py-3.5 px-4 text-center">THAO TÁC</th>
+                </tr>
+              </thead>
+              <tbody id="bgh-grading-table" class="divide-y divide-slate-100 text-sm">
+                <!-- Render qua JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="p-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
+            <div class="flex items-center gap-2">
+              <span>Hiển thị mỗi trang:</span>
+              <select id="bgh-page-size" onchange="changeBghPageSize(this.value)" class="border border-slate-300 rounded px-2.5 py-1 bg-white focus:outline-none">
+                <option value="5">5 việc</option>
+                <option value="10" selected>10 việc</option>
+                <option value="20">20 việc</option>
+                <option value="999">Tất cả</option>
+              </select>
+            </div>
+            <div class="flex items-center gap-3">
+              <span id="bgh-pagination-info">Trang 1 / 1 (0 việc)</span>
+              <div class="flex gap-1.5">
+                <button id="bgh-btn-prev" onclick="prevBghPage()" class="px-3 py-1 rounded border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed font-medium">
+                  ◀ Trước
+                </button>
+                <button id="bgh-btn-next" onclick="nextBghPage()" class="px-3 py-1 rounded border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed font-medium">
+                  Sau ▶
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: GIAO VIỆC CHO GIÁO VIÊN -->
+      <div id="bgh-tab-content-assign" class="hidden space-y-4">
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="font-bold text-slate-900 text-base">Danh Sách Giáo Viên (Ưu Tiên Ít Điểm KPI & Ít Nhiệm Vụ Nhất)</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Sắp xếp tự động: Tổng điểm tăng dần, người ít việc hơn đứng trước.</p>
+            </div>
+            <div>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                Chỉ giao việc Còn chỉ tiêu
+              </span>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  <th class="py-3.5 px-4 text-center">STT</th>
+                  <th class="py-3.5 px-4">MÃ GV</th>
+                  <th class="py-3.5 px-4">HỌ VÀ TÊN</th>
+                  <th class="py-3.5 px-4">BỘ MÔN</th>
+                  <th class="py-3.5 px-4 text-center">ĐÃ NHẬN</th>
+                  <th class="py-3.5 px-4 text-center">TỔNG ĐIỂM KPI</th>
+                  <th class="py-3.5 px-4">CHỌN VIỆC CẦN GIAO</th>
+                  <th class="py-3.5 px-4 text-center">HÀNH ĐỘNG</th>
+                </tr>
+              </thead>
+              <tbody id="bgh-assign-table" class="divide-y divide-slate-100 text-sm">
+                <!-- Render qua JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: THỐNG KÊ TIẾN ĐỘ & KPI -->
+      <div id="bgh-tab-content-stats" class="hidden space-y-6">
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">Báo Cáo Tổng Hợp Toàn Trường</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Xuất dữ liệu định dạng bảng tính Excel đa sheet theo chuẩn báo cáo quản lý.</p>
+          </div>
+          <div class="flex items-center gap-2.5 no-print">
+            <button onclick="exportToExcel()" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm transition">
+              📊 Xuất Báo Cáo Excel
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-[11px] font-bold uppercase text-slate-400 tracking-wider">SỐ VIỆC CHƯA GIAO HẾT</span>
+            <div id="stat-tasks-available" class="text-3xl font-extrabold text-amber-500 mt-2">0</div>
+            <p class="text-xs text-slate-500 mt-1">Nhiệm vụ còn chỉ tiêu nhân sự</p>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-[11px] font-bold uppercase text-slate-400 tracking-wider">HOÀN THÀNH TRƯỚC HẠN</span>
+            <div id="stat-completed-early" class="text-3xl font-extrabold text-emerald-600 mt-2">0</div>
+            <p class="text-xs text-slate-500 mt-1">Nhiệm vụ về đích sớm</p>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-[11px] font-bold uppercase text-slate-400 tracking-wider">SỐ VIỆC CHẬM TIẾN ĐỘ</span>
+            <div id="stat-tasks-overdue" class="text-3xl font-extrabold text-rose-600 mt-2">0</div>
+            <p class="text-xs text-slate-500 mt-1">Quá hạn chót (chưa xong/xong trễ)</p>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-[11px] font-bold uppercase text-slate-400 tracking-wider">TỔNG LƯỢT PHÂN CÔNG</span>
+            <div id="stat-tasks-assigned" class="text-3xl font-extrabold text-indigo-600 mt-2">0</div>
+            <p class="text-xs text-slate-500 mt-1">Lượt công việc đã tiếp nhận</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm lg:col-span-2">
+            <h4 class="font-bold text-slate-900 text-sm mb-4 flex items-center gap-2">
+              📈 Biểu Đồ Tổng Điểm KPI Giáo Viên
+            </h4>
+            <div class="h-64 sm:h-72">
+              <canvas id="kpiBarChart"></canvas>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <h4 class="font-bold text-slate-900 text-sm mb-4 flex items-center gap-2">
+                🎯 Tỷ Lệ Tiến Độ Công Việc
+              </h4>
+              <div class="space-y-4 pt-2">
+                <div>
+                  <div class="flex justify-between text-xs font-semibold mb-1">
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-500 inline-block"></span> Hoàn thành trước hạn</span>
+                    <span id="rate-early-text">0%</span>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                    <div id="bar-rate-early" class="bg-emerald-500 h-2.5 rounded-full" style="width: 0%"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-xs font-semibold mb-1">
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-rose-500 inline-block"></span> Chậm tiến độ (Quá hạn)</span>
+                    <span id="rate-late-text">0%</span>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                    <div id="bar-rate-late" class="bg-rose-500 h-2.5 rounded-full" style="width: 0%"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-xs font-semibold mb-1">
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-500 inline-block"></span> Đang làm đúng hạn</span>
+                    <span id="rate-ontime-text">0%</span>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                    <div id="bar-rate-ontime" class="bg-amber-500 h-2.5 rounded-full" style="width: 0%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-100 text-[11px] text-slate-400">
+              Tự động tính toán theo mốc thời gian thực và hạn hoàn thành từng nhiệm vụ.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 4: PHÂN HỆ QUẢN LÝ HỌC SINH ==================== -->
     <section id="students-section" class="hidden space-y-6">
-      <div class="flex justify-between"><button onclick="goToHome()" class="text-xs bg-white px-3.5 py-2 border rounded-xl">← Quay lại</button></div>
-      <div class="flex justify-between"><h2 class="text-2xl font-extrabold">Sổ Nề Nếp Học Sinh</h2><button onclick="openAddDisciplineModal()" class="bg-emerald-600 text-white font-semibold px-4 py-2.5 rounded-xl">➕ Ghi Nhận</button></div>
+      <div class="flex items-center justify-between">
+        <button onclick="goToHome()" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-sm hover:bg-slate-50 transition">
+          ← Quay lại Trang Chủ
+        </button>
+        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+          Phân hệ: Quản Lý Học Sinh & Nề Nếp
+        </span>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Sổ Quản Lý Học Sinh & Thi Đua Nề Nếp</h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">Ghi nhận vi phạm, theo dõi chuyên cần và xếp loại hạnh kiểm theo tuần.</p>
+        </div>
+        <button onclick="openAddDisciplineModal()" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow transition">
+          <span>➕</span> Ghi Nhận Vi Phạm / Điểm Cộng
+        </button>
+      </div>
+
+      <!-- TỔNG QUAN SĨ SỐ & VI PHẠM -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <div class="bg-white p-5 rounded-2xl border"><span class="text-xs font-semibold">Tổng Học Sinh</span><div class="text-3xl font-extrabold mt-2">1,250</div></div>
-        <div class="bg-white p-5 rounded-2xl border"><span class="text-xs font-semibold">Vi Phạm Tuần Này</span><div id="stat-violations-count" class="text-3xl font-extrabold text-rose-600 mt-2">0</div></div>
-        <div class="bg-white p-5 rounded-2xl border"><span class="text-xs font-semibold">Lớp Dẫn Đầu</span><div class="text-3xl font-extrabold text-emerald-600 mt-2">11A5</div></div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-semibold uppercase text-slate-400">Tổng Số Học Sinh Quản Lý</span>
+          <div class="text-3xl font-extrabold text-slate-900 mt-2">1,250 <span class="text-sm font-normal text-slate-500">học sinh</span></div>
+          <p class="text-xs text-slate-500 mt-1">Toàn trường 30 lớp</p>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-semibold uppercase text-slate-400">Vi Phạm Ghi Nhận Trong Tuần</span>
+          <div id="stat-violations-count" class="text-3xl font-extrabold text-rose-600 mt-2">0</div>
+          <p class="text-xs text-rose-500 mt-1">Đi muộn, đồng phục, chuyên cần</p>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-semibold uppercase text-slate-400">Lớp Dẫn Đầu Thi Đua</span>
+          <div class="text-3xl font-extrabold text-emerald-600 mt-2">11A5</div>
+          <p class="text-xs text-emerald-500 mt-1">Điểm nề nếp đạt 98.5/100</p>
+        </div>
       </div>
-      <div class="bg-white rounded-xl border p-5">
-        <div class="overflow-x-auto"><table class="w-full text-left text-sm border-collapse"><thead><tr class="bg-slate-50 border-b uppercase text-xs"><th>Ngày</th><th>Lớp</th><th>Học sinh</th><th>Nội dung</th><th>Điểm</th><th>Người ghi</th></tr></thead><tbody id="student-discipline-table"></tbody></table></div>
+
+      <!-- BẢNG THEO DÕI NỀ NẾP -->
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+          <h4 class="font-bold text-slate-900">Nhật Ký Nề Nếp & Vi Phạm Học Sinh</h4>
+          <span class="text-xs bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-medium border border-emerald-200">Tuần hiện tại</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase">
+                <th class="py-3 px-4">Ngày</th>
+                <th class="py-3 px-4">Lớp</th>
+                <th class="py-3 px-4">Họ và tên học sinh</th>
+                <th class="py-3 px-4">Nội dung / Vi phạm</th>
+                <th class="py-3 px-4 text-center">Điểm trừ/cộng</th>
+                <th class="py-3 px-4">Người ghi nhận</th>
+              </tr>
+            </thead>
+            <tbody id="student-discipline-table" class="divide-y divide-slate-100">
+              <!-- Render via JS -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
-    <!-- 5: QUẢN LÝ XIN NGHỈ -->
+    <!-- ==================== VIEW 5: PHÂN HỆ QUẢN LÝ XIN NGHỈ DẠY ==================== -->
     <section id="leave-section" class="hidden space-y-6">
-      <div class="flex justify-between"><button onclick="goToHome()" class="text-xs bg-white px-3.5 py-2 border rounded-xl">← Quay lại</button></div>
-      <div class="flex justify-between"><h2 class="text-2xl font-extrabold">Đăng Ký Nghỉ & Dạy Bù</h2><button onclick="openLeaveModal()" class="bg-sky-600 text-white font-semibold px-4 py-2.5 rounded-xl">📝 Nộp Đơn</button></div>
-      <div class="bg-white rounded-xl border p-5">
-        <div class="overflow-x-auto"><table class="w-full text-left text-sm border-collapse"><thead><tr class="bg-slate-50 border-b uppercase text-xs"><th>Mã</th><th>Giáo viên</th><th>Lý do</th><th>Thời gian</th><th>Kế hoạch</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="leave-table"></tbody></table></div>
+      <div class="flex items-center justify-between">
+        <button onclick="goToHome()" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-sm hover:bg-slate-50 transition">
+          ← Quay lại Trang Chủ
+        </button>
+        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200">
+          Phân hệ: Đăng Ký Nghỉ Dạy & Dạy Bù
+        </span>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Hệ Thống Đăng Ký Nghỉ & Dạy Thay Bù</h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">Gửi đơn phép trực tuyến, điều phối giáo viên dạy thay và báo lịch dạy bù.</p>
+        </div>
+        <button onclick="openLeaveModal()" class="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow transition">
+          <span>📝</span> Gửi Đơn Xin Nghỉ Mới
+        </button>
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+          <h4 class="font-bold text-slate-900">Danh Sách Đơn Xin Nghỉ & Lịch Báo Giảng Bù</h4>
+          <span class="text-xs text-slate-400">Cập nhật liên tục</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase">
+                <th class="py-3 px-4">Mã đơn</th>
+                <th class="py-3 px-4">Giáo viên xin nghỉ</th>
+                <th class="py-3 px-4">Lý do nghỉ</th>
+                <th class="py-3 px-4 text-center">Thời gian nghỉ</th>
+                <th class="py-3 px-4">GV Dạy thay / Kế hoạch dạy bù</th>
+                <th class="py-3 px-4 text-center">Trạng thái BGH</th>
+                <th class="py-3 px-4 text-center">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="leave-table" class="divide-y divide-slate-100">
+              <!-- Render via JS -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
-    <!-- 6: SỔ MƯỢN THIẾT BỊ -->
+    <!-- ==================== VIEW 6: SỔ MƯỢN THIẾT BỊ ==================== -->
     <section id="equipment-section" class="hidden space-y-6">
-      <div class="flex justify-between"><button onclick="goToHome()" class="text-xs bg-white px-3.5 py-2 border rounded-xl">← Quay lại</button></div>
-      <div class="flex justify-between"><h2 class="text-2xl font-extrabold">Mượn Thiết Bị</h2><button onclick="openEquipmentModal()" class="bg-purple-600 text-white font-semibold px-4 py-2.5 rounded-xl">🔬 Đăng Ký Mượn</button></div>
-      <div class="bg-white rounded-xl border p-5">
-        <div class="overflow-x-auto"><table class="w-full text-left text-sm border-collapse"><thead><tr class="bg-slate-50 border-b uppercase text-xs"><th>Mã</th><th>Giáo viên</th><th>Thiết bị</th><th>Tiết/Lớp</th><th>Ngày</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="equipment-table"></tbody></table></div>
+      <div class="flex items-center justify-between">
+        <button onclick="goToHome()" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-sm hover:bg-slate-50 transition">
+          ← Quay lại Trang Chủ
+        </button>
+        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+          Phân hệ: Sổ Mượn Thiết Bị & Phòng Bộ Môn
+        </span>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Sổ Mượn Thiết Bị & Phòng Chức Năng</h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">Đăng ký mượn phòng thí nghiệm, máy chiếu, đồ dùng dạy học theo tiết khóa học.</p>
+        </div>
+        <button onclick="openEquipmentModal()" class="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow transition">
+          <span>🔬</span> Đăng Ký Mượn Thiết Bị
+        </button>
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+          <h4 class="font-bold text-slate-900">Danh Sách Mượn Trả Thiết Bị Dạy Học</h4>
+          <span class="text-xs text-slate-400">Trường THPT Trần Phú</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase">
+                <th class="py-3 px-4">Mã mượn</th>
+                <th class="py-3 px-4">Giáo viên mượn</th>
+                <th class="py-3 px-4">Thiết bị / Phòng mượn</th>
+                <th class="py-3 px-4 text-center">Tiết / Lớp dạy</th>
+                <th class="py-3 px-4 text-center">Ngày mượn</th>
+                <th class="py-3 px-4 text-center">Tình trạng</th>
+                <th class="py-3 px-4 text-center">Xác nhận trả</th>
+              </tr>
+            </thead>
+            <tbody id="equipment-table" class="divide-y divide-slate-100">
+              <!-- Render via JS -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
+
   </main>
 
-  <!-- ==================== CÁC MODAL ==================== -->
-  <!-- MODAL ĐĂNG NHẬP -->
+  <!-- ==================== CÁC MODAL HỆ THỐNG ==================== -->
+
+  <!-- MODAL: ĐĂNG NHẬP (ĐÃ LOẠI BỎ CÁC NÚT DEMO) -->
   <div id="login-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-3xl max-w-md w-full p-7 shadow-2xl border text-center relative">
+    <div class="bg-white rounded-3xl max-w-md w-full p-7 shadow-2xl border border-slate-100 text-center relative">
       <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">✕</button>
-      <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3 text-3xl font-bold">🎓</div>
+      <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3 text-3xl font-bold">
+        🎓
+      </div>
       <h3 class="text-xl font-black text-slate-900 mb-1">Xác Thực Tài Khoản</h3>
-      <p id="login-modal-msg" class="text-xs text-indigo-600 font-semibold mb-4 px-2">Vui lòng đăng nhập bằng Google để tiếp tục.</p>
-      <div class="flex justify-center mb-4"><div id="google-signin-btn"></div></div>
+      <p id="login-modal-msg" class="text-xs text-indigo-600 font-semibold mb-6 px-2">Vui lòng đăng nhập bằng tài khoản Google để tiếp tục.</p>
+
+      <div class="flex justify-center mb-2">
+        <div id="google-signin-btn"></div>
+      </div>
     </div>
   </div>
 
-  <!-- MODAL BÁO CÁO MINH CHỨNG -->
+  <!-- MODAL: BÁO CÁO HOÀN THÀNH / NỘP MINH CHỨNG -->
   <div id="evidence-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <h3 class="text-base font-bold text-slate-900 mb-4">Báo Cáo Hoàn Thành Nhiệm Vụ</h3>
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg">📁</div>
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Báo Cáo Hoàn Thành Nhiệm Vụ</h3>
+          <p class="text-xs text-slate-500" id="evidence-modal-subtitle">Nhiệm vụ: --</p>
+        </div>
+      </div>
       <form id="evidence-form" onsubmit="submitEvidence(event)" class="space-y-4 text-sm">
         <input type="hidden" id="evidence-task-id">
         <div>
-          <label class="block font-medium mb-1">Link minh chứng (Drive):</label>
-          <input type="url" id="evidence-link-input" class="w-full border rounded-lg px-3 py-2">
+          <div class="flex justify-between items-center mb-1">
+            <label class="block font-medium text-slate-700">Đường link minh chứng (Drive / Hình ảnh):</label>
+            <span class="text-[11px] text-slate-400 italic">Không bắt buộc</span>
+          </div>
+          <input type="url" id="evidence-link-input" placeholder="https://drive.google.com/..." class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          <p class="text-[11px] text-slate-400 mt-1">Thầy/Cô có thể dán link minh chứng Drive hoặc để trống nếu nhiệm vụ không yêu cầu gửi file.</p>
         </div>
-        <div class="flex justify-end gap-2 pt-3 border-t"><button type="button" onclick="closeEvidenceModal()" class="px-4 py-2 border rounded-lg">Hủy</button><button type="submit" class="px-5 py-2 bg-emerald-600 text-white rounded-lg">Hoàn Thành</button></div>
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeEvidenceModal()" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 font-medium">Hủy</button>
+          <button type="submit" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium shadow-sm transition">Xác Nhận Hoàn Thành</button>
+        </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL THÊM NHIỆM VỤ -->
+  <!-- MODAL: GIAO NHIỆM VỤ MỚI VÀO KHO KPI (BGH) -->
   <div id="task-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl">
-      <h3 class="text-lg font-bold mb-4">Thêm Nhiệm Vụ Mới</h3>
-      <form onsubmit="handleCreateTask(event)" class="space-y-4 text-sm">
-        <div><label class="block mb-1">Mã việc</label><input type="text" id="modal-task-id" required class="w-full border rounded-lg px-3 py-2"></div>
-        <div><label class="block mb-1">Tên việc</label><input type="text" id="modal-task-title" required class="w-full border rounded-lg px-3 py-2"></div>
-        <div><label class="block mb-1">Mô tả</label><textarea id="modal-task-desc" class="w-full border rounded-lg px-3 py-2"></textarea></div>
-        <div class="grid grid-cols-3 gap-3">
-          <div><label class="block mb-1">Định mức</label><input type="number" id="modal-task-score" required class="w-full border rounded-lg px-3 py-2"></div>
-          <div><label class="block mb-1">Hạn chót</label><input type="date" id="modal-task-deadline" required class="w-full border rounded-lg px-3 py-2"></div>
-          <div><label class="block mb-1">Chỉ tiêu</label><input type="number" id="modal-task-quota" required class="w-full border rounded-lg px-3 py-2"></div>
+      <h3 class="text-lg font-bold text-slate-900 mb-4">Thêm Nhiệm Vụ Mới Vào Kho KPI</h3>
+      <form id="new-task-form" onsubmit="handleCreateTask(event)" class="space-y-4 text-sm">
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">Mã việc (Ví dụ: A6)</label>
+          <input type="text" id="modal-task-id" required class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none uppercase">
         </div>
-        <div class="flex justify-end gap-2 pt-3 border-t"><button type="button" onclick="closeCreateTaskModal()" class="px-4 py-2 border rounded-lg">Hủy</button><button type="submit" class="px-5 py-2 bg-indigo-600 text-white rounded-lg">Lưu</button></div>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">Tên việc</label>
+          <input type="text" id="modal-task-title" required class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">Mô tả công việc</label>
+          <textarea id="modal-task-desc" rows="3" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">Điểm định mức</label>
+            <input type="number" id="modal-task-score" required min="1" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">Hạn hoàn thành</label>
+            <input type="date" id="modal-task-deadline" required class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">Chỉ tiêu (GV)</label>
+            <input type="number" id="modal-task-quota" required min="1" value="1" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-4 border-t border-slate-100">
+          <button type="button" onclick="closeCreateTaskModal()" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 font-medium">Hủy</button>
+          <button type="submit" class="px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-sm">Lưu & Xuất Bản</button>
+        </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL GHI NHẬN NỀ NẾP -->
+  <!-- MODAL: GHI NHẬN NỀ NẾP HỌC SINH -->
   <div id="discipline-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <h3 class="text-base font-bold mb-3">Ghi Nhận Vi Phạm / Điểm Cộng</h3>
+      <h3 class="text-base font-bold text-slate-900 mb-3">Ghi Nhận Vi Phạm / Điểm Cộng Học Sinh</h3>
       <form onsubmit="handleSaveDiscipline(event)" class="space-y-3 text-sm">
-        <div><label class="block mb-1">Chọn lớp:</label><input type="text" id="modal-disc-class" value="11A5" class="w-full border rounded-lg px-3 py-2"></div>
-        <div><label class="block mb-1">Tên học sinh:</label><input type="text" id="modal-disc-student" required class="w-full border rounded-lg px-3 py-2"></div>
-        <div><label class="block mb-1">Nội dung:</label><input type="text" id="modal-disc-content" required class="w-full border rounded-lg px-3 py-2"></div>
-        <div><label class="block mb-1">Điểm (+ hoặc -):</label><input type="number" id="modal-disc-points" value="-2" required class="w-full border rounded-lg px-3 py-2"></div>
-        <div class="flex justify-end gap-2 pt-3 border-t"><button type="button" onclick="closeAddDisciplineModal()" class="px-4 py-2 border rounded-lg">Hủy</button><button type="submit" class="px-5 py-2 bg-emerald-600 text-white rounded-lg">Lưu</button></div>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">Chọn lớp:</label>
+          <select id="modal-disc-class" class="w-full border border-slate-300 rounded-lg px-3 py-2 bg-white">
+            <option value="10A1">10A1</option>
+            <option value="11A5" selected>11A5</option>
+            <option value="12A2">12A2</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">Tên học sinh:</label>
+          <input type="text" id="modal-disc-student" required placeholder="Ví dụ: Nguyễn Văn A" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+        </div>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">Nội dung ghi nhận:</label>
+          <input type="text" id="modal-disc-content" required placeholder="Ví dụ: Đi học muộn 15 phút / Đạt giải HSG" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+        </div>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">Điểm số (+ hoặc -):</label>
+          <input type="number" id="modal-disc-points" required value="-2" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeAddDisciplineModal()" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 font-medium">Hủy</button>
+          <button type="submit" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium shadow-sm">Lưu Nhật Ký</button>
+        </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL XIN NGHỈ -->
+  <!-- MODAL: ĐĂNG KÝ NGHỈ DẠY -->
   <div id="leave-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <h3 class="text-base font-bold mb-3">Đăng Ký Nghỉ Dạy & Báo Giảng Bù</h3>
+      <h3 class="text-base font-bold text-slate-900 mb-3">Đăng Ký Nghỉ Dạy & Báo Giảng Bù</h3>
       <form onsubmit="handleSaveLeave(event)" class="space-y-3 text-sm">
-        <div><label class="block mb-1">Lý do nghỉ:</label><input type="text" id="modal-leave-reason" required class="w-full border rounded-lg px-3 py-2"></div>
-        <div class="grid grid-cols-2 gap-2">
-          <div><label class="block mb-1">Từ ngày:</label><input type="date" id="modal-leave-date" required class="w-full border rounded-lg px-3 py-2"></div>
-          <div><label class="block mb-1">Số tiết:</label><input type="number" id="modal-leave-periods" required min="1" value="2" class="w-full border rounded-lg px-3 py-2"></div>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">Lý do nghỉ:</label>
+          <input type="text" id="modal-leave-reason" required placeholder="Ví dụ: Đi công tác chuyên môn / Việc gia đình" class="w-full border border-slate-300 rounded-lg px-3 py-2">
         </div>
-        <div><label class="block mb-1">Kế hoạch dạy thay/bù:</label><input type="text" id="modal-leave-plan" required class="w-full border rounded-lg px-3 py-2"></div>
-        <div class="flex justify-end gap-2 pt-3 border-t"><button type="button" onclick="closeLeaveModal()" class="px-4 py-2 border rounded-lg">Hủy</button><button type="submit" class="px-5 py-2 bg-sky-600 text-white rounded-lg">Gửi Đơn</button></div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">Từ ngày:</label>
+            <input type="date" id="modal-leave-date" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">Số tiết nghỉ:</label>
+            <input type="number" id="modal-leave-periods" required min="1" value="2" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+          </div>
+        </div>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">Kế hoạch dạy thay / Dạy bù:</label>
+          <input type="text" id="modal-leave-plan" required placeholder="Ví dụ: Thầy Nam dạy thay tiết 2, 3 thứ 5" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeLeaveModal()" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 font-medium">Hủy</button>
+          <button type="submit" class="px-5 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-medium shadow-sm">Gửi Đơn Xin Nghỉ</button>
+        </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL MƯỢN THIẾT BỊ -->
+  <!-- MODAL: ĐĂNG KÝ MƯỢN THIẾT BỊ -->
   <div id="equipment-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <h3 class="text-base font-bold mb-3">Đăng Ký Mượn Thiết Bị</h3>
+      <h3 class="text-base font-bold text-slate-900 mb-3">Đăng Ký Mượn Thiết Bị & Phòng Học</h3>
       <form onsubmit="handleSaveEquipment(event)" class="space-y-3 text-sm">
-        <div><label class="block mb-1">Thiết bị / Phòng:</label><input type="text" id="modal-equip-name" required class="w-full border rounded-lg px-3 py-2"></div>
-        <div class="grid grid-cols-2 gap-2">
-          <div><label class="block mb-1">Ngày mượn:</label><input type="date" id="modal-equip-date" required class="w-full border rounded-lg px-3 py-2"></div>
-          <div><label class="block mb-1">Tiết dạy / Lớp:</label><input type="text" id="modal-equip-period" required class="w-full border rounded-lg px-3 py-2"></div>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">Tên thiết bị / Phòng bộ môn:</label>
+          <select id="modal-equip-name" class="w-full border border-slate-300 rounded-lg px-3 py-2 bg-white">
+            <option value="Máy chiếu di động số 02">Máy chiếu di động số 02</option>
+            <option value="Bộ thí nghiệm Quang học Vật lý">Bộ thí nghiệm Quang học Vật lý</option>
+            <option value="Phòng Thực hành Tin học 1">Phòng Thực hành Tin học 1</option>
+            <option value="Bộ mô hình ADN Sinh học">Bộ mô hình ADN Sinh học</option>
+          </select>
         </div>
-        <div class="flex justify-end gap-2 pt-3 border-t"><button type="button" onclick="closeEquipmentModal()" class="px-4 py-2 border rounded-lg">Hủy</button><button type="submit" class="px-5 py-2 bg-purple-600 text-white rounded-lg">Xác Nhận</button></div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">Ngày mượn:</label>
+            <input type="date" id="modal-equip-date" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">Tiết dạy / Lớp:</label>
+            <input type="text" id="modal-equip-period" required placeholder="Ví dụ: Tiết 3 - Lớp 11A5" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeEquipmentModal()" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 font-medium">Hủy</button>
+          <button type="submit" class="px-5 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-medium shadow-sm">Xác Nhận Mượn</button>
+        </div>
       </form>
     </div>
   </div>
 
-  <!-- KẾT NỐI VỚI FILE JS -->
-  <script src="app.js"></script>
+  <!-- ==================== KHỐI JAVASCRIPT ĐỒNG BỘ TOÀN DIỆN ==================== -->
+  <script>
+    // --- CẤU HÌNH API & TÀI KHOẢN ---
+    const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbxKqmkVAW2iGr96AF8-icSKKNdOGLEXqwAEAiANm1VYD21ARQk0KzHnbY-_BGRTwtsB0A/exec";
+    const GOOGLE_CLIENT_ID = "575102440654-fvv1hcq0p7buoh4ov3rgjk4p56o2d3bk.apps.googleusercontent.com";
+
+    // Khởi tạo trạng thái rỗng hoàn toàn - KHÔNG CÓ DỮ LIỆU MẪU
+    let appData = {
+      staff: [],
+      tasks: [],
+      registrations: [],
+      disciplines: [],
+      leaves: [],
+      equipmentBorrows: [],
+      bghEmails: []
+    };
+
+    let currentUser = null;
+    let bghActiveTab = "grading";
+    let bghPage = 1;
+    let bghItemsPerPage = 10;
+    let kpiChartInstance = null;
+    let currentModule = "home";
+
+    let currentKpiTab = "all";
+    let currentPage = 1;
+    let itemsPerPage = 10;
+
+    function parseDateSafe(dateStr) {
+      if (!dateStr) return null;
+      dateStr = String(dateStr).trim();
+      if (dateStr.includes("/")) {
+        const p = dateStr.split("/");
+        if (p.length === 3) return new Date(parseInt(p[2], 10), parseInt(p[1], 10) - 1, parseInt(p[0], 10), 23, 59, 59);
+      } else if (dateStr.includes("-")) {
+        const p = dateStr.split("-");
+        if (p.length === 3) return new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10), 23, 59, 59);
+      }
+      return null;
+    }
+
+    // --- KHỞI TẠO HỆ THỐNG & GỌI BACKEND ---
+    window.onload = function() {
+      const now = new Date();
+      const badge = document.getElementById("current-date-badge");
+      if (badge) badge.innerText = `📅 Ngày ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+
+      if (window.google) {
+        google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGoogleLoginResponse
+        });
+        google.accounts.id.renderButton(
+          document.getElementById("google-signin-btn"),
+          { theme: "outline", size: "large", width: 280, text: "signin_with" }
+        );
+      }
+      goToHome();
+      fetchRemoteData(); // Gọi backend GS ngay khi mở web
+    };
+
+    // --- HÀM GỌI BACKEND GS BẰNG JSONP (CHỐNG LỖI CORS 100%) ---
+    function fetchRemoteData(callbackFn) {
+      if (!SCRIPT_API_URL || SCRIPT_API_URL.includes("YOUR_")) return;
+      const cbName = 'onDataInit_' + Math.round(1000000 * Math.random());
+
+      window[cbName] = function(json) {
+        delete window[cbName];
+        const el = document.getElementById(cbName);
+        if (el) el.remove();
+
+        if (json && json.success) {
+          appData.tasks = json.tasks || [];
+          appData.staff = json.staff || [];
+          appData.registrations = json.registrations || [];
+          appData.bghEmails = json.bghEmails || [];
+
+          // Nếu người dùng đã đăng nhập từ trước, cập nhật quyền lại
+          if (currentUser) {
+            const lowerEmail = currentUser.email.toLowerCase();
+            if (appData.bghEmails.includes(lowerEmail)) currentUser.role = "BGH";
+            const st = appData.staff.find(s => s.email && s.email.toLowerCase() === lowerEmail);
+            if (st) {
+              currentUser.code = st.code;
+              currentUser.name = st.name;
+            }
+            renderAppView();
+          }
+        }
+        if (callbackFn) callbackFn(json);
+      };
+
+      const script = document.createElement('script');
+      script.id = cbName;
+      script.src = `${SCRIPT_API_URL}?action=getInitialData&callback=${cbName}`;
+      script.onerror = function() {
+        // Fallback qua fetch nếu JSONP bị chặn nội bộ
+        fetch(`${SCRIPT_API_URL}?action=getInitialData`)
+          .then(r => r.json())
+          .then(json => {
+            if (json && json.success) {
+              appData.tasks = json.tasks || [];
+              appData.staff = json.staff || [];
+              appData.registrations = json.registrations || [];
+              appData.bghEmails = json.bghEmails || [];
+              if (currentUser) renderAppView();
+            }
+          })
+          .catch(e => console.warn("Lỗi đồng bộ Backend:", e));
+      };
+      document.body.appendChild(script);
+    }
+
+    // Hàm gọi các API ghi dữ liệu tới Google Apps Script
+    function callGsApi(action, params, onSuccess) {
+      const cbName = 'onApiDone_' + Math.round(1000000 * Math.random());
+      params.action = action;
+      params.callback = cbName;
+      if (currentUser && currentUser.email) params.email = currentUser.email;
+
+      const queryParts = [];
+      for (const k in params) {
+        if (params.hasOwnProperty(k)) queryParts.push(encodeURIComponent(k) + '=' + encodeURIComponent(params[k]));
+      }
+
+      window[cbName] = function(res) {
+        delete window[cbName];
+        const el = document.getElementById(cbName);
+        if (el) el.remove();
+        if (onSuccess) onSuccess(res);
+      };
+
+      const script = document.createElement('script');
+      script.id = cbName;
+      script.src = `${SCRIPT_API_URL}?${queryParts.join('&')}`;
+      document.body.appendChild(script);
+
+      // Dự phòng POST chạy ngầm
+      try {
+        fetch(SCRIPT_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(params)
+        }).catch(() => {});
+      } catch(e) {}
+    }
+
+    // --- ĐĂNG NHẬP GOOGLE & XÁC THỰC THỰC TẾ ---
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        return JSON.parse(decodeURIComponent(escape(window.atob(base64))));
+      } catch (e) { return null; }
+    }
+
+    function handleGoogleLoginResponse(response) {
+      const payload = parseJwt(response.credential);
+      if (payload) {
+        processUserSession(payload.email, payload.name, payload.picture);
+      }
+    }
+
+    function processUserSession(email, name, avatar) {
+      const lowerEmail = email.toLowerCase().trim();
+      let role = "GV";
+
+      // Kiểm tra BGH từ mảng quét động trên Sheet
+      const isBgh = appData.bghEmails && appData.bghEmails.includes(lowerEmail);
+      if (isBgh) role = "BGH";
+
+      // Khớp nhân sự từ bảng
+      let staffProfile = appData.staff.find(s => s.email && s.email.toLowerCase() === lowerEmail);
+
+      let userCode = staffProfile ? staffProfile.code : (isBgh ? "BGH" : "GV_NEW");
+      let userName = staffProfile ? staffProfile.name : name;
+
+      currentUser = {
+        email: lowerEmail,
+        name: userName,
+        code: userCode,
+        role: role,
+        avatar: avatar
+      };
+
+      closeLoginModal();
+      renderAppView();
+    }
+
+    function logout() {
+      currentUser = null;
+      document.getElementById("user-info-bar").classList.add("hidden");
+      document.getElementById("nav-guest-box").classList.remove("hidden");
+      goToHome();
+    }
+
+    // --- ĐIỀU HƯỚNG & HIỂN THỊ VIEW ---
+    function renderAppView() {
+      document.getElementById("nav-guest-box").classList.add("hidden");
+      document.getElementById("user-info-bar").classList.remove("hidden");
+
+      document.getElementById("user-display-name").innerText = currentUser.name;
+      document.getElementById("user-avatar").src = currentUser.avatar;
+      const roleBadge = document.getElementById("user-role-badge");
+
+      if (currentUser.role === "BGH") {
+        roleBadge.innerText = "Ban Giám Hiệu";
+        roleBadge.className = "inline-block mt-1 text-[11px] px-2 py-0.5 rounded font-medium bg-amber-100 text-amber-800 border border-amber-200";
+      } else {
+        roleBadge.innerText = `Giáo Viên (${currentUser.code})`;
+        roleBadge.className = "inline-block mt-1 text-[11px] px-2 py-0.5 rounded font-medium bg-indigo-100 text-indigo-700";
+      }
+
+      // Ẩn/Hiện phân hệ BGH dựa vào quyền động lấy từ Sheet
+      const bghCard = document.getElementById("card-kpi-bgh");
+      if (bghCard) bghCard.classList.toggle("hidden", currentUser.role !== "BGH");
+
+      if (currentModule !== "home") navigateToModule(currentModule);
+      else goToHome();
+    }
+
+    function hideAllSections() {
+      document.getElementById("portal-section").classList.add("hidden");
+      document.getElementById("teacher-section").classList.add("hidden");
+      document.getElementById("bgh-section").classList.add("hidden");
+      document.getElementById("students-section").classList.add("hidden");
+      document.getElementById("leave-section").classList.add("hidden");
+      document.getElementById("equipment-section").classList.add("hidden");
+    }
+
+    function goToHome() {
+      currentModule = "home";
+      hideAllSections();
+      document.getElementById("portal-section").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function navigateToModule(moduleKey) {
+      if (!currentUser) {
+        openLoginModal("Vui lòng đăng nhập để truy cập phân hệ nghiệp vụ này.");
+        return;
+      }
+      currentModule = moduleKey;
+      hideAllSections();
+
+      if (moduleKey === "kpi_me") {
+        document.getElementById("teacher-section").classList.remove("hidden");
+        renderTeacherDashboard();
+      } else if (moduleKey === "kpi_bgh") {
+        if (currentUser.role !== "BGH") {
+          alert("⛔ Phân hệ 'QUẢN LÝ KPI' chỉ dành cho Ban Giám Hiệu!");
+          goToHome();
+          return;
+        }
+        document.getElementById("bgh-section").classList.remove("hidden");
+        switchBghTab(bghActiveTab);
+      } else if (moduleKey === "students") {
+        document.getElementById("students-section").classList.remove("hidden");
+        renderStudentsSection();
+      } else if (moduleKey === "leave") {
+        document.getElementById("leave-section").classList.remove("hidden");
+        renderLeaveSection();
+      } else if (moduleKey === "equipment") {
+        document.getElementById("equipment-section").classList.remove("hidden");
+        renderEquipmentSection();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openLoginModal(msg) {
+      if (msg) document.getElementById("login-modal-msg").innerText = msg;
+      document.getElementById("login-modal").classList.remove("hidden");
+    }
+    function closeLoginModal() { document.getElementById("login-modal").classList.add("hidden"); }
+
+    // --- DASHBOARD GIÁO VIÊN ---
+    function switchKpiTab(tabName) {
+      currentKpiTab = tabName;
+      currentPage = 1;
+      ["all", "available", "registered"].forEach(t => {
+        const btn = document.getElementById("tab-" + t);
+        if (!btn) return;
+        btn.className = (t === tabName)
+          ? "px-3.5 py-1.5 rounded-lg bg-white text-indigo-600 shadow-sm transition font-bold"
+          : "px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition";
+      });
+      renderTeacherDashboard();
+    }
+
+    function changePageSize(size) { itemsPerPage = Number(size); currentPage = 1; renderTeacherDashboard(); }
+    function prevPage() { if (currentPage > 1) { currentPage--; renderTeacherDashboard(); } }
+    function nextPage() { currentPage++; renderTeacherDashboard(); }
+
+    function renderTeacherDashboard() {
+      const myRegs = appData.registrations.filter(r => r.teacherCode === currentUser.code);
+      const totalScore = myRegs.reduce((sum, r) => sum + (r.finalScore !== null && r.finalScore !== "" ? Number(r.finalScore) : 0), 0);
+
+      // Xếp hạng giáo viên so với toàn trường
+      const allTeacherScores = (appData.staff || []).map(gv => {
+        const gvRegs = (appData.registrations || []).filter(r => r.teacherCode === gv.code);
+        const score = gvRegs.reduce((sum, r) => sum + (r.finalScore !== null && r.finalScore !== "" ? Number(r.finalScore) : 0), 0);
+        return { code: gv.code, score: score };
+      });
+      allTeacherScores.sort((a, b) => b.score - a.score);
+
+      const rankIndex = allTeacherScores.findIndex(item => item.code === currentUser.code);
+      const myRank = rankIndex !== -1 ? (rankIndex + 1) : "--";
+      const totalTeachers = allTeacherScores.length || 1;
+
+      document.getElementById("stat-tasks-count").innerText = myRegs.length;
+      document.getElementById("stat-total-score").innerHTML = `${totalScore} <span class="text-sm font-normal text-slate-500">điểm</span>`;
+
+      const rankEl = document.getElementById("stat-potential-score");
+      if (rankEl) rankEl.innerHTML = `#${myRank} <span class="text-sm font-normal text-slate-500">/ ${totalTeachers} GV</span>`;
+      const rankDescEl = document.getElementById("stat-rank-desc");
+      if (rankDescEl) rankDescEl.innerText = myRank === 1 ? "🏆 Dẫn đầu thi đua toàn trường" : `Xếp thứ ${myRank} theo điểm BGH chấm`;
+
+      const myTableBody = document.getElementById("my-tasks-table");
+      myTableBody.innerHTML = "";
+      if (myRegs.length === 0) {
+        myTableBody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400">Bạn chưa đăng ký nhiệm vụ nào.</td></tr>`;
+      } else {
+        const now = new Date();
+        const formattedTasks = myRegs.map((r, index) => {
+          const taskInfo = appData.tasks.find(t => String(t.id).trim().toUpperCase() === String(r.taskId).trim().toUpperCase()) || { title: "Nhiệm vụ " + r.taskId, deadline: "" };
+          const deadlineDate = parseDateSafe(taskInfo.deadline);
+
+          const isGraded = (r.finalScore !== null && r.finalScore !== "" && !isNaN(Number(r.finalScore)));
+          const isWaiting = !isGraded && (r.level === "Chờ nghiệm thu" || Boolean(r.evidence && String(r.evidence).trim() !== ""));
+          const isOverdue = !isGraded && !isWaiting && deadlineDate && (deadlineDate < now);
+
+          let levelBadge = "";
+          let priorityRank = 3;
+
+          if (isGraded) {
+            priorityRank = 4;
+            levelBadge = `<span class="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium bg-emerald-100 text-emerald-700 border border-emerald-200">✓ ${r.level || 'Đã nghiệm thu'}</span>`;
+          } else if (isOverdue) {
+            priorityRank = 1;
+            levelBadge = `<span class="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-bold bg-rose-100 text-rose-700 border border-rose-300">🚨 Quá hạn</span>`;
+          } else if (isWaiting) {
+            priorityRank = 2;
+            levelBadge = `<span class="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium bg-amber-100 text-amber-800 border border-amber-200">⏳ Chờ nghiệm thu</span>`;
+          } else {
+            priorityRank = 3;
+            levelBadge = `<span class="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium bg-blue-50 text-blue-700 border border-blue-200">⚙️ ${r.level || 'Đang thực hiện'}</span>`;
+          }
+
+          const scoreBadge = (r.finalScore !== null && r.finalScore !== "")
+            ? `<span class="font-bold text-emerald-600">${r.finalScore} / ${r.baseScore}</span>`
+            : `<span class="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-200">Chờ BGH chấm</span>`;
+
+          return { reg: r, taskInfo, priorityRank, levelBadge, scoreBadge, isGraded, isWaiting, originalIndex: index };
+        });
+
+        formattedTasks.sort((a, b) => a.priorityRank - b.priorityRank || a.originalIndex - b.originalIndex);
+
+        formattedTasks.forEach(item => {
+          const r = item.reg;
+          const taskInfo = item.taskInfo;
+          const rowHighlight = item.priorityRank === 1 ? 'bg-rose-50/40 hover:bg-rose-50' : 'hover:bg-slate-50/80';
+          const evidenceLink = r.evidence && String(r.evidence).trim() !== ""
+            ? `<a href="${r.evidence}" target="_blank" class="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 underline font-semibold">📁 Xem Drive</a>`
+            : `<span class="text-xs text-slate-400 italic">Chưa có</span>`;
+
+          let reportBtn = item.isGraded
+            ? `<span class="text-xs text-emerald-600 font-semibold">✓ Hoàn tất</span>`
+            : `<button onclick="openEvidenceModal('${r.taskId}')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-lg shadow-sm transition">Báo cáo hoàn thành</button>`;
+
+          myTableBody.innerHTML += `
+            <tr class="${rowHighlight} transition border-b border-slate-100">
+              <td class="py-3 px-4 font-semibold text-indigo-600">${r.taskId}</td>
+              <td class="py-3 px-4 font-medium text-slate-800">${taskInfo.title}</td>
+              <td class="py-3 px-4 text-center font-semibold text-slate-700">${r.baseScore}</td>
+              <td class="py-3 px-4 text-center">${item.levelBadge}</td>
+              <td class="py-3 px-4 text-center">${evidenceLink}</td>
+              <td class="py-3 px-4 text-center">${item.scoreBadge}</td>
+              <td class="py-3 px-4 text-center">${reportBtn}</td>
+            </tr>
+          `;
+        });
+      }
+
+      // Kho KPI
+      const seenTaskIds = new Set();
+      const uniqueTasks = [];
+      (appData.tasks || []).forEach(task => {
+        if (task && task.id && String(task.id).trim() !== "") {
+          const cleanId = String(task.id).trim().toUpperCase();
+          if (!seenTaskIds.has(cleanId)) { seenTaskIds.add(cleanId); uniqueTasks.push(task); }
+        }
+      });
+
+      const registeredTasks = uniqueTasks.filter(t => myRegs.some(r => String(r.taskId).trim().toUpperCase() === String(t.id).trim().toUpperCase()));
+      const availableTasks = uniqueTasks.filter(t => (t.status || "").trim() !== "Hết việc" && !myRegs.some(r => String(r.taskId).trim().toUpperCase() === String(t.id).trim().toUpperCase()));
+
+      document.getElementById("count-all").innerText = uniqueTasks.length;
+      document.getElementById("count-available").innerText = availableTasks.length;
+      document.getElementById("count-registered").innerText = registeredTasks.length;
+
+      let filteredTasks = currentKpiTab === "available" ? availableTasks : (currentKpiTab === "registered" ? registeredTasks : uniqueTasks);
+      const totalPages = Math.ceil(filteredTasks.length / itemsPerPage) || 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const displayTasks = filteredTasks.slice(startIndex, startIndex + itemsPerPage);
+
+      document.getElementById("pagination-info").innerText = `Trang ${currentPage} / ${totalPages} (Tổng ${filteredTasks.length} việc)`;
+      document.getElementById("btn-prev-page").disabled = (currentPage === 1);
+      document.getElementById("btn-next-page").disabled = (currentPage >= totalPages);
+
+      const availableTableBody = document.getElementById("available-tasks-table");
+      availableTableBody.innerHTML = "";
+      if (displayTasks.length === 0) {
+        availableTableBody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">Không có công việc nào trong mục này.</td></tr>`;
+      } else {
+        displayTasks.forEach(task => {
+          const isRegistered = myRegs.some(r => String(r.taskId).trim().toUpperCase() === String(task.id).trim().toUpperCase());
+          const isFull = (task.status || "").trim() === "Hết việc";
+          const statusBadge = isFull
+            ? `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">Hết việc</span>`
+            : `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Còn việc</span>`;
+
+          let actionBtn = isRegistered
+            ? `<span class="inline-flex items-center justify-center min-w-[110px] px-3.5 py-1.5 rounded-lg text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-300 gap-1">✓ Đã đăng ký</span>`
+            : (isFull ? `<span class="inline-flex items-center justify-center min-w-[110px] px-3.5 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-400">Đã đủ chỉ tiêu</span>`
+                      : `<button onclick="registerKPI('${task.id}')" class="inline-flex items-center justify-center min-w-[110px] px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition">Đăng ký ngay</button>`);
+
+          availableTableBody.innerHTML += `
+            <tr class="hover:bg-slate-50/80 transition border-b border-slate-100">
+              <td class="py-3 px-4 font-bold text-slate-800">${task.id}</td>
+              <td class="py-3 px-4"><div class="font-semibold text-slate-900">${task.title}</div><div class="text-xs text-slate-500 mt-0.5">${task.desc || ""}</div></td>
+              <td class="py-3 px-4 text-center font-bold text-indigo-600">${task.score}</td>
+              <td class="py-3 px-4 text-center text-slate-600 text-xs">${task.deadline}</td>
+              <td class="py-3 px-4 text-center text-xs text-slate-500">${task.quota} người</td>
+              <td class="py-3 px-4 text-center">${statusBadge}</td>
+              <td class="py-3 px-4 text-center">${actionBtn}</td>
+            </tr>
+          `;
+        });
+      }
+    }
+
+    // GV Nộp minh chứng
+    function openEvidenceModal(taskId) {
+      document.getElementById("evidence-task-id").value = taskId;
+      document.getElementById("evidence-modal-subtitle").innerText = "Mã nhiệm vụ: " + taskId;
+      const reg = appData.registrations.find(r => r.teacherCode === currentUser.code && String(r.taskId).trim().toUpperCase() === String(taskId).trim().toUpperCase());
+      document.getElementById("evidence-link-input").value = reg ? (reg.evidence || "") : "";
+      document.getElementById("evidence-modal").classList.remove("hidden");
+    }
+    function closeEvidenceModal() { document.getElementById("evidence-modal").classList.add("hidden"); }
+
+    function submitEvidence(e) {
+      e.preventDefault();
+      const taskId = document.getElementById("evidence-task-id").value;
+      const link = document.getElementById("evidence-link-input").value.trim();
+
+      const reg = appData.registrations.find(r => String(r.teacherCode).trim().toUpperCase() === String(currentUser.code).trim().toUpperCase() && String(r.taskId).trim().toUpperCase() === String(taskId).trim().toUpperCase());
+      if (reg) { reg.evidence = link; reg.level = "Chờ nghiệm thu"; }
+      closeEvidenceModal();
+      renderTeacherDashboard();
+
+      callGsApi('submitProof', { taskId: taskId, teacherCode: currentUser.code, evidence: link }, () => {
+        fetchRemoteData();
+      });
+      alert(`✅ Đã gửi báo cáo hoàn thành nhiệm vụ [${taskId}] thành công!`);
+    }
+
+    // GV Đăng ký KPI
+    function registerKPI(taskId) {
+      const task = appData.tasks.find(t => t.id === taskId);
+      if (!task) return;
+
+      const newReg = {
+        rowIndex: appData.registrations.length + 2,
+        taskId: task.id,
+        teacherCode: currentUser.code,
+        teacherName: currentUser.name,
+        level: "Đang thực hiện",
+        baseScore: task.score,
+        finalScore: null,
+        evidence: ""
+      };
+      appData.registrations.push(newReg);
+      renderTeacherDashboard();
+
+      callGsApi('registerTask', { taskId: task.id, teacherCode: currentUser.code, teacherName: currentUser.name, score: task.score }, () => {
+        fetchRemoteData();
+      });
+      alert(`Đăng ký thành công nhiệm vụ [${task.id}]! Dữ liệu đã chuyển vào Sheet.`);
+    }
+
+    // --- DASHBOARD BAN GIÁM HIỆU ---
+    function switchBghTab(tab) {
+      bghActiveTab = tab;
+      ["grading", "assign", "stats"].forEach(t => {
+        const btn = document.getElementById(`bgh-tab-${t}-btn`);
+        const content = document.getElementById(`bgh-tab-content-${t}`);
+        if (!btn || !content) return;
+        if (t === tab) {
+          btn.className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-2 whitespace-nowrap transition font-bold";
+          content.classList.remove("hidden");
+        } else {
+          btn.className = "px-5 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap transition";
+          content.classList.add("hidden");
+        }
+      });
+      if (tab === "grading") renderBGHGradingTable();
+      if (tab === "assign") renderBghAssignTable();
+      if (tab === "stats") renderBghStatsDashboard();
+    }
+
+    function changeBghPageSize(val) { bghItemsPerPage = Number(val); bghPage = 1; renderBGHGradingTable(); }
+    function prevBghPage() { if (bghPage > 1) { bghPage--; renderBGHGradingTable(); } }
+    function nextBghPage() { bghPage++; renderBGHGradingTable(); }
+
+    function renderBGHGradingTable() {
+      const tbody = document.getElementById("bgh-grading-table");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+      const now = new Date();
+
+      if (!appData.registrations || appData.registrations.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-400">Chưa có giáo viên nào đăng ký nhiệm vụ.</td></tr>`;
+        document.getElementById("bgh-pagination-info").innerText = "Trang 1 / 1 (0 việc)";
+        return;
+      }
+
+      const processed = appData.registrations.map((r, index) => {
+        const task = appData.tasks.find(t => String(t.id).trim().toUpperCase() === String(r.taskId).trim().toUpperCase()) || {};
+        const deadlineDate = parseDateSafe(task.deadline);
+        const isDone = (r.finalScore !== null && r.finalScore !== "" && !isNaN(Number(r.finalScore)));
+        const isWaiting = !isDone && (r.level === "Chờ nghiệm thu" || Boolean(r.evidence && String(r.evidence).trim() !== ""));
+        const isOverdue = !isDone && !isWaiting && deadlineDate && (deadlineDate < now);
+
+        let priority = 3;
+        let statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">Chưa đến hạn</span>`;
+        if (isDone) { priority = 4; statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">✓ Đã xong</span>`; }
+        else if (isWaiting) { priority = 1; statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300">⏳ Chờ nghiệm thu</span>`; }
+        else if (isOverdue) { priority = 2; statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-300">🚨 Quá hạn</span>`; }
+
+        return { reg: r, task, priority, statusBadge, originalIndex: index, deadline: task.deadline || "--" };
+      });
+
+      processed.sort((a, b) => a.priority - b.priority || a.originalIndex - b.originalIndex);
+      const totalPages = Math.ceil(processed.length / bghItemsPerPage) || 1;
+      if (bghPage > totalPages) bghPage = totalPages;
+      const start = (bghPage - 1) * bghItemsPerPage;
+      const listToShow = processed.slice(start, start + bghItemsPerPage);
+
+      document.getElementById("bgh-pagination-info").innerText = `Trang ${bghPage} / ${totalPages} (${processed.length} việc)`;
+      document.getElementById("bgh-btn-prev").disabled = (bghPage === 1);
+      document.getElementById("bgh-btn-next").disabled = (bghPage >= totalPages);
+
+      listToShow.forEach(item => {
+        const r = item.reg;
+        const idx = item.originalIndex;
+        const evidenceBtn = r.evidence && String(r.evidence).trim() !== ""
+          ? `<a href="${r.evidence}" target="_blank" class="inline-flex items-center gap-1 text-xs text-indigo-600 bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-md font-semibold hover:bg-indigo-100">🔗 Drive</a>`
+          : `<span class="text-xs text-slate-400 italic">Chưa có</span>`;
+
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-50/80 transition border-b border-slate-100">
+            <td class="py-3 px-4 font-bold text-indigo-600">${r.taskId}</td>
+            <td class="py-3 px-4"><span class="font-bold text-slate-800">${r.teacherName}</span><span class="text-xs text-slate-400 ml-1">(${r.teacherCode})</span></td>
+            <td class="py-3 px-4 text-center font-bold text-slate-700">${r.baseScore}</td>
+            <td class="py-3 px-4 text-center text-xs text-slate-600">${item.deadline}</td>
+            <td class="py-3 px-4 text-center">${evidenceBtn}</td>
+            <td class="py-3 px-4 text-center">${item.statusBadge}</td>
+            <td class="py-3 px-4 text-center"><input type="number" id="bgh-score-${idx}" value="${r.finalScore !== null ? r.finalScore : ''}" placeholder="${r.baseScore}" max="${r.baseScore}" min="0" class="w-16 border border-slate-300 rounded px-2 py-1 text-center font-bold text-indigo-600 focus:outline-none"></td>
+            <td class="py-3 px-4 text-center"><button onclick="saveBghScore(${idx})" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm transition">Lưu điểm</button></td>
+          </tr>
+        `;
+      });
+    }
+
+    function saveBghScore(idx) {
+      const reg = appData.registrations[idx];
+      const val = document.getElementById(`bgh-score-${idx}`).value;
+      if (val === "" || isNaN(Number(val))) { alert("Vui lòng nhập điểm chấm hợp lệ!"); return; }
+
+      const score = Number(val);
+      reg.finalScore = score;
+      reg.level = "Đã xong";
+      renderBGHGradingTable();
+
+      callGsApi('gradeTask', { maViec: reg.taskId, maGV: reg.teacherCode, score: score }, () => {
+        fetchRemoteData();
+      });
+      alert(`✅ Đã lưu điểm ${score} cho giáo viên ${reg.teacherName} (Nhiệm vụ: ${reg.taskId})!`);
+    }
+
+    // BGH Giao việc
+    function renderBghAssignTable() {
+      const tbody = document.getElementById("bgh-assign-table");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      const tasksWithRemaining = appData.tasks.map(t => {
+        const totalQuota = Number(t.quota) || 1;
+        const registeredCount = (appData.registrations || []).filter(r => String(r.taskId).trim().toUpperCase() === String(t.id).trim().toUpperCase()).length;
+        const remainingQuota = Math.max(0, totalQuota - registeredCount);
+        return { ...t, remainingQuota, isStillAvailable: remainingQuota > 0 && (t.status || "").trim() !== "Hết việc" };
+      });
+      const eligibleTasks = tasksWithRemaining.filter(t => t.isStillAvailable);
+
+      const teacherStats = appData.staff.map(gv => {
+        const myRegs = appData.registrations.filter(r => r.teacherCode === gv.code);
+        const taskCount = myRegs.length;
+        const totalScore = myRegs.reduce((sum, r) => sum + (r.finalScore !== null && r.finalScore !== "" ? Number(r.finalScore) : 0), 0);
+        return { gv, taskCount, totalScore };
+      });
+      teacherStats.sort((a, b) => a.totalScore - b.totalScore || a.taskCount - b.taskCount);
+
+      if (teacherStats.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-400">Không có dữ liệu giáo viên.</td></tr>`;
+        return;
+      }
+
+      teacherStats.forEach((item, index) => {
+        const gv = item.gv;
+        let taskOptions = eligibleTasks.map(t => `<option value="${t.id}">[${t.id}] ${t.title} (${t.score}đ - chỉ tiêu còn: ${t.remainingQuota})</option>`).join("");
+        if (!taskOptions) taskOptions = `<option value="">-- Hết việc còn chỉ tiêu --</option>`;
+
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+            <td class="py-3 px-4 text-center font-bold text-slate-400">${index + 1}</td>
+            <td class="py-3 px-4 font-bold text-indigo-600">${gv.code}</td>
+            <td class="py-3 px-4 font-bold text-slate-800">${gv.name}</td>
+            <td class="py-3 px-4 text-slate-600 font-medium">${gv.subject || 'Chung'}</td>
+            <td class="py-3 px-4 text-center"><span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">${item.taskCount} việc</span></td>
+            <td class="py-3 px-4 text-center font-extrabold text-indigo-600">${item.totalScore}</td>
+            <td class="py-3 px-4"><select id="select-task-for-${gv.code}" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white focus:outline-none">${taskOptions}</select></td>
+            <td class="py-3 px-4 text-center"><button onclick="assignTaskToTeacher('${gv.code}', '${gv.name}')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm transition">Giao việc</button></td>
+          </tr>
+        `;
+      });
+    }
+
+    function assignTaskToTeacher(teacherCode, teacherName) {
+      const select = document.getElementById(`select-task-for-${teacherCode}`);
+      const taskId = select.value;
+      if (!taskId) { alert("Hiện không có nhiệm vụ phù hợp để giao!"); return; }
+
+      const task = appData.tasks.find(t => t.id === taskId);
+      if (!task) return;
+
+      const exists = appData.registrations.some(r => r.teacherCode === teacherCode && r.taskId === taskId);
+      if (exists) { alert(`Giáo viên ${teacherName} đã nhận nhiệm vụ [${taskId}] rồi!`); return; }
+
+      const newReg = { rowIndex: appData.registrations.length + 2, taskId: task.id, teacherCode: teacherCode, teacherName: teacherName, level: "Đang thực hiện", baseScore: task.score, finalScore: null, evidence: "" };
+      appData.registrations.push(newReg);
+      renderBghAssignTable();
+
+      callGsApi('registerTask', { taskId: task.id, teacherCode: teacherCode, teacherName: teacherName, score: task.score }, () => {
+        fetchRemoteData();
+      });
+      alert(`✅ Đã giao nhiệm vụ [${task.id}] cho GV ${teacherName} thành công!`);
+    }
+
+    // BGH Thống kê & Biểu đồ
+    function renderBghStatsDashboard() {
+      const now = new Date();
+      const tasksAvailable = appData.tasks.filter(t => (t.status || "").trim() !== "Hết việc").length;
+      let completedEarly = 0, lateTasks = 0, onTimeTasks = 0;
+
+      appData.registrations.forEach(r => {
+        const task = appData.tasks.find(t => String(t.id).trim().toUpperCase() === String(r.taskId).trim().toUpperCase());
+        const dl = task ? parseDateSafe(task.deadline) : null;
+        const isDone = (r.finalScore !== null && r.finalScore !== "" && !isNaN(Number(r.finalScore)));
+
+        if (isDone) completedEarly++;
+        else if (dl && dl < now) lateTasks++;
+        else onTimeTasks++;
+      });
+
+      const totalAssignments = appData.registrations.length;
+      document.getElementById("stat-tasks-available").innerText = tasksAvailable;
+      document.getElementById("stat-completed-early").innerText = completedEarly;
+      document.getElementById("stat-tasks-overdue").innerText = lateTasks;
+      document.getElementById("stat-tasks-assigned").innerText = totalAssignments;
+
+      const pEarly = totalAssignments ? Math.round((completedEarly / totalAssignments) * 100) : 0;
+      const pLate = totalAssignments ? Math.round((lateTasks / totalAssignments) * 100) : 0;
+      const pOnTime = totalAssignments ? Math.round((onTimeTasks / totalAssignments) * 100) : 0;
+
+      document.getElementById("rate-early-text").innerText = pEarly + "%";
+      document.getElementById("rate-late-text").innerText = pLate + "%";
+      document.getElementById("rate-ontime-text").innerText = pOnTime + "%";
+
+      document.getElementById("bar-rate-early").style.width = pEarly + "%";
+      document.getElementById("bar-rate-late").style.width = pLate + "%";
+      document.getElementById("bar-rate-ontime").style.width = pOnTime + "%";
+
+      const labels = appData.staff.map(s => s.name);
+      const scores = appData.staff.map(s => appData.registrations.filter(r => r.teacherCode === s.code).reduce((sum, r) => sum + (r.finalScore ? Number(r.finalScore) : 0), 0));
+
+      const chartCanvas = document.getElementById('kpiBarChart');
+      if (chartCanvas) {
+        const ctx = chartCanvas.getContext('2d');
+        if (kpiChartInstance) kpiChartInstance.destroy();
+        kpiChartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: { labels: labels, datasets: [{ label: 'Tổng Điểm KPI', data: scores, backgroundColor: '#4f46e5', borderRadius: 6 }] },
+          options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 5 } } }, plugins: { legend: { display: false } } }
+        });
+      }
+    }
+
+    // Xuất Excel 3 Sheet
+    function exportToExcel() {
+      if (typeof XLSX === 'undefined') { alert("Thư viện Excel đang tải, vui lòng thử lại sau 3 giây!"); return; }
+      const now = new Date();
+      const wb = XLSX.utils.book_new();
+
+      const summaryRows = [["STT", "Mã GV", "Họ và Tên", "Bộ Môn", "Số Việc Đã Nhận", "Hoàn Thành Trước Hạn", "Đang Làm Đúng Hạn", "Quá Hạn", "Tổng Điểm KPI", "Danh Mục Việc"]];
+      appData.staff.forEach((s, idx) => {
+        const myRegs = appData.registrations.filter(r => r.teacherCode === s.code);
+        let countEarly = 0, countOnTime = 0, countOverdue = 0;
+        const taskTitles = [];
+
+        myRegs.forEach(r => {
+          const task = appData.tasks.find(t => String(t.id).trim().toUpperCase() === String(r.taskId).trim().toUpperCase());
+          const dl = task ? parseDateSafe(task.deadline) : null;
+          const isDone = (r.finalScore !== null && r.finalScore !== "" && !isNaN(Number(r.finalScore)));
+          taskTitles.push(task ? `[${r.taskId}] ${task.title}` : `[${r.taskId}]`);
+          if (isDone) countEarly++;
+          else if (dl && dl < now) countOverdue++;
+          else countOnTime++;
+        });
+
+        const totalScore = myRegs.reduce((sum, r) => sum + (r.finalScore ? Number(r.finalScore) : 0), 0);
+        summaryRows.push([idx + 1, s.code, s.name, s.subject || 'Chung', myRegs.length, countEarly, countOnTime, countOverdue, totalScore, taskTitles.join("; ")]);
+      });
+
+      const overdueRows = [["STT", "Mã GV", "Họ Tên", "Bộ Môn", "Mã Việc", "Tên Việc Quá Hạn", "Hạn Chót", "Định Mức", "Tình Trạng"]];
+      let oCount = 0;
+      appData.registrations.forEach(r => {
+        const task = appData.tasks.find(t => String(t.id).trim().toUpperCase() === String(r.taskId).trim().toUpperCase());
+        const dl = task ? parseDateSafe(task.deadline) : null;
+        const isDone = (r.finalScore !== null && r.finalScore !== "" && !isNaN(Number(r.finalScore)));
+        if (!isDone && dl && (dl < now)) {
+          oCount++;
+          const teacher = appData.staff.find(s => s.code === r.teacherCode) || {};
+          overdueRows.push([oCount, r.teacherCode, r.teacherName, teacher.subject || 'Chung', r.taskId, task ? task.title : '--', task ? task.deadline : '--', r.baseScore, 'Quá hạn']);
+        }
+      });
+      if (oCount === 0) overdueRows.push(["--", "--", "Hiện không có công việc nào bị quá hạn", "--", "--", "--", "--", "--", "--"]);
+
+      const byTaskRows = [["STT", "Mã Việc", "Tên Công Việc", "Điểm Định Mức", "Hạn Chót", "Chỉ Tiêu", "Đã Nhận", "Thành Viên"]];
+      appData.tasks.forEach((t, idx) => {
+        const assignedRegs = appData.registrations.filter(r => String(r.taskId).trim().toUpperCase() === String(t.id).trim().toUpperCase());
+        byTaskRows.push([idx + 1, t.id, t.title, t.score, t.deadline, t.quota, assignedRegs.length, assignedRegs.map(r => `${r.teacherName} (${r.teacherCode})`).join("; ") || "Chưa có"]);
+      });
+
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(summaryRows), "Tổng Hợp KPI");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(overdueRows), "Danh Sách Quá Hạn");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(byTaskRows), "Thống Kê Theo Việc");
+      XLSX.writeFile(wb, `Bao_Cao_KPI_THPT_Tran_Phu_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    }
+
+    // Modal tạo việc mới cho BGH
+    function openCreateTaskModal() { document.getElementById("task-modal").classList.remove("hidden"); }
+    function closeCreateTaskModal() { document.getElementById("task-modal").classList.add("hidden"); }
+
+    function handleCreateTask(e) {
+      e.preventDefault();
+      const taskId = document.getElementById("modal-task-id").value.trim().toUpperCase();
+      const title = document.getElementById("modal-task-title").value.trim();
+      const desc = document.getElementById("modal-task-desc").value.trim();
+      const score = Number(document.getElementById("modal-task-score").value);
+      const deadline = document.getElementById("modal-task-deadline").value;
+      const quota = Number(document.getElementById("modal-task-quota").value);
+
+      appData.tasks.push({ id: taskId, title, desc, score, deadline, quota, status: "Còn việc" });
+      closeCreateTaskModal();
+      document.getElementById("new-task-form").reset();
+
+      callGsApi('addNewTask', { taskId, title, desc, score, deadline, quota }, () => {
+        fetchRemoteData();
+      });
+      alert(`Đã xuất bản nhiệm vụ [${taskId}] vào Kho KPI!`);
+      if (bghActiveTab === "assign") renderBghAssignTable();
+    }
+
+    // --- PHÂN HỆ QUẢN LÝ HỌC SINH ---
+    function renderStudentsSection() {
+      const tbody = document.getElementById("student-discipline-table");
+      tbody.innerHTML = "";
+      document.getElementById("stat-violations-count").innerText = appData.disciplines.length;
+
+      if (appData.disciplines.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400">Chưa ghi nhận vi phạm nào trong tuần.</td></tr>`;
+        return;
+      }
+      appData.disciplines.forEach(item => {
+        const pointClass = item.points < 0 ? 'text-rose-600 font-bold' : 'text-emerald-600 font-bold';
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+            <td class="py-3 px-4 font-medium text-slate-600">${item.date}</td>
+            <td class="py-3 px-4 font-bold text-indigo-600">${item.class}</td>
+            <td class="py-3 px-4 font-bold text-slate-900">${item.student}</td>
+            <td class="py-3 px-4 text-slate-700">${item.content}</td>
+            <td class="py-3 px-4 text-center ${pointClass}">${item.points > 0 ? '+' : ''}${item.points}</td>
+            <td class="py-3 px-4 text-slate-500">${item.recorder}</td>
+          </tr>
+        `;
+      });
+    }
+
+    function openAddDisciplineModal() { document.getElementById("discipline-modal").classList.remove("hidden"); }
+    function closeAddDisciplineModal() { document.getElementById("discipline-modal").classList.add("hidden"); }
+    function handleSaveDiscipline(e) {
+      e.preventDefault();
+      const now = new Date();
+      appData.disciplines.unshift({
+        date: `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`,
+        class: document.getElementById("modal-disc-class").value,
+        student: document.getElementById("modal-disc-student").value.trim(),
+        content: document.getElementById("modal-disc-content").value.trim(),
+        points: Number(document.getElementById("modal-disc-points").value),
+        recorder: currentUser.name
+      });
+      closeAddDisciplineModal();
+      renderStudentsSection();
+      alert("Đã lưu ghi nhận nề nếp học sinh!");
+    }
+
+    // --- PHÂN HỆ XIN NGHỈ DẠY ---
+    function renderLeaveSection() {
+      const tbody = document.getElementById("leave-table");
+      tbody.innerHTML = "";
+      if (appData.leaves.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400">Chưa có đơn xin nghỉ nào.</td></tr>`;
+        return;
+      }
+      appData.leaves.forEach((item, index) => {
+        const isBGH = currentUser && currentUser.role === "BGH";
+        let actionBtn = (isBGH && item.status !== "Đã duyệt")
+          ? `<button onclick="approveLeave(${index})" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2.5 py-1.5 rounded-lg shadow-sm">Duyệt đơn</button>`
+          : `<span class="text-xs text-slate-400">Không có</span>`;
+
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+            <td class="py-3 px-4 font-bold text-sky-600">${item.id}</td>
+            <td class="py-3 px-4 font-bold text-slate-900">${item.teacherName}</td>
+            <td class="py-3 px-4 text-slate-700">${item.reason}</td>
+            <td class="py-3 px-4 text-center font-medium text-slate-600">${item.dates}</td>
+            <td class="py-3 px-4 text-slate-600">${item.plan}</td>
+            <td class="py-3 px-4 text-center"><span class="inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${item.status === 'Đã duyệt' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${item.status}</span></td>
+            <td class="py-3 px-4 text-center">${actionBtn}</td>
+          </tr>
+        `;
+      });
+    }
+
+    function openLeaveModal() { document.getElementById("leave-modal").classList.remove("hidden"); }
+    function closeLeaveModal() { document.getElementById("leave-modal").classList.add("hidden"); }
+    function handleSaveLeave(e) {
+      e.preventDefault();
+      const id = "NP" + String(appData.leaves.length + 1).padStart(2, '0');
+      appData.leaves.unshift({
+        id: id,
+        teacherCode: currentUser.code,
+        teacherName: currentUser.name,
+        reason: document.getElementById("modal-leave-reason").value.trim(),
+        dates: `${document.getElementById("modal-leave-date").value} (${document.getElementById("modal-leave-periods").value} tiết)`,
+        plan: document.getElementById("modal-leave-plan").value.trim(),
+        status: "Chờ BGH duyệt"
+      });
+      closeLeaveModal();
+      renderLeaveSection();
+      alert(`Đã gửi đơn xin nghỉ [${id}] lên Ban Giám Hiệu!`);
+    }
+    function approveLeave(idx) { appData.leaves[idx].status = "Đã duyệt"; renderLeaveSection(); alert("Đã duyệt đơn nghỉ phép!"); }
+
+    // --- PHÂN HỆ SỔ MƯỢN THIẾT BỊ ---
+    function renderEquipmentSection() {
+      const tbody = document.getElementById("equipment-table");
+      tbody.innerHTML = "";
+      if (appData.equipmentBorrows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400">Chưa có lượt mượn thiết bị nào.</td></tr>`;
+        return;
+      }
+      appData.equipmentBorrows.forEach((item, index) => {
+        let returnBtn = item.status === "Đang mượn"
+          ? `<button onclick="returnEquipment(${index})" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-2.5 py-1.5 rounded-lg shadow-sm">Xác nhận trả</button>`
+          : `<span class="text-xs text-emerald-600 font-semibold">✓ Đã hoàn tất</span>`;
+
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+            <td class="py-3 px-4 font-bold text-purple-600">${item.id}</td>
+            <td class="py-3 px-4 font-bold text-slate-900">${item.teacherName}</td>
+            <td class="py-3 px-4 font-medium text-slate-800">${item.item}</td>
+            <td class="py-3 px-4 text-center text-slate-600">${item.period}</td>
+            <td class="py-3 px-4 text-center text-slate-600">${item.date}</td>
+            <td class="py-3 px-4 text-center"><span class="inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${item.status === 'Đang mượn' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">${item.status}</span></td>
+            <td class="py-3 px-4 text-center">${returnBtn}</td>
+          </tr>
+        `;
+      });
+    }
+
+    function openEquipmentModal() { document.getElementById("equipment-modal").classList.remove("hidden"); }
+    function closeEquipmentModal() { document.getElementById("equipment-modal").classList.add("hidden"); }
+    function handleSaveEquipment(e) {
+      e.preventDefault();
+      const id = "MT" + String(appData.equipmentBorrows.length + 1).padStart(2, '0');
+      appData.equipmentBorrows.unshift({
+        id: id,
+        teacherCode: currentUser.code,
+        teacherName: currentUser.name,
+        item: document.getElementById("modal-equip-name").value,
+        period: document.getElementById("modal-equip-period").value.trim(),
+        date: document.getElementById("modal-equip-date").value,
+        status: "Đang mượn"
+      });
+      closeEquipmentModal();
+      renderEquipmentSection();
+      alert(`Đăng ký mượn thiết bị thành công với mã: [${id}]!`);
+    }
+    function returnEquipment(idx) { appData.equipmentBorrows[idx].status = "Đã trả"; renderEquipmentSection(); alert("Đã cập nhật tình trạng: Hoàn trả thiết bị thành công!"); }
+  </script>
 </body>
 </html>
