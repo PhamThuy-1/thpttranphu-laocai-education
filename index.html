@@ -25,9 +25,7 @@
   <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm no-print">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3 cursor-pointer" onclick="goToHome()">
-        <div class="bg-indigo-600 text-white p-2 rounded-xl font-black text-lg shadow-md flex items-center justify-center w-10 h-10">
-          TP
-        </div>
+        <div class="bg-indigo-600 text-white p-2 rounded-xl font-black text-lg shadow-md flex items-center justify-center w-10 h-10">TP</div>
         <div>
           <h1 class="text-base font-bold text-slate-900 leading-tight">CỔNG THÔNG TIN & ĐIỀU HÀNH</h1>
           <p class="text-xs text-slate-500">Trường THPT Trần Phú - Tỉnh Lào Cai</p>
@@ -41,7 +39,7 @@
 
         <div id="nav-guest-box">
           <button onclick="openLoginModal()" class="inline-flex items-center gap-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3.5 py-2 rounded-xl shadow-sm transition">
-            🔑 Đăng nhập Tài Khoản Google
+            🔑 Đăng nhập GV / BGH
           </button>
         </div>
 
@@ -51,9 +49,7 @@
             <span id="user-role-badge" class="inline-block mt-1 text-[11px] px-2 py-0.5 rounded font-medium bg-indigo-100 text-indigo-700">--</span>
           </div>
           <img id="user-avatar" class="w-9 h-9 rounded-full border border-slate-300 object-cover" src="" alt="avatar">
-          <button onclick="logout()" class="text-xs bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 px-3 py-1.5 rounded-md border border-slate-200 transition font-medium">
-            Đăng xuất
-          </button>
+          <button onclick="logout()" class="text-xs bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 px-3 py-1.5 rounded-md border border-slate-200 transition font-medium">Đăng xuất</button>
         </div>
       </div>
     </div>
@@ -61,8 +57,8 @@
 
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-8">
-
-    <!-- VIEW 1: TRANG CHỦ PORTAL HUB -->
+    
+    <!-- 1: TRANG CHỦ -->
     <section id="portal-section" class="space-y-8">
       <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 text-white shadow-xl">
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(99,102,241,0.25),transparent)]"></div>
@@ -72,556 +68,305 @@
               ✨ Cổng Giáo Dục Trực Tuyến & Quản Trị Toàn Diện
             </span>
             <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">TRƯỜNG THPT TRẦN PHÚ</h2>
-            <p class="text-indigo-200 text-sm leading-relaxed">
-              Hệ thống quản lý KPI, nghỉ dạy & dạy thay, theo dõi nề nếp học sinh và sổ mượn thiết bị trực tuyến kết nối Backend dữ liệu thực.
-            </p>
+            <p class="text-indigo-200 text-sm leading-relaxed">Hệ thống chuyển đổi số hỗ trợ giáo viên quản lý KPI, đăng ký nghỉ và xếp lịch dạy thay bù, theo dõi nề nếp học sinh và sổ mượn thiết bị trực tuyến.</p>
             <div class="pt-2 flex flex-wrap gap-4 text-xs text-indigo-300 font-medium justify-center md:justify-start">
-              <span>📍 Tỉnh Lào Cai</span>
-              <span>📅 Năm học 2026 - 2027</span>
-              <span id="current-date-badge">📅 Ngày hôm nay</span>
+              <span>📍 Tỉnh Lào Cai</span><span>📅 Năm học 2026 - 2027</span><span id="current-date-badge">📅 Ngày hôm nay</span>
             </div>
           </div>
           <div class="w-full md:w-80 h-48 rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl relative bg-indigo-950 flex-shrink-0">
-            <img src="https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=600&q=80" alt="Khuôn viên THPT Trần Phú" class="w-full h-full object-cover opacity-90 hover:scale-105 transition duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end p-3">
-              <span class="text-[11px] font-semibold text-slate-200">Khuôn viên THPT Trần Phú</span>
-            </div>
+            <img src="https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=600&q=80" alt="Khuôn viên" class="w-full h-full object-cover opacity-90 hover:scale-105 transition duration-500">
           </div>
         </div>
       </div>
 
-      <!-- DANH MỤC PHÂN HỆ -->
       <div>
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">🚀 Danh Mục Phân Hệ Nghiệp Vụ</h3>
-          <span class="text-xs text-slate-500">Yêu cầu đăng nhập tài khoản trường</span>
+          <span class="text-xs text-slate-500">Bấm vào phân hệ để truy cập</span>
         </div>
-
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- KPI TÔI -->
           <div onclick="navigateToModule('kpi_me')" class="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-indigo-500 hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between">
             <div class="space-y-3">
               <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl group-hover:bg-indigo-600 group-hover:text-white transition">📊</div>
               <div class="flex items-center justify-between">
                 <h4 class="font-bold text-slate-900 text-base group-hover:text-indigo-600 transition">KPI CỦA TÔI</h4>
-                <span class="text-[10px] bg-blue-100 text-blue-700 font-semibold px-2 py-0.5 rounded-full">Tất cả GV</span>
+                <span class="text-[10px] bg-blue-100 text-blue-700 font-semibold px-2 py-0.5 rounded-full">Mọi người</span>
               </div>
-              <p class="text-xs text-slate-500 leading-relaxed">Xem bảng phân công nhiệm vụ cá nhân, nộp link minh chứng Drive và nhận điểm đánh giá từ BGH.</p>
-            </div>
-            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-indigo-600">
-              <span>Mở bảng cá nhân</span><span class="group-hover:translate-x-1 transition">➔</span>
+              <p class="text-xs text-slate-500">Xem bảng phân công nhiệm vụ cá nhân, nộp link minh chứng, nhận điểm và đăng ký việc.</p>
             </div>
           </div>
 
-          <div onclick="navigateToModule('kpi_bgh')" class="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-amber-500 hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between">
+          <!-- QUẢN LÝ KPI (BGH) - Ẩn mặc định -->
+          <div id="card-kpi-bgh" onclick="navigateToModule('kpi_bgh')" class="hidden group bg-white p-6 rounded-2xl border border-slate-200 hover:border-amber-500 hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between">
             <div class="space-y-3">
               <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl group-hover:bg-amber-600 group-hover:text-white transition">👑</div>
               <div class="flex items-center justify-between">
                 <h4 class="font-bold text-slate-900 text-base group-hover:text-amber-600 transition">QUẢN LÝ KPI</h4>
                 <span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">Chỉ BGH</span>
               </div>
-              <p class="text-xs text-slate-500 leading-relaxed">Phân công việc tự động, duyệt minh chứng, chấm điểm công việc và xuất báo cáo Excel toàn trường.</p>
-            </div>
-            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-amber-600">
-              <span>Bảng điều hành BGH</span><span class="group-hover:translate-x-1 transition">➔</span>
+              <p class="text-xs text-slate-500">Bàn giao việc tự động, duyệt minh chứng, chấm điểm công việc, xuất báo cáo.</p>
             </div>
           </div>
 
+          <!-- HS -->
           <div onclick="navigateToModule('students')" class="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between">
             <div class="space-y-3">
               <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl group-hover:bg-emerald-600 group-hover:text-white transition">📋</div>
               <div class="flex items-center justify-between">
                 <h4 class="font-bold text-slate-900 text-base group-hover:text-emerald-600 transition">QUẢN LÝ HỌC SINH</h4>
-                <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">GVCN & BGH</span>
               </div>
-              <p class="text-xs text-slate-500 leading-relaxed">Ghi nhận vi phạm, theo dõi điểm cộng thi đua lớp chủ nhiệm và đánh giá nề nếp học sinh.</p>
-            </div>
-            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-emerald-600">
-              <span>Vào sổ nề nếp học sinh</span><span class="group-hover:translate-x-1 transition">➔</span>
+              <p class="text-xs text-slate-500">Theo dõi điểm thi đua lớp chủ nhiệm, ghi nhận vi phạm nội quy và xếp loại hạnh kiểm.</p>
             </div>
           </div>
 
+          <!-- XIN NGHỈ -->
           <div onclick="navigateToModule('leave')" class="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-sky-500 hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between">
             <div class="space-y-3">
               <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-2xl group-hover:bg-sky-600 group-hover:text-white transition">📝</div>
               <div class="flex items-center justify-between">
                 <h4 class="font-bold text-slate-900 text-base group-hover:text-sky-600 transition">QUẢN LÝ XIN NGHỈ</h4>
-                <span class="text-[10px] bg-sky-100 text-sky-800 font-semibold px-2 py-0.5 rounded-full">Giáo viên</span>
               </div>
-              <p class="text-xs text-slate-500 leading-relaxed">Nộp đơn xin nghỉ dạy trực tuyến, đăng ký giáo viên dạy thay hoặc gửi lịch báo giảng bù.</p>
-            </div>
-            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-sky-600">
-              <span>Nộp đơn & duyệt nghỉ</span><span class="group-hover:translate-x-1 transition">➔</span>
+              <p class="text-xs text-slate-500">Nộp đơn xin nghỉ trực tuyến, đề xuất phân công dạy thay hoặc lịch dạy bù.</p>
             </div>
           </div>
 
+          <!-- MƯỢN THIẾT BỊ -->
           <div onclick="navigateToModule('equipment')" class="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-purple-500 hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between">
             <div class="space-y-3">
               <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl group-hover:bg-purple-600 group-hover:text-white transition">🔬</div>
               <div class="flex items-center justify-between">
                 <h4 class="font-bold text-slate-900 text-base group-hover:text-purple-600 transition">SỔ MƯỢN THIẾT BỊ</h4>
-                <span class="text-[10px] bg-purple-100 text-purple-800 font-semibold px-2 py-0.5 rounded-full">GVBM & Thiết bị</span>
               </div>
-              <p class="text-xs text-slate-500 leading-relaxed">Đăng ký mượn phòng thí nghiệm, máy chiếu, đồ dùng dạy học và theo dõi lịch sử hoàn trả.</p>
-            </div>
-            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-purple-600">
-              <span>Đăng ký mượn thiết bị</span><span class="group-hover:translate-x-1 transition">➔</span>
+              <p class="text-xs text-slate-500">Đăng ký mượn phòng chức năng, thiết bị thí nghiệm, máy chiếu, đồ dùng dạy học.</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- VIEW 2: TEACHER DASHBOARD -->
+    <!-- 2: TEACHER DASHBOARD (KPI CỦA TÔI) -->
     <section id="teacher-section" class="hidden space-y-6">
       <div class="flex items-center justify-between">
-        <button onclick="goToHome()" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-sm hover:bg-slate-50 transition">← Quay lại Trang Chủ</button>
-        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">Phân hệ: KPI Cá Nhân</span>
+        <button onclick="goToHome()" class="text-xs font-semibold bg-white px-3.5 py-2 rounded-xl border shadow-sm">← Quay lại Trang Chủ</button>
+        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border">Phân hệ: KPI Cá Nhân</span>
       </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-          <span class="text-xs font-semibold uppercase text-slate-400">Nhiệm Vụ Đã Đăng Ký</span>
-          <div id="stat-tasks-count" class="text-3xl font-extrabold text-slate-900 mt-2">0</div>
-          <p class="text-xs text-slate-500 mt-1">Đồng bộ từ Google Sheet</p>
-        </div>
-        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-          <span class="text-xs font-semibold uppercase text-slate-400">Tổng Điểm KPI Đã Chấm</span>
-          <div id="stat-total-score" class="text-3xl font-extrabold text-indigo-600 mt-2">0 <span class="text-sm font-normal text-slate-500">điểm</span></div>
-          <p class="text-xs text-emerald-600 mt-1">Điểm chính thức từ BGH</p>
-        </div>
-        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-          <span class="text-xs font-semibold uppercase text-slate-400">Xếp Hạng Điểm KPI</span>
-          <div id="stat-potential-score" class="text-3xl font-extrabold text-amber-600 mt-2">--</div>
-          <p id="stat-rank-desc" class="text-xs text-slate-500 mt-1">Xếp hạng trong toàn trường</p>
+      <div>
+        <h3 class="text-lg font-bold mb-4">📊 Tổng Hợp KPI Của Tôi</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div class="bg-white p-5 rounded-xl border shadow-sm"><span class="text-xs font-semibold text-slate-400">Nhiệm Vụ Đã Đăng Ký</span><div id="stat-tasks-count" class="text-3xl font-extrabold mt-2">0</div></div>
+          <div class="bg-white p-5 rounded-xl border shadow-sm"><span class="text-xs font-semibold text-slate-400">Tổng Điểm KPI</span><div id="stat-total-score" class="text-3xl font-extrabold text-indigo-600 mt-2">0</div></div>
+          <div class="bg-white p-5 rounded-xl border shadow-sm"><span class="text-xs font-semibold text-slate-400">Xếp Hạng Điểm KPI</span><div id="stat-potential-score" class="text-3xl font-extrabold text-amber-600 mt-2">--</div><p id="stat-rank-desc" class="text-xs text-slate-500 mt-1">Xếp hạng toàn trường</p></div>
         </div>
       </div>
-
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="p-5 border-b border-slate-100 flex flex-wrap justify-between items-center gap-2">
-          <div>
-            <h4 class="font-bold text-slate-900">Chi Tiết Nhiệm Vụ & Điểm Số</h4>
-            <p class="text-xs text-slate-500 mt-0.5">Tự động ưu tiên: <b class="text-rose-600">🚨 Quá hạn</b> → <b class="text-blue-600">⚙️ Đang thực hiện / Chờ nghiệm thu</b> → <b class="text-emerald-600">✓ Đã nghiệm thu</b></p>
-          </div>
-        </div>
+      <div class="bg-white rounded-xl border shadow-sm p-5">
+        <h4 class="font-bold mb-3">Chi Tiết Nhiệm Vụ & Điểm Số</h4>
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse text-sm">
-            <thead>
-              <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase">
-                <th class="py-3 px-4">Mã việc</th>
-                <th class="py-3 px-4">Tên nhiệm vụ</th>
-                <th class="py-3 px-4 text-center">Định mức</th>
-                <th class="py-3 px-4 text-center">Mức độ hoàn thành</th>
-                <th class="py-3 px-4 text-center">Minh chứng</th>
-                <th class="py-3 px-4 text-center">Điểm BGH chấm</th>
-                <th class="py-3 px-4 text-center">Báo cáo hoàn thành</th>
-              </tr>
-            </thead>
+            <thead><tr class="bg-slate-50 border-b text-xs font-semibold uppercase"><th class="py-3 px-4">Mã việc</th><th class="py-3 px-4">Tên nhiệm vụ</th><th class="py-3 px-4 text-center">Định mức</th><th class="py-3 px-4 text-center">Trạng thái</th><th class="py-3 px-4 text-center">Minh chứng</th><th class="py-3 px-4 text-center">Điểm</th><th class="py-3 px-4 text-center">Thao tác</th></tr></thead>
             <tbody id="my-tasks-table" class="divide-y divide-slate-100"></tbody>
           </table>
         </div>
       </div>
-
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h4 class="font-bold text-slate-900 text-base">Kho KPI Linh Hoạt</h4>
-            <p class="text-xs text-slate-500 mt-0.5">Tìm kiếm và đăng ký các nhiệm vụ chuyên môn theo đợt.</p>
-          </div>
-          <div class="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+      <div class="bg-white rounded-xl border shadow-sm p-5">
+        <div class="flex justify-between items-center mb-4">
+          <h4 class="font-bold">Kho KPI Linh Hoạt</h4>
+          <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-semibold">
             <button id="tab-all" onclick="switchKpiTab('all')" class="px-3.5 py-1.5 rounded-lg bg-white text-indigo-600 shadow-sm font-bold">Tất cả (<span id="count-all">0</span>)</button>
-            <button id="tab-available" onclick="switchKpiTab('available')" class="px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900">Còn việc (<span id="count-available">0</span>)</button>
-            <button id="tab-registered" onclick="switchKpiTab('registered')" class="px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900">Đã nhận (<span id="count-registered">0</span>)</button>
+            <button id="tab-available" onclick="switchKpiTab('available')" class="px-3.5 py-1.5 rounded-lg text-slate-600">Còn việc (<span id="count-available">0</span>)</button>
+            <button id="tab-registered" onclick="switchKpiTab('registered')" class="px-3.5 py-1.5 rounded-lg text-slate-600">Đã nhận (<span id="count-registered">0</span>)</button>
           </div>
         </div>
-
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto mb-4">
           <table class="w-full text-left border-collapse text-sm">
-            <thead>
-              <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase">
-                <th class="py-3 px-4">Mã việc</th>
-                <th class="py-3 px-4">Tên & Mô tả nhiệm vụ</th>
-                <th class="py-3 px-4 text-center">Điểm định mức</th>
-                <th class="py-3 px-4 text-center">Hạn chót</th>
-                <th class="py-3 px-4 text-center">Chỉ tiêu</th>
-                <th class="py-3 px-4 text-center">Trạng thái</th>
-                <th class="py-3 px-4 text-center">Hành động</th>
-              </tr>
-            </thead>
+            <thead><tr class="bg-slate-50 border-b text-xs font-semibold uppercase"><th class="py-3 px-4">Mã việc</th><th class="py-3 px-4">Tên & Mô tả</th><th class="py-3 px-4 text-center">Điểm</th><th class="py-3 px-4 text-center">Hạn chót</th><th class="py-3 px-4 text-center">Chỉ tiêu</th><th class="py-3 px-4 text-center">Trạng thái</th><th class="py-3 px-4 text-center">Hành động</th></tr></thead>
             <tbody id="available-tasks-table" class="divide-y divide-slate-100"></tbody>
           </table>
         </div>
+        <div class="flex justify-between text-xs text-slate-600">
+          <div>Hiển thị: <select id="page-size-select" onchange="changePageSize(this.value)" class="border rounded px-2 py-1"><option value="5">5</option><option value="10" selected>10</option><option value="20">20</option><option value="999">Tất cả</option></select></div>
+          <div class="flex items-center gap-2"><span id="pagination-info">Trang 1 / 1</span><button id="btn-prev-page" onclick="prevPage()" class="border px-2 py-1 rounded">◀ Trước</button><button id="btn-next-page" onclick="nextPage()" class="border px-2 py-1 rounded">Sau ▶</button></div>
+        </div>
+      </div>
+    </section>
 
-        <div class="p-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
-          <div class="flex items-center gap-2">
-            <span>Hiển thị mỗi trang:</span>
-            <select id="page-size-select" onchange="changePageSize(this.value)" class="border border-slate-300 rounded px-2 py-1 bg-white">
-              <option value="5">5 việc</option>
-              <option value="10" selected>10 việc</option>
-              <option value="20">20 việc</option>
-            </select>
-          </div>
-          <div class="flex items-center gap-2">
-            <span id="pagination-info">Trang 1 / 1</span>
-            <div class="flex gap-1">
-              <button id="btn-prev-page" onclick="prevPage()" class="px-2.5 py-1 rounded border border-slate-200 bg-white disabled:opacity-40">◀ Trước</button>
-              <button id="btn-next-page" onclick="nextPage()" class="px-2.5 py-1 rounded border border-slate-200 bg-white disabled:opacity-40">Sau ▶</button>
+    <!-- 3: BGH DASHBOARD -->
+    <section id="bgh-section" class="hidden space-y-6">
+      <div class="flex items-center justify-between"><button onclick="goToHome()" class="text-xs font-semibold bg-white px-3.5 py-2 rounded-xl border shadow-sm">← Quay lại Trang Chủ</button></div>
+      <div class="flex justify-between items-center">
+        <div><h2 class="text-2xl font-extrabold">Bảng Điều Hành Ban Giám Hiệu</h2></div>
+        <button onclick="openCreateTaskModal()" class="bg-indigo-600 text-white font-semibold px-4 py-2.5 rounded-xl">+ Thêm Nhiệm Vụ</button>
+      </div>
+      <div class="flex gap-2 border-b text-sm font-semibold pt-2 overflow-x-auto no-print">
+        <button id="bgh-tab-grading-btn" onclick="switchBghTab('grading')" class="px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold">📝 Chấm Điểm KPI</button>
+        <button id="bgh-tab-assign-btn" onclick="switchBghTab('assign')" class="px-5 py-3 border-b-2 border-transparent text-slate-500">🎯 Giao Việc</button>
+        <button id="bgh-tab-stats-btn" onclick="switchBghTab('stats')" class="px-5 py-3 border-b-2 border-transparent text-slate-500">📊 Thống Kê</button>
+      </div>
+      <div id="bgh-tab-content-grading" class="bg-white rounded-xl border p-5">
+        <div class="overflow-x-auto mb-4">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead><tr class="bg-slate-50 border-b text-xs font-bold uppercase"><th class="py-3 px-4">Mã</th><th class="py-3 px-4">Giáo viên</th><th class="py-3 px-4 text-center">Định mức</th><th class="py-3 px-4 text-center">Hạn chót</th><th class="py-3 px-4 text-center">Minh chứng</th><th class="py-3 px-4 text-center">Trạng thái</th><th class="py-3 px-4 text-center">Điểm</th><th class="py-3 px-4 text-center">Thao tác</th></tr></thead>
+            <tbody id="bgh-grading-table" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+        <div class="flex justify-between text-xs text-slate-600">
+          <div>Hiển thị: <select id="bgh-page-size" onchange="changeBghPageSize(this.value)" class="border rounded px-2.5 py-1"><option value="5">5</option><option value="10" selected>10</option><option value="999">Tất cả</option></select></div>
+          <div class="flex gap-2"><span id="bgh-pagination-info"></span><button id="bgh-btn-prev" onclick="prevBghPage()" class="border px-3 py-1 rounded">◀ Trước</button><button id="bgh-btn-next" onclick="nextBghPage()" class="border px-3 py-1 rounded">Sau ▶</button></div>
+        </div>
+      </div>
+      <div id="bgh-tab-content-assign" class="hidden bg-white rounded-xl border p-5">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead><tr class="bg-slate-50 border-b text-xs font-bold uppercase"><th class="py-3 px-4">STT</th><th class="py-3 px-4">Mã GV</th><th class="py-3 px-4">Họ Tên</th><th class="py-3 px-4">Bộ Môn</th><th class="py-3 px-4 text-center">Đã Nhận</th><th class="py-3 px-4 text-center">Tổng Điểm</th><th class="py-3 px-4">Chọn việc</th><th class="py-3 px-4 text-center">Hành động</th></tr></thead>
+            <tbody id="bgh-assign-table" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="bgh-tab-content-stats" class="hidden space-y-6">
+        <div class="bg-white p-5 rounded-xl border flex justify-between"><h3 class="font-bold">Báo Cáo Toàn Trường</h3><button onclick="exportToExcel()" class="bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl">📊 Xuất Excel</button></div>
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <div class="bg-white p-5 rounded-2xl border"><span class="text-[11px] font-bold uppercase text-slate-400">CHƯA GIAO HẾT</span><div id="stat-tasks-available" class="text-3xl font-extrabold text-amber-500 mt-2">0</div></div>
+          <div class="bg-white p-5 rounded-2xl border"><span class="text-[11px] font-bold uppercase text-slate-400">XONG TRƯỚC HẠN</span><div id="stat-completed-early" class="text-3xl font-extrabold text-emerald-600 mt-2">0</div></div>
+          <div class="bg-white p-5 rounded-2xl border"><span class="text-[11px] font-bold uppercase text-slate-400">CHẬM TIẾN ĐỘ</span><div id="stat-tasks-overdue" class="text-3xl font-extrabold text-rose-600 mt-2">0</div></div>
+          <div class="bg-white p-5 rounded-2xl border"><span class="text-[11px] font-bold uppercase text-slate-400">TỔNG PHÂN CÔNG</span><div id="stat-tasks-assigned" class="text-3xl font-extrabold text-indigo-600 mt-2">0</div></div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="bg-white p-5 rounded-2xl border lg:col-span-2"><h4 class="font-bold text-sm mb-4">📈 Biểu Đồ Tổng Điểm</h4><div class="h-72"><canvas id="kpiBarChart"></canvas></div></div>
+          <div class="bg-white p-5 rounded-2xl border"><h4 class="font-bold text-sm mb-4">🎯 Tỷ Lệ Tiến Độ</h4>
+            <div class="space-y-4 pt-2">
+              <div><div class="flex justify-between text-xs font-semibold mb-1"><span><span class="w-3 h-3 rounded bg-emerald-500 inline-block"></span> Xong sớm</span><span id="rate-early-text">0%</span></div><div class="w-full bg-slate-100 rounded-full h-2.5"><div id="bar-rate-early" class="bg-emerald-500 h-2.5 rounded-full" style="width: 0%"></div></div></div>
+              <div><div class="flex justify-between text-xs font-semibold mb-1"><span><span class="w-3 h-3 rounded bg-rose-500 inline-block"></span> Quá hạn</span><span id="rate-late-text">0%</span></div><div class="w-full bg-slate-100 rounded-full h-2.5"><div id="bar-rate-late" class="bg-rose-500 h-2.5 rounded-full" style="width: 0%"></div></div></div>
+              <div><div class="flex justify-between text-xs font-semibold mb-1"><span><span class="w-3 h-3 rounded bg-amber-500 inline-block"></span> Đúng hạn</span><span id="rate-ontime-text">0%</span></div><div class="w-full bg-slate-100 rounded-full h-2.5"><div id="bar-rate-ontime" class="bg-amber-500 h-2.5 rounded-full" style="width: 0%"></div></div></div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- VIEW 3: BGH DASHBOARD -->
-    <section id="bgh-section" class="hidden space-y-6">
-      <div class="flex items-center justify-between">
-        <button onclick="goToHome()" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-sm hover:bg-slate-50 transition">← Quay lại Trang Chủ</button>
-        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">Phân hệ: Ban Giám Hiệu</span>
-      </div>
-
-      <div class="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Bảng Điều Hành Ban Giám Hiệu</h2>
-          <p class="text-xs sm:text-sm text-slate-500 mt-1">Phân công nhiệm vụ, chấm điểm KPI và xuất báo cáo dữ liệu thực từ Google Sheet.</p>
-        </div>
-        <button onclick="openCreateTaskModal()" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow transition">+ Thêm Nhiệm Vụ Mới</button>
-      </div>
-
-      <div class="flex items-center gap-2 border-b border-slate-200 text-sm font-semibold pt-2 overflow-x-auto no-print">
-        <button id="bgh-tab-grading-btn" onclick="switchBghTab('grading')" class="px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold">📝 Chấm Điểm KPI</button>
-        <button id="bgh-tab-assign-btn" onclick="switchBghTab('assign')" class="px-5 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800">🎯 Giao Việc Cho Giáo Viên</button>
-        <button id="bgh-tab-stats-btn" onclick="switchBghTab('stats')" class="px-5 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800">📊 Thống Kê Tiến Độ & KPI</button>
-      </div>
-
-      <!-- TAB 1: CHẤM ĐIỂM -->
-      <div id="bgh-tab-content-grading" class="space-y-4">
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <div class="p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
-            <h3 class="font-bold text-slate-900 text-base">Danh Sách Nhiệm Vụ Cần Chấm Điểm</h3>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-sm">
-              <thead>
-                <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase">
-                  <th class="py-3.5 px-4">MÃ VIỆC</th>
-                  <th class="py-3.5 px-4">GIÁO VIÊN THỰC HIỆN</th>
-                  <th class="py-3.5 px-4 text-center">ĐỊNH MỨC</th>
-                  <th class="py-3.5 px-4 text-center">HẠN CHÓT</th>
-                  <th class="py-3.5 px-4 text-center">MINH CHỨNG</th>
-                  <th class="py-3.5 px-4 text-center">TRẠNG THÁI</th>
-                  <th class="py-3.5 px-4 text-center">ĐIỂM CHẤM</th>
-                  <th class="py-3.5 px-4 text-center">THAO TÁC</th>
-                </tr>
-              </thead>
-              <tbody id="bgh-grading-table" class="divide-y divide-slate-100"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 2: GIAO VIỆC -->
-      <div id="bgh-tab-content-assign" class="hidden space-y-4">
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <div class="p-5 border-b border-slate-100 flex justify-between items-center">
-            <h3 class="font-bold text-slate-900 text-base">Danh Sách Giáo Viên (Ưu tiên ít điểm & ít việc nhất)</h3>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-sm">
-              <thead>
-                <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase">
-                  <th class="py-3.5 px-4 text-center">STT</th>
-                  <th class="py-3.5 px-4">MÃ GV</th>
-                  <th class="py-3.5 px-4">HỌ VÀ TÊN</th>
-                  <th class="py-3.5 px-4">BỘ MÔN</th>
-                  <th class="py-3.5 px-4 text-center">ĐÃ NHẬN</th>
-                  <th class="py-3.5 px-4 text-center">TỔNG ĐIỂM KPI</th>
-                  <th class="py-3.5 px-4">CHỌN VIỆC CẦN GIAO</th>
-                  <th class="py-3.5 px-4 text-center">HÀNH ĐỘNG</th>
-                </tr>
-              </thead>
-              <tbody id="bgh-assign-table" class="divide-y divide-slate-100"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 3: THỐNG KÊ -->
-      <div id="bgh-tab-content-stats" class="hidden space-y-6">
-        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center">
-          <h3 class="font-bold text-slate-900 text-base">Báo Cáo Tổng Hợp Toàn Trường</h3>
-          <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm">📊 Xuất Báo Cáo Excel</button>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-[11px] font-bold uppercase text-slate-400">SỐ VIỆC CHƯA GIAO HẾT</span>
-            <div id="stat-tasks-available" class="text-3xl font-extrabold text-amber-500 mt-2">0</div>
-          </div>
-          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-[11px] font-bold uppercase text-slate-400">HOÀN THÀNH TRƯỚC HẠN</span>
-            <div id="stat-completed-early" class="text-3xl font-extrabold text-emerald-600 mt-2">0</div>
-          </div>
-          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-[11px] font-bold uppercase text-slate-400">SỐ VIỆC CHẬM TIẾN ĐỘ</span>
-            <div id="stat-tasks-overdue" class="text-3xl font-extrabold text-rose-600 mt-2">0</div>
-          </div>
-          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-[11px] font-bold uppercase text-slate-400">TỔNG LƯỢT PHÂN CÔNG</span>
-            <div id="stat-tasks-assigned" class="text-3xl font-extrabold text-indigo-600 mt-2">0</div>
-          </div>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <h4 class="font-bold text-slate-900 text-sm mb-4">📈 Biểu Đồ Tổng Điểm KPI Giáo Viên</h4>
-          <div class="h-64"><canvas id="kpiBarChart"></canvas></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- VIEW 4: HỌC SINH -->
+    <!-- 4: QUẢN LÝ HỌC SINH -->
     <section id="students-section" class="hidden space-y-6">
-      <div class="flex items-center justify-between">
-        <button onclick="goToHome()" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white px-3.5 py-2 rounded-xl border border-slate-200">← Quay lại Trang Chủ</button>
-        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700">Phân hệ: Quản Lý Học Sinh</span>
+      <div class="flex justify-between"><button onclick="goToHome()" class="text-xs bg-white px-3.5 py-2 border rounded-xl">← Quay lại</button></div>
+      <div class="flex justify-between"><h2 class="text-2xl font-extrabold">Sổ Nề Nếp Học Sinh</h2><button onclick="openAddDisciplineModal()" class="bg-emerald-600 text-white font-semibold px-4 py-2.5 rounded-xl">➕ Ghi Nhận</button></div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div class="bg-white p-5 rounded-2xl border"><span class="text-xs font-semibold">Tổng Học Sinh</span><div class="text-3xl font-extrabold mt-2">1,250</div></div>
+        <div class="bg-white p-5 rounded-2xl border"><span class="text-xs font-semibold">Vi Phạm Tuần Này</span><div id="stat-violations-count" class="text-3xl font-extrabold text-rose-600 mt-2">0</div></div>
+        <div class="bg-white p-5 rounded-2xl border"><span class="text-xs font-semibold">Lớp Dẫn Đầu</span><div class="text-3xl font-extrabold text-emerald-600 mt-2">11A5</div></div>
       </div>
-      <div class="flex justify-between items-center">
-        <h2 class="text-2xl font-extrabold text-slate-900">Sổ Quản Lý Học Sinh & Nề Nếp</h2>
-        <button onclick="openAddDisciplineModal()" class="bg-emerald-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl">➕ Ghi Nhận Vi Phạm / Điểm Cộng</button>
-      </div>
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <table class="w-full text-left border-collapse text-sm">
-          <thead>
-            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase">
-              <th class="py-3 px-4">Ngày</th>
-              <th class="py-3 px-4">Lớp</th>
-              <th class="py-3 px-4">Họ tên học sinh</th>
-              <th class="py-3 px-4">Nội dung</th>
-              <th class="py-3 px-4 text-center">Điểm</th>
-              <th class="py-3 px-4">Người ghi</th>
-            </tr>
-          </thead>
-          <tbody id="student-discipline-table" class="divide-y divide-slate-100"></tbody>
-        </table>
+      <div class="bg-white rounded-xl border p-5">
+        <div class="overflow-x-auto"><table class="w-full text-left text-sm border-collapse"><thead><tr class="bg-slate-50 border-b uppercase text-xs"><th>Ngày</th><th>Lớp</th><th>Học sinh</th><th>Nội dung</th><th>Điểm</th><th>Người ghi</th></tr></thead><tbody id="student-discipline-table"></tbody></table></div>
       </div>
     </section>
 
-    <!-- VIEW 5: XIN NGHỈ -->
+    <!-- 5: QUẢN LÝ XIN NGHỈ -->
     <section id="leave-section" class="hidden space-y-6">
-      <div class="flex items-center justify-between">
-        <button onclick="goToHome()" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white px-3.5 py-2 rounded-xl border border-slate-200">← Quay lại Trang Chủ</button>
-        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-sky-50 text-sky-700">Phân hệ: Xin Nghỉ & Dạy Bù</span>
-      </div>
-      <div class="flex justify-between items-center">
-        <h2 class="text-2xl font-extrabold text-slate-900">Đăng Ký Nghỉ Dạy & Báo Giảng Bù</h2>
-        <button onclick="openLeaveModal()" class="bg-sky-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl">📝 Gửi Đơn Xin Nghỉ Mới</button>
-      </div>
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <table class="w-full text-left border-collapse text-sm">
-          <thead>
-            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase">
-              <th class="py-3 px-4">Mã đơn</th>
-              <th class="py-3 px-4">Giáo viên</th>
-              <th class="py-3 px-4">Lý do</th>
-              <th class="py-3 px-4 text-center">Thời gian</th>
-              <th class="py-3 px-4">Kế hoạch dạy thay/bù</th>
-              <th class="py-3 px-4 text-center">Trạng thái</th>
-              <th class="py-3 px-4 text-center">Thao tác</th>
-            </tr>
-          </thead>
-          <tbody id="leave-table" class="divide-y divide-slate-100"></tbody>
-        </table>
+      <div class="flex justify-between"><button onclick="goToHome()" class="text-xs bg-white px-3.5 py-2 border rounded-xl">← Quay lại</button></div>
+      <div class="flex justify-between"><h2 class="text-2xl font-extrabold">Đăng Ký Nghỉ & Dạy Bù</h2><button onclick="openLeaveModal()" class="bg-sky-600 text-white font-semibold px-4 py-2.5 rounded-xl">📝 Nộp Đơn</button></div>
+      <div class="bg-white rounded-xl border p-5">
+        <div class="overflow-x-auto"><table class="w-full text-left text-sm border-collapse"><thead><tr class="bg-slate-50 border-b uppercase text-xs"><th>Mã</th><th>Giáo viên</th><th>Lý do</th><th>Thời gian</th><th>Kế hoạch</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="leave-table"></tbody></table></div>
       </div>
     </section>
 
-    <!-- VIEW 6: THIẾT BỊ -->
+    <!-- 6: SỔ MƯỢN THIẾT BỊ -->
     <section id="equipment-section" class="hidden space-y-6">
-      <div class="flex items-center justify-between">
-        <button onclick="goToHome()" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white px-3.5 py-2 rounded-xl border border-slate-200">← Quay lại Trang Chủ</button>
-        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-purple-50 text-purple-700">Phân hệ: Sổ Mượn Thiết Bị</span>
-      </div>
-      <div class="flex justify-between items-center">
-        <h2 class="text-2xl font-extrabold text-slate-900">Sổ Mượn Thiết Bị & Phòng Học</h2>
-        <button onclick="openEquipmentModal()" class="bg-purple-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl">🔬 Đăng Ký Mượn Thiết Bị</button>
-      </div>
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <table class="w-full text-left border-collapse text-sm">
-          <thead>
-            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase">
-              <th class="py-3 px-4">Mã mượn</th>
-              <th class="py-3 px-4">Giáo viên</th>
-              <th class="py-3 px-4">Thiết bị / Phòng</th>
-              <th class="py-3 px-4 text-center">Tiết / Lớp</th>
-              <th class="py-3 px-4 text-center">Ngày mượn</th>
-              <th class="py-3 px-4 text-center">Tình trạng</th>
-              <th class="py-3 px-4 text-center">Thao tác</th>
-            </tr>
-          </thead>
-          <tbody id="equipment-table" class="divide-y divide-slate-100"></tbody>
-        </table>
+      <div class="flex justify-between"><button onclick="goToHome()" class="text-xs bg-white px-3.5 py-2 border rounded-xl">← Quay lại</button></div>
+      <div class="flex justify-between"><h2 class="text-2xl font-extrabold">Mượn Thiết Bị</h2><button onclick="openEquipmentModal()" class="bg-purple-600 text-white font-semibold px-4 py-2.5 rounded-xl">🔬 Đăng Ký Mượn</button></div>
+      <div class="bg-white rounded-xl border p-5">
+        <div class="overflow-x-auto"><table class="w-full text-left text-sm border-collapse"><thead><tr class="bg-slate-50 border-b uppercase text-xs"><th>Mã</th><th>Giáo viên</th><th>Thiết bị</th><th>Tiết/Lớp</th><th>Ngày</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="equipment-table"></tbody></table></div>
       </div>
     </section>
-
   </main>
 
-  <!-- MODAL ĐĂNG NHẬP GOOGLE BẢO MẬT -->
+  <!-- ==================== CÁC MODAL ==================== -->
+  <!-- MODAL ĐĂNG NHẬP -->
   <div id="login-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-3xl max-w-md w-full p-7 shadow-2xl border border-slate-100 text-center relative">
+    <div class="bg-white rounded-3xl max-w-md w-full p-7 shadow-2xl border text-center relative">
       <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">✕</button>
       <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3 text-3xl font-bold">🎓</div>
-      <h3 class="text-xl font-black text-slate-900 mb-1">Xác Thực Tài Khoản Trường</h3>
-      <p id="login-modal-msg" class="text-xs text-indigo-600 font-semibold mb-6 px-2">Đăng nhập tài khoản Google do trường cấp để tải dữ liệu thực từ Google Sheet.</p>
-
-      <div class="flex justify-center mb-2">
-        <div id="google-signin-btn"></div>
-      </div>
+      <h3 class="text-xl font-black text-slate-900 mb-1">Xác Thực Tài Khoản</h3>
+      <p id="login-modal-msg" class="text-xs text-indigo-600 font-semibold mb-4 px-2">Vui lòng đăng nhập bằng Google để tiếp tục.</p>
+      <div class="flex justify-center mb-4"><div id="google-signin-btn"></div></div>
     </div>
   </div>
 
-  <!-- CÁC MODAL THAO TÁC -->
+  <!-- MODAL BÁO CÁO MINH CHỨNG -->
   <div id="evidence-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <h3 class="text-base font-bold text-slate-900 mb-2">Báo Cáo Hoàn Thành Nhiệm Vụ</h3>
-      <p class="text-xs text-slate-500 mb-4" id="evidence-modal-subtitle">Nhiệm vụ: --</p>
+      <h3 class="text-base font-bold text-slate-900 mb-4">Báo Cáo Hoàn Thành Nhiệm Vụ</h3>
       <form id="evidence-form" onsubmit="submitEvidence(event)" class="space-y-4 text-sm">
         <input type="hidden" id="evidence-task-id">
         <div>
-          <label class="block font-medium text-slate-700 mb-1">Link minh chứng (Drive / Link công việc):</label>
-          <input type="url" id="evidence-link-input" placeholder="https://drive.google.com/..." class="w-full border border-slate-300 rounded-lg px-3 py-2">
+          <label class="block font-medium mb-1">Link minh chứng (Drive):</label>
+          <input type="url" id="evidence-link-input" class="w-full border rounded-lg px-3 py-2">
         </div>
-        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
-          <button type="button" onclick="closeEvidenceModal()" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-600">Hủy</button>
-          <button type="submit" class="px-5 py-2 rounded-lg bg-emerald-600 text-white font-medium">Gửi Báo Cáo</button>
-        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t"><button type="button" onclick="closeEvidenceModal()" class="px-4 py-2 border rounded-lg">Hủy</button><button type="submit" class="px-5 py-2 bg-emerald-600 text-white rounded-lg">Hoàn Thành</button></div>
       </form>
     </div>
   </div>
 
+  <!-- MODAL THÊM NHIỆM VỤ -->
   <div id="task-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl">
-      <h3 class="text-lg font-bold text-slate-900 mb-4">Thêm Nhiệm Vụ Mới Vào Kho KPI</h3>
-      <form id="new-task-form" onsubmit="handleCreateTask(event)" class="space-y-4 text-sm">
-        <div>
-          <label class="block font-medium text-slate-700 mb-1">Mã việc (Ví dụ: A6)</label>
-          <input type="text" id="modal-task-id" required class="w-full border border-slate-300 rounded-lg px-3 py-2 uppercase">
-        </div>
-        <div>
-          <label class="block font-medium text-slate-700 mb-1">Tên việc</label>
-          <input type="text" id="modal-task-title" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
-        </div>
-        <div>
-          <label class="block font-medium text-slate-700 mb-1">Mô tả công việc</label>
-          <textarea id="modal-task-desc" rows="3" class="w-full border border-slate-300 rounded-lg px-3 py-2"></textarea>
-        </div>
+      <h3 class="text-lg font-bold mb-4">Thêm Nhiệm Vụ Mới</h3>
+      <form onsubmit="handleCreateTask(event)" class="space-y-4 text-sm">
+        <div><label class="block mb-1">Mã việc</label><input type="text" id="modal-task-id" required class="w-full border rounded-lg px-3 py-2"></div>
+        <div><label class="block mb-1">Tên việc</label><input type="text" id="modal-task-title" required class="w-full border rounded-lg px-3 py-2"></div>
+        <div><label class="block mb-1">Mô tả</label><textarea id="modal-task-desc" class="w-full border rounded-lg px-3 py-2"></textarea></div>
         <div class="grid grid-cols-3 gap-3">
-          <div>
-            <label class="block font-medium text-slate-700 mb-1">Điểm định mức</label>
-            <input type="number" id="modal-task-score" required min="1" class="w-full border border-slate-300 rounded-lg px-3 py-2">
-          </div>
-          <div>
-            <label class="block font-medium text-slate-700 mb-1">Hạn hoàn thành</label>
-            <input type="date" id="modal-task-deadline" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
-          </div>
-          <div>
-            <label class="block font-medium text-slate-700 mb-1">Chỉ tiêu (GV)</label>
-            <input type="number" id="modal-task-quota" required min="1" value="1" class="w-full border border-slate-300 rounded-lg px-3 py-2">
-          </div>
+          <div><label class="block mb-1">Định mức</label><input type="number" id="modal-task-score" required class="w-full border rounded-lg px-3 py-2"></div>
+          <div><label class="block mb-1">Hạn chót</label><input type="date" id="modal-task-deadline" required class="w-full border rounded-lg px-3 py-2"></div>
+          <div><label class="block mb-1">Chỉ tiêu</label><input type="number" id="modal-task-quota" required class="w-full border rounded-lg px-3 py-2"></div>
         </div>
-        <div class="flex justify-end gap-2 pt-4 border-t border-slate-100">
-          <button type="button" onclick="closeCreateTaskModal()" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-600">Hủy</button>
-          <button type="submit" class="px-5 py-2 rounded-lg bg-indigo-600 text-white font-medium">Lưu Nhiệm Vụ</button>
-        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t"><button type="button" onclick="closeCreateTaskModal()" class="px-4 py-2 border rounded-lg">Hủy</button><button type="submit" class="px-5 py-2 bg-indigo-600 text-white rounded-lg">Lưu</button></div>
       </form>
     </div>
   </div>
 
+  <!-- MODAL GHI NHẬN NỀ NẾP -->
   <div id="discipline-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <h3 class="text-base font-bold text-slate-900 mb-3">Ghi Nhận Vi Phạm / Điểm Cộng Học Sinh</h3>
+      <h3 class="text-base font-bold mb-3">Ghi Nhận Vi Phạm / Điểm Cộng</h3>
       <form onsubmit="handleSaveDiscipline(event)" class="space-y-3 text-sm">
-        <div>
-          <label class="block font-medium text-slate-700 mb-1">Chọn lớp:</label>
-          <select id="modal-disc-class" class="w-full border border-slate-300 rounded-lg px-3 py-2 bg-white">
-            <option value="10A1">10A1</option><option value="11A5" selected>11A5</option><option value="12A2">12A2</option>
-          </select>
-        </div>
-        <div>
-          <label class="block font-medium text-slate-700 mb-1">Tên học sinh:</label>
-          <input type="text" id="modal-disc-student" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
-        </div>
-        <div>
-          <label class="block font-medium text-slate-700 mb-1">Nội dung ghi nhận:</label>
-          <input type="text" id="modal-disc-content" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
-        </div>
-        <div>
-          <label class="block font-medium text-slate-700 mb-1">Điểm số (+ hoặc -):</label>
-          <input type="number" id="modal-disc-points" required value="-2" class="w-full border border-slate-300 rounded-lg px-3 py-2">
-        </div>
-        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
-          <button type="button" onclick="closeAddDisciplineModal()" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-600">Hủy</button>
-          <button type="submit" class="px-5 py-2 rounded-lg bg-emerald-600 text-white font-medium">Lưu Nhật Ký</button>
-        </div>
+        <div><label class="block mb-1">Chọn lớp:</label><input type="text" id="modal-disc-class" value="11A5" class="w-full border rounded-lg px-3 py-2"></div>
+        <div><label class="block mb-1">Tên học sinh:</label><input type="text" id="modal-disc-student" required class="w-full border rounded-lg px-3 py-2"></div>
+        <div><label class="block mb-1">Nội dung:</label><input type="text" id="modal-disc-content" required class="w-full border rounded-lg px-3 py-2"></div>
+        <div><label class="block mb-1">Điểm (+ hoặc -):</label><input type="number" id="modal-disc-points" value="-2" required class="w-full border rounded-lg px-3 py-2"></div>
+        <div class="flex justify-end gap-2 pt-3 border-t"><button type="button" onclick="closeAddDisciplineModal()" class="px-4 py-2 border rounded-lg">Hủy</button><button type="submit" class="px-5 py-2 bg-emerald-600 text-white rounded-lg">Lưu</button></div>
       </form>
     </div>
   </div>
 
+  <!-- MODAL XIN NGHỈ -->
   <div id="leave-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <h3 class="text-base font-bold text-slate-900 mb-3">Đăng Ký Nghỉ Dạy & Báo Giảng Bù</h3>
+      <h3 class="text-base font-bold mb-3">Đăng Ký Nghỉ Dạy & Báo Giảng Bù</h3>
       <form onsubmit="handleSaveLeave(event)" class="space-y-3 text-sm">
-        <div>
-          <label class="block font-medium text-slate-700 mb-1">Lý do nghỉ:</label>
-          <input type="text" id="modal-leave-reason" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
-        </div>
+        <div><label class="block mb-1">Lý do nghỉ:</label><input type="text" id="modal-leave-reason" required class="w-full border rounded-lg px-3 py-2"></div>
         <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block font-medium text-slate-700 mb-1">Từ ngày:</label>
-            <input type="date" id="modal-leave-date" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
-          </div>
-          <div>
-            <label class="block font-medium text-slate-700 mb-1">Số tiết nghỉ:</label>
-            <input type="number" id="modal-leave-periods" required min="1" value="2" class="w-full border border-slate-300 rounded-lg px-3 py-2">
-          </div>
+          <div><label class="block mb-1">Từ ngày:</label><input type="date" id="modal-leave-date" required class="w-full border rounded-lg px-3 py-2"></div>
+          <div><label class="block mb-1">Số tiết:</label><input type="number" id="modal-leave-periods" required min="1" value="2" class="w-full border rounded-lg px-3 py-2"></div>
         </div>
-        <div>
-          <label class="block font-medium text-slate-700 mb-1">Kế hoạch dạy thay / Dạy bù:</label>
-          <input type="text" id="modal-leave-plan" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
-        </div>
-        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
-          <button type="button" onclick="closeLeaveModal()" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-600">Hủy</button>
-          <button type="submit" class="px-5 py-2 rounded-lg bg-sky-600 text-white font-medium">Gửi Đơn Xin Nghỉ</button>
-        </div>
+        <div><label class="block mb-1">Kế hoạch dạy thay/bù:</label><input type="text" id="modal-leave-plan" required class="w-full border rounded-lg px-3 py-2"></div>
+        <div class="flex justify-end gap-2 pt-3 border-t"><button type="button" onclick="closeLeaveModal()" class="px-4 py-2 border rounded-lg">Hủy</button><button type="submit" class="px-5 py-2 bg-sky-600 text-white rounded-lg">Gửi Đơn</button></div>
       </form>
     </div>
   </div>
 
+  <!-- MODAL MƯỢN THIẾT BỊ -->
   <div id="equipment-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <h3 class="text-base font-bold text-slate-900 mb-3">Đăng Ký Mượn Thiết Bị & Phòng Học</h3>
+      <h3 class="text-base font-bold mb-3">Đăng Ký Mượn Thiết Bị</h3>
       <form onsubmit="handleSaveEquipment(event)" class="space-y-3 text-sm">
-        <div>
-          <label class="block font-medium text-slate-700 mb-1">Tên thiết bị / Phòng bộ môn:</label>
-          <select id="modal-equip-name" class="w-full border border-slate-300 rounded-lg px-3 py-2 bg-white">
-            <option value="Máy chiếu di động số 02">Máy chiếu di động số 02</option>
-            <option value="Bộ thí nghiệm Quang học Vật lý">Bộ thí nghiệm Quang học Vật lý</option>
-            <option value="Phòng Thực hành Tin học 1">Phòng Thực hành Tin học 1</option>
-          </select>
-        </div>
+        <div><label class="block mb-1">Thiết bị / Phòng:</label><input type="text" id="modal-equip-name" required class="w-full border rounded-lg px-3 py-2"></div>
         <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block font-medium text-slate-700 mb-1">Ngày mượn:</label>
-            <input type="date" id="modal-equip-date" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
-          </div>
-          <div>
-            <label class="block font-medium text-slate-700 mb-1">Tiết dạy / Lớp:</label>
-            <input type="text" id="modal-equip-period" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
-          </div>
+          <div><label class="block mb-1">Ngày mượn:</label><input type="date" id="modal-equip-date" required class="w-full border rounded-lg px-3 py-2"></div>
+          <div><label class="block mb-1">Tiết dạy / Lớp:</label><input type="text" id="modal-equip-period" required class="w-full border rounded-lg px-3 py-2"></div>
         </div>
-        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
-          <button type="button" onclick="closeEquipmentModal()" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-600">Hủy</button>
-          <button type="submit" class="px-5 py-2 rounded-lg bg-purple-600 text-white font-medium">Xác Nhận Mượn</button>
-        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t"><button type="button" onclick="closeEquipmentModal()" class="px-4 py-2 border rounded-lg">Hủy</button><button type="submit" class="px-5 py-2 bg-purple-600 text-white rounded-lg">Xác Nhận</button></div>
       </form>
     </div>
   </div>
 
-  <!-- CHỈ KẾT NỐI VỚI APP.JS -->
+  <!-- KẾT NỐI VỚI FILE JS -->
   <script src="app.js"></script>
 </body>
 </html>
