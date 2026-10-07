@@ -2,7 +2,7 @@
 // CẤU HÌNH API & TÀI KHOẢN (ĐIỀN LINK WEB APP THẬT CỦA CÔ VÀO ĐÂY)
 // =======================================================
 
-const SCRIPT_API_URL = "https://script.google.com/macros/u/1/s/AKfycbxKqmkVAW2iGr96AF8-icSKKNdOGLEXqwAEAiANm1VYD21ARQk0KzHnbY-_BGRTwtsB0A/exec";
+const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbwo0e6Wz_zQFih0X3FhizMBNNSt8SVzf-F-sc9YSLdVPX4ra_-tSUXa2TrvMIkHA5RX/exec";
 const GOOGLE_CLIENT_ID = "575102440654-fvv1hcq0p7buoh4ov3rgjk4p56o2d3bk.apps.googleusercontent.com";
 
 
