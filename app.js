@@ -286,3 +286,54 @@ async function assignTaskToTeacher(gvCode, gvName) {
     } else { alert("Lỗi: " + json.error); }
   } catch (e) { alert("Lỗi kết nối!"); }
 }
+// Bổ sung các hàm điều hướng tab và mở modal còn thiếu vào app.js:
+function switchKpiTab(tabName) {
+  currentKpiTab = tabName;
+  currentPage = 1;
+  ["all", "available", "registered"].forEach(t => {
+    const btn = document.getElementById("tab-" + t);
+    if (btn) {
+      btn.className = (t === tabName) ? "px-3.5 py-1.5 rounded-lg bg-white text-indigo-600 shadow-sm font-bold" : "px-3.5 py-1.5 rounded-lg text-slate-600";
+    }
+  });
+  renderTeacherDashboard();
+}
+
+function changePageSize(size) {
+  itemsPerPage = Number(size);
+  currentPage = 1;
+  renderTeacherDashboard();
+}
+
+function prevPage() {
+  if (currentPage > 1) { currentPage--; renderTeacherDashboard(); }
+}
+
+function nextPage() {
+  currentPage++;
+  renderTeacherDashboard();
+}
+
+function switchBghTab(tab) {
+  bghActiveTab = tab;
+  ["grading", "assign", "stats"].forEach(t => {
+    const btn = document.getElementById(`bgh-tab-${t}-btn`);
+    const content = document.getElementById(`bgh-tab-content-${t}`);
+    if(btn) btn.className = (t === tab) ? "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold" : "px-5 py-3 border-b-2 border-transparent text-slate-500";
+    if(content) content.classList.toggle("hidden", t !== tab);
+  });
+  if (tab === "grading") renderBGHGradingTable();
+  if (tab === "assign") renderBghAssignTable();
+}
+
+function changeBghPageSize(val) { bghItemsPerPage = Number(val); bghPage = 1; renderBGHGradingTable(); }
+function prevBghPage() { if (bghPage > 1) { bghPage--; renderBGHGradingTable(); } }
+function nextBghPage() { bghPage++; renderBGHGradingTable(); }
+
+// Các hàm mở/đóng modal phụ trợ
+function openAddDisciplineModal() { const el = document.getElementById("discipline-modal"); if(el) el.classList.remove("hidden"); }
+function closeAddDisciplineModal() { const el = document.getElementById("discipline-modal"); if(el) el.classList.add("hidden"); }
+function openLeaveModal() { const el = document.getElementById("leave-modal"); if(el) el.classList.remove("hidden"); }
+function closeLeaveModal() { const el = document.getElementById("leave-modal"); if(el) el.classList.add("hidden"); }
+function openEquipmentModal() { const el = document.getElementById("equipment-modal"); if(el) el.classList.remove("hidden"); }
+function closeEquipmentModal() { const el = document.getElementById("equipment-modal"); if(el) el.classList.add("hidden"); }
