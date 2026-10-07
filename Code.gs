@@ -5,7 +5,7 @@ const properties = PropertiesService.getScriptProperties();
 
 // Khai báo ID trang tính từ ENV.
 // Người dùng tự cài đặt thuộc tính SHEET_DATA_ID trong phần Cài đặt dự án của Apps Script.
-const SPREADSHEET_ID = '1qJyIXs80N_ds-lqsKoWYLgY63l86vnPZp7UX1-6Hg54';
+const SPREADSHEET_ID = properties.getProperty('SHEET_DATA_ID');
 
 // =========================================================
 // HÀM HỖ TRỢ: LẤY DANH SÁCH EMAIL BGH TỪ SHEET 'Nhân sự'
