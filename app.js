@@ -2,8 +2,8 @@
 // CẤU HÌNH API & TÀI KHOẢN
 // =======================================================
 // ĐIỀN ĐƯỜNG LINK GOOGLE SCRIPT CỦA CÔ VÀO ĐÂY:
-const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfyc.../exec";
-const GOOGLE_CLIENT_ID = "1017573987823-tsgmmms10dptct2qj6o7kj9gh33fra7u.apps.googleusercontent.com";
+const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbxKqmkVAW2iGr96AF8-icSKKNdOGLEXqwAEAiANm1VYD21ARQk0KzHnbY-_BGRTwtsB0A/exec";
+const GOOGLE_CLIENT_ID = "575102440654-fvv1hcq0p7buoh4ov3rgjk4p56o2d3bk.apps.googleusercontent.com";
 
 // Khởi tạo trạng thái rỗng hoàn toàn, chỉ đợi Google Script cấp dữ liệu
 let appData = { staff: [], tasks: [], registrations: [], disciplines: [], leaves: [], equipmentBorrows: [], bghEmails: [] };
