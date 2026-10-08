@@ -1070,24 +1070,42 @@
       } catch (e) { return null; }
     }
 
+    // =========================================================
+    // 1. KHI ĐĂNG NHẬP GOOGLE -> TỰ ĐỘNG GỌI API LẤY DATA BGH DỰ BÀO RỒI MỚI CHECK QUYỀN
+    // =========================================================
     function handleGoogleLoginResponse(response) {
       const payload = parseJwt(response.credential);
-      if (payload) {
-        processUserSession(payload.email, payload.name, payload.picture);
+      if (!payload || !payload.email) {
+        alert("Không thể lấy email từ Google SDK!");
+        return;
       }
+
+      // Hiển thị thông báo đang tải dữ liệu
+      openLoginModal("⏳ Đang đồng bộ dữ liệu và kiểm tra phân quyền...");
+
+      // Gọi API lấy dữ liệu mới nhất từ Apps Script trước khi gán session
+      fetchRemoteData(function() {
+        processUserSession(payload.email, payload.name, payload.picture);
+      });
     }
 
+    // =========================================================
+    // 2. HÀM XỬ LÝ PHÂN QUYỀN BGH DỰA TRÊN DỮ LIỆU ĐÃ LẤY TỪ BACKEND
+    // =========================================================
     function processUserSession(email, name, avatar) {
       const lowerEmail = email.toLowerCase().trim();
       let role = "GV";
 
-      // 1. Tìm thông tin nhân sự theo email
+      // Tìm hồ sơ nhân sự theo email
       let staffProfile = appData.staff.find(s => s.email && s.email.toLowerCase().trim() === lowerEmail);
 
-      // 2. Kiểm tra xem email có thuộc bghEmails từ Sheet HOẶC Cột F (Vai trò) === 'BGH'
+      // Check 1: Nằm trong mảng bghEmails backend trả về
       const isBghFromList = appData.bghEmails && appData.bghEmails.includes(lowerEmail);
+
+      // Check 2: Thuộc tính role trong nhân sự === 'BGH'
       const isBghFromRole = staffProfile && String(staffProfile.role).trim().toUpperCase() === 'BGH';
 
+      // Nếu thỏa mãn 1 trong 2 điều kiện -> Gán quyền BGH
       if (isBghFromList || isBghFromRole) {
         role = "BGH";
       }
@@ -1107,9 +1125,15 @@
       renderAppView();
     }
 
-    // --- ĐỒNG BỘ DỮ LIỆU BẤT ĐỒNG BỘ VÀ CẬP NHẬT QUYỀN LẠI ---
+    // =========================================================
+    // 3. HÀM GỌI API BACKEND GET DỮ LIỆU BẰNG JSONP
+    // =========================================================
     function fetchRemoteData(callbackFn) {
-      if (!SCRIPT_API_URL || SCRIPT_API_URL.includes("YOUR_")) return;
+      if (!SCRIPT_API_URL || SCRIPT_API_URL.includes("YOUR_")) {
+        if (callbackFn) callbackFn();
+        return;
+      }
+
       const cbName = 'onDataInit_' + Math.round(1000000 * Math.random());
 
       window[cbName] = function(json) {
@@ -1122,31 +1146,34 @@
           appData.staff = json.staff || [];
           appData.registrations = json.registrations || [];
           appData.bghEmails = json.bghEmails || [];
-
-          // Cập nhật lại quyền nếu người dùng đã đăng nhập trước khi dữ liệu phản hồi xong
-          if (currentUser) {
-            const lowerEmail = currentUser.email.toLowerCase().trim();
-            const st = appData.staff.find(s => s.email && s.email.toLowerCase().trim() === lowerEmail);
-
-            const isBghList = appData.bghEmails.includes(lowerEmail);
-            const isBghRole = st && String(st.role).trim().toUpperCase() === 'BGH';
-
-            if (isBghList || isBghRole) {
-              currentUser.role = "BGH";
-            }
-            if (st) {
-              currentUser.code = st.code;
-              currentUser.name = st.name;
-            }
-            renderAppView();
-          }
         }
+
+        // Chạy callback đăng nhập sau khi đã nhận xong dữ liệu
         if (callbackFn) callbackFn(json);
       };
 
       const script = document.createElement('script');
       script.id = cbName;
       script.src = `${SCRIPT_API_URL}?action=getInitialData&callback=${cbName}`;
+      script.onerror = function() {
+        console.warn("Lỗi JSONP script, đang chuyển sang Fetch API...");
+        fetch(`${SCRIPT_API_URL}?action=getInitialData`)
+          .then(r => r.json())
+          .then(json => {
+            if (json && json.success) {
+              appData.tasks = json.tasks || [];
+              appData.staff = json.staff || [];
+              appData.registrations = json.registrations || [];
+              appData.bghEmails = json.bghEmails || [];
+            }
+            if (callbackFn) callbackFn(json);
+          })
+          .catch(e => {
+            console.error("Lỗi kết nối Backend:", e);
+            if (callbackFn) callbackFn();
+          });
+      };
+
       document.body.appendChild(script);
     }
 
