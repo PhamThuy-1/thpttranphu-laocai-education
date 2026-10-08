@@ -1081,14 +1081,18 @@
       const lowerEmail = email.toLowerCase().trim();
       let role = "GV";
 
-      // Kiểm tra BGH từ mảng quét động trên Sheet
-      const isBgh = appData.bghEmails && appData.bghEmails.includes(lowerEmail);
-      if (isBgh) role = "BGH";
+      // 1. Tìm thông tin nhân sự theo email
+      let staffProfile = appData.staff.find(s => s.email && s.email.toLowerCase().trim() === lowerEmail);
 
-      // Khớp nhân sự từ bảng
-      let staffProfile = appData.staff.find(s => s.email && s.email.toLowerCase() === lowerEmail);
+      // 2. Kiểm tra xem email có thuộc bghEmails từ Sheet HOẶC Cột F (Vai trò) === 'BGH'
+      const isBghFromList = appData.bghEmails && appData.bghEmails.includes(lowerEmail);
+      const isBghFromRole = staffProfile && String(staffProfile.role).trim().toUpperCase() === 'BGH';
 
-      let userCode = staffProfile ? staffProfile.code : (isBgh ? "BGH" : "GV_NEW");
+      if (isBghFromList || isBghFromRole) {
+        role = "BGH";
+      }
+
+      let userCode = staffProfile ? staffProfile.code : (role === "BGH" ? "BGH" : "GV_NEW");
       let userName = staffProfile ? staffProfile.name : name;
 
       currentUser = {
@@ -1101,6 +1105,49 @@
 
       closeLoginModal();
       renderAppView();
+    }
+
+    // --- ĐỒNG BỘ DỮ LIỆU BẤT ĐỒNG BỘ VÀ CẬP NHẬT QUYỀN LẠI ---
+    function fetchRemoteData(callbackFn) {
+      if (!SCRIPT_API_URL || SCRIPT_API_URL.includes("YOUR_")) return;
+      const cbName = 'onDataInit_' + Math.round(1000000 * Math.random());
+
+      window[cbName] = function(json) {
+        delete window[cbName];
+        const el = document.getElementById(cbName);
+        if (el) el.remove();
+
+        if (json && json.success) {
+          appData.tasks = json.tasks || [];
+          appData.staff = json.staff || [];
+          appData.registrations = json.registrations || [];
+          appData.bghEmails = json.bghEmails || [];
+
+          // Cập nhật lại quyền nếu người dùng đã đăng nhập trước khi dữ liệu phản hồi xong
+          if (currentUser) {
+            const lowerEmail = currentUser.email.toLowerCase().trim();
+            const st = appData.staff.find(s => s.email && s.email.toLowerCase().trim() === lowerEmail);
+
+            const isBghList = appData.bghEmails.includes(lowerEmail);
+            const isBghRole = st && String(st.role).trim().toUpperCase() === 'BGH';
+
+            if (isBghList || isBghRole) {
+              currentUser.role = "BGH";
+            }
+            if (st) {
+              currentUser.code = st.code;
+              currentUser.name = st.name;
+            }
+            renderAppView();
+          }
+        }
+        if (callbackFn) callbackFn(json);
+      };
+
+      const script = document.createElement('script');
+      script.id = cbName;
+      script.src = `${SCRIPT_API_URL}?action=getInitialData&callback=${cbName}`;
+      document.body.appendChild(script);
     }
 
     function logout() {

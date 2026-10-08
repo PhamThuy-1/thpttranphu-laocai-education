@@ -1,8 +1,7 @@
 // =========================================================
 // CẤU HÌNH ID TRANG TÍNH GOOGLE SHEET
 // =========================================================
-const properties = PropertiesService.getScriptProperties();
-const SPREADSHEET_ID = properties.getProperty('SHEET_DATA_ID') || '1qJyIXs80N_ds-lqsKoWYLgY63l86vnPZp7UX1-6Hg54';
+const SPREADSHEET_ID ='1qJyIXs80N_ds-lqsKoWYLgY63l86vnPZp7UX1-6Hg54';
 
 // =========================================================
 // HÀM HỖ TRỢ: QUÉT ĐỘNG DANH SÁCH EMAIL BGH TỪ SHEET 'Nhân sự'
@@ -26,8 +25,9 @@ function getBghEmails(ss) {
       }
     }
   }
+  console.log(bghList);
   if (bghList.length === 0) {
-    bghList = ['bgh@laocai.edu.vn', 'hieutruong.c3tp@yenbai.edu.vn'];
+    bghList = [];
   }
   return [...new Set(bghList)];
 }
