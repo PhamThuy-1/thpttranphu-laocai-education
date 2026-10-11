@@ -1638,15 +1638,97 @@
       });
       return set.size;
     }
-    let monthPlanData = [];
-    let weekPlanData = [];
+    // =============================================================
+    // KHỞI TẠO INDEXEDDB LƯU TRỮ TỆP PDF KHÔNG GIỚI HẠN DUNG LƯỢNG
+    // =============================================================
+    let dbPlan;
+    const requestDB = indexedDB.open("PlanFilesDB", 1);
+    requestDB.onupgradeneeded = function(e) {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains("pdf_files")) {
+        db.createObjectStore("pdf_files", { keyPath: "id" });
+      }
+    };
+    requestDB.onsuccess = function(e) {
+      dbPlan = e.target.result;
+    };
+    requestDB.onerror = function(e) {
+      console.error("Lỗi mở IndexedDB:", e);
+    };
+
+    function savePdfToDB(id, fileData, callback) {
+      if (!dbPlan) {
+        if (callback) callback();
+        return;
+      }
+      const tx = dbPlan.transaction("pdf_files", "readwrite");
+      const store = tx.objectStore("pdf_files");
+      store.put({ id: id, data: fileData });
+      tx.oncomplete = function() {
+        if (callback) callback();
+      };
+    }
+
+    function getPdfFromDB(id, callback) {
+      if (!dbPlan) {
+        callback(null);
+        return;
+      }
+      const tx = dbPlan.transaction("pdf_files", "readonly");
+      const store = tx.objectStore("pdf_files");
+      const req = store.get(id);
+      req.onsuccess = function() {
+        callback(req.result ? req.result.data : null);
+      };
+      req.onerror = function() {
+        callback(null);
+      };
+    }
+
+    // -------------------------------------------------------------
+    // DỮ LIỆU KẾ HOẠCH HOẠT ĐỘNG (12 THÁNG & 40 TUẦN)
+    // -------------------------------------------------------------
+    const MONTH_LABELS = [
+      "Tháng 08/2026", "Tháng 09/2026", "Tháng 10/2026", "Tháng 11/2026", 
+      "Tháng 12/2026", "Tháng 01/2027", "Tháng 02/2027", "Tháng 03/2027", 
+      "Tháng 04/2027", "Tháng 05/2027", "Tháng 06/2027", "Tháng 07/2027"
+    ];
+
+    let monthPlanData = JSON.parse(localStorage.getItem('PLAN_MONTH_DATA_2026_2027') || 'null');
+    if (!monthPlanData) {
+      monthPlanData = MONTH_LABELS.map((m, idx) => ({
+        id: `M-${idx + 1}`,
+        title: m,
+        fileName: "",
+        hasFile: false,
+        fileData: "",
+        updatedAt: "--"
+      }));
+      localStorage.setItem('PLAN_MONTH_DATA_2026_2027', JSON.stringify(monthPlanData));
+    }
+
+    let weekPlanData = JSON.parse(localStorage.getItem('PLAN_WEEK_DATA_2026_2027') || 'null');
+    if (!weekPlanData) {
+      weekPlanData = [];
+      for (let i = 1; i <= 40; i++) {
+        const numStr = i < 10 ? `0${i}` : `${i}`;
+        weekPlanData.push({
+          id: `W-${numStr}`,
+          weekNum: i,
+          title: `Tuần ${numStr}`,
+          fileName: "",
+          hasFile: false,
+          fileData: "",
+          updatedAt: "--"
+        });
+      }
+      localStorage.setItem('PLAN_WEEK_DATA_2026_2027', JSON.stringify(weekPlanData));
+    }
+
     let currentWeekPage = 1;
     const WEEKS_PER_PAGE = 10;
+    const TOTAL_WEEK_PAGES = Math.ceil(40 / WEEKS_PER_PAGE);
     let currentPlanTab = 'month';
-
-    function totalWeekPages() {
-      return Math.max(1, Math.ceil(weekPlanData.length / WEEKS_PER_PAGE));
-    }
 
     function switchPlanTab(tab) {
       currentPlanTab = tab;
@@ -1668,8 +1750,7 @@
       }
     }
 
-  function renderActionPlanModule() {
-    
+    function renderActionPlanModule() {
       renderMonthPlanTable();
       renderWeekPlanTable();
     }
@@ -1678,10 +1759,6 @@
       const tbody = document.getElementById('plan-month-table-body');
       let html = '';
 
-      if (!monthPlanData.length) {
-        tbody.innerHTML = '<tr><td colspan="5" class="py-8 text-center text-slate-500">Sheet KeHoach chưa có kế hoạch tháng.</td></tr>';
-        return;
-      }
       monthPlanData.forEach((item, index) => {
         const fileDisplay = item.hasFile 
           ? `<span class="inline-flex items-center gap-1.5 font-semibold text-slate-800"><span class="text-blue-600 text-base">📘</span> ${item.fileName}</span>`
@@ -1721,21 +1798,11 @@
 
     function renderWeekPlanTable() {
       const tbody = document.getElementById('plan-week-table-body');
-      const totalPages = totalWeekPages();
-      currentWeekPage = Math.min(currentWeekPage, totalPages);
       const startIdx = (currentWeekPage - 1) * WEEKS_PER_PAGE;
       const endIdx = startIdx + WEEKS_PER_PAGE;
       const pageItems = weekPlanData.slice(startIdx, endIdx);
 
       let html = '';
-      if (!weekPlanData.length) {
-        tbody.innerHTML = '<tr><td colspan="5" class="py-8 text-center text-slate-500">Sheet KeHoach chưa có kế hoạch tuần.</td></tr>';
-        document.getElementById('week-page-info').innerText = 'Chưa có dữ liệu';
-        document.getElementById('btn-prev-week').disabled = true;
-        document.getElementById('btn-next-week').disabled = true;
-        document.getElementById('week-page-numbers').innerHTML = '';
-        return;
-      }
       pageItems.forEach((item, index) => {
         const globalStt = startIdx + index + 1;
         const fileDisplay = item.hasFile 
@@ -1772,12 +1839,12 @@
       });
       tbody.innerHTML = html;
 
-      document.getElementById('week-page-info').innerText = `Trang ${currentWeekPage} / ${totalPages}`;
+      document.getElementById('week-page-info').innerText = `Trang ${currentWeekPage} / ${TOTAL_WEEK_PAGES}`;
       document.getElementById('btn-prev-week').disabled = (currentWeekPage === 1);
-      document.getElementById('btn-next-week').disabled = (currentWeekPage === totalPages);
+      document.getElementById('btn-next-week').disabled = (currentWeekPage === TOTAL_WEEK_PAGES);
 
       let pageNumHtml = '';
-      for (let p = 1; p <= totalPages; p++) {
+      for (let p = 1; p <= TOTAL_WEEK_PAGES; p++) {
         if (p === currentWeekPage) {
           pageNumHtml += `<span class="w-7 h-7 flex items-center justify-center bg-indigo-600 text-white rounded-lg font-bold">${p}</span>`;
         } else {
@@ -1789,7 +1856,7 @@
 
     function changeWeekPage(delta) {
       const target = currentWeekPage + delta;
-      if (target >= 1 && target <= totalWeekPages()) {
+      if (target >= 1 && target <= TOTAL_WEEK_PAGES) {
         currentWeekPage = target;
         renderWeekPlanTable();
       }
@@ -1817,7 +1884,7 @@
       document.getElementById('upload-doc-modal').classList.add('hidden');
     }
 
-    async function confirmUploadDocFile() {
+    function confirmUploadDocFile() {
       const fileInput = document.getElementById('upload-file-input');
       if (!fileInput.files || fileInput.files.length === 0) {
         alert("Vui lòng chọn tệp định dạng .pdf từ máy tính của bạn!");
@@ -1829,35 +1896,54 @@
         alert("Vui lòng chỉ chọn tệp văn bản có phần mở rộng .pdf!");
         return;
       }
-      if (file.size > 8 * 1024 * 1024) {
-        alert("Dung lượng PDF không được vượt quá 8 MB.");
-        return;
-      }
-      try {
-        const fileData = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = () => reject(new Error("Không đọc được tệp PDF đã chọn."));
-          reader.readAsDataURL(file);
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64Data = e.target.result;
+        const now = new Date();
+        const timeStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+        const targetId = currentUploadTarget.id;
+
+        // Lưu file nặng vào IndexedDB (không làm phình dung lượng)
+        savePdfToDB(targetId, base64Data, function() {
+          if (currentUploadTarget.type === 'month') {
+            const item = monthPlanData.find(m => m.id === targetId);
+            if (item) {
+              item.fileName = file.name;
+              item.hasFile = true;
+              item.updatedAt = timeStr;
+              item.fileData = "";
+              try {
+                localStorage.setItem('PLAN_MONTH_DATA_2026_2027', JSON.stringify(monthPlanData));
+              } catch(err) {
+                console.warn("Lỗi ghi localStorage:", err);
+              }
+            }
+          } else if (currentUploadTarget.type === 'week') {
+            const item = weekPlanData.find(w => w.id === targetId);
+            if (item) {
+              item.fileName = file.name;
+              item.hasFile = true;
+              item.updatedAt = timeStr;
+              item.fileData = "";
+              try {
+                localStorage.setItem('PLAN_WEEK_DATA_2026_2027', JSON.stringify(weekPlanData));
+              } catch(err) {
+                console.warn("Lỗi ghi localStorage:", err);
+              }
+            }
+          }
+
+          closeUploadDocModal();
+          renderActionPlanModule();
+          alert(`✅ Đã tải lên và lưu thành công tệp: ${file.name}`);
         });
-        await apiRequest("uploadActionPlan", {
-          type: currentUploadTarget.type,
-          id: currentUploadTarget.id,
-          fileName: file.name,
-          fileData
-        });
-        const planData = await apiRequest("getActionPlan");
-        monthPlanData = planData.months;
-        weekPlanData = planData.weeks;
-        closeUploadDocModal();
-        renderActionPlanModule();
-        alert(`Đã tải tệp ${file.name} lên Google Drive và cập nhật Sheet.`);
-      } catch (error) {
-        alert(`Không thể tải kế hoạch lên: ${error.message}`);
-      }
+      };
+      reader.readAsDataURL(file);
     }
 
-    async function viewDocPlan(type, id) {
+    function viewDocPlan(type, id) {
       let item = (type === 'month') 
         ? monthPlanData.find(m => m.id === id) 
         : weekPlanData.find(w => w.id === id);
@@ -1874,24 +1960,30 @@
       const iframe = document.getElementById('pdf-viewer-frame');
       iframe.src = "about:blank";
 
+      // Lấy file từ IndexedDB ra để hiển thị trên iframe
+      getPdfFromDB(id, function(fileData) {
+        const dataToShow = fileData || item.fileData;
+        if (dataToShow) {
+          iframe.src = dataToShow;
+        } else {
+          alert("Tệp chưa có dữ liệu tải lên thực tế.");
+        }
+      });
+
       document.getElementById('btn-modal-download').onclick = function() {
         downloadDocPlan(type, id);
       };
+
       document.getElementById('view-doc-modal').classList.remove('hidden');
-      try {
-        const file = await apiRequest("getActionPlanFile", { type, id });
-        iframe.src = `data:${file.contentType};base64,${file.fileData}`;
-      } catch (error) {
-        closeViewDocModal();
-        alert(`Không thể tải tệp kế hoạch: ${error.message}`);
-      }
     }
- function closeViewDocModal() {
+
+    function closeViewDocModal() {
       const iframe = document.getElementById('pdf-viewer-frame');
       if (iframe) iframe.src = "about:blank";
       document.getElementById('view-doc-modal').classList.add('hidden');
     }
-    async function downloadDocPlan(type, id) {
+
+    function downloadDocPlan(type, id) {
       let item = (type === 'month') 
         ? monthPlanData.find(m => m.id === id) 
         : weekPlanData.find(w => w.id === id);
@@ -1901,19 +1993,20 @@
         return;
       }
 
-      try {
-        const file = await apiRequest("getActionPlanFile", { type, id });
-        const link = document.createElement('a');
-        link.href = `data:${file.contentType};base64,${file.fileData}`;
-        link.download = file.fileName || item.fileName || `${item.title}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } catch (error) {
-        alert(`Không thể tải tệp kế hoạch: ${error.message}`);
-      }
+      getPdfFromDB(id, function(fileData) {
+        const dataToDownload = fileData || item.fileData;
+        if (dataToDownload) {
+          const link = document.createElement('a');
+          link.href = dataToDownload;
+          link.download = item.fileName || `${item.title}.pdf`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else {
+          alert("Tệp này chưa có dữ liệu tải lên thực tế.");
+        }
+      });
     }
-
     // --- CẬP NHẬT THÔNG BÁO SỐ NHIỆM VỤ KPI CẦN HOÀN THÀNH ---
     function updateKpiNotificationBadge() {
       const badge = document.getElementById("kpi-badge-tile");
