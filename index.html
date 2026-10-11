@@ -1117,7 +1117,6 @@
     </section>
 
     <!-- VIEW 7: PHÂN HỆ KẾ HOẠCH HOẠT ĐỘNG -->
-    <!-- VIEW 7: PHÂN HỆ KẾ HOẠCH HOẠT ĐỘNG -->
     <section id="actionplan-section" class="hidden flex-col space-y-4">
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div class="flex items-center gap-3">
@@ -2104,10 +2103,10 @@
     }
 
     function navigateToModule(moduleKey) {
-      if (!currentUser) {
-        openLoginModal("Vui lòng đăng nhập để truy cập phân hệ nghiệp vụ này.");
-        return;
-      }
+  if (!currentUser && moduleKey !== "actionplan") {
+    openLoginModal("Vui lòng đăng nhập để truy cập phân hệ nghiệp vụ này.");
+    return;
+  }
 
       currentModule = moduleKey;
       hideAllSections();
