@@ -99,7 +99,7 @@ function authenticateRequest_(idToken) {
     throw new Error('Vui lòng đăng nhập bằng tài khoản Google của trường.');
   }
 
-  const clientId = 575102440654-fvv1hcq0p7buoh4ov3rgjk4p56o2d3bk.apps.googleusercontent.com //PropertiesService.getScriptProperties().getProperty('GOOGLE_CLIENT_ID');
+  const clientId = PropertiesService.getScriptProperties().getProperty('GOOGLE_CLIENT_ID');
   if (!clientId) throw new Error('Hệ thống chưa cấu hình xác thực Google.');
 
   const response = UrlFetchApp.fetch('https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(idToken), {
