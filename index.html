@@ -4545,25 +4545,34 @@
 	// =========================================================================
     // 7. XUẤT BÁO CÁO TỔNG HỢP THEO LỚP CHO GVCN (CÓ TỔNG CỘNG TỪNG CỘT LỖI)
     // =========================================================================
-    async function exportClassSummaryReportExcel() {
+   async function exportClassSummaryReportExcel() {
       if (typeof XLSX === "undefined") {
         alert("⚠️ Đang tải thư viện xuất Excel, vui lòng thử lại sau 2 giây!");
         return;
       }
 
-      // 1. Xác định lớp chủ nhiệm của tài khoản đang đăng nhập
+      // 1. Xác định lớp cần xuất báo cáo
       let targetClass = "";
       if (currentUser) {
         if (currentUser.homeroom && currentUser.homeroom.trim() !== "") {
           targetClass = currentUser.homeroom.trim();
         } else if (currentUser.role === "BGH") {
-          const overrideInput = document.getElementById("input-student-class");
-          targetClass = (overrideInput && overrideInput.value && overrideInput.value !== "Chưa phân công CN") ? overrideInput.value.trim() : "";
+          // Kiểm tra xem BGH đã chọn lớp nào chưa
+          const bghSelect = document.getElementById("select-bgh-override-class");
+          if (bghSelect && bghSelect.value && bghSelect.value !== "") {
+            targetClass = bghSelect.value.trim();
+          } else {
+            // Nếu BGH chưa chọn lớp, lấy danh sách lớp có trong sheet và hỏi BGH
+            const allClasses = [...new Set((studentListFromSheet || []).map(s => String(s.lop || '').trim()).filter(Boolean))].sort();
+            const chosen = prompt(`Ban Giám Hiệu vui lòng nhập tên lớp cần xuất báo cáo:\n(Các lớp hiện có: ${allClasses.join(", ")})`, allClasses[0] || "");
+            if (!chosen) return;
+            targetClass = chosen.trim();
+          }
         }
       }
 
       if (!targetClass) {
-        alert("⚠️ Không xác định được lớp chủ nhiệm của bạn! Chỉ giáo viên chủ nhiệm mới xuất được báo cáo này.");
+        alert("⚠️ Không xác định được lớp để xuất báo cáo! Vui lòng chọn lớp trước khi xuất.");
         return;
       }
 
@@ -4579,7 +4588,7 @@
       // 3. Lấy danh sách toàn bộ học sinh của lớp từ dữ liệu sheet HS
       const classStudents = (studentListFromSheet || []).filter(s => cleanStr(s.lop) === cleanStr(targetClass));
       if (classStudents.length === 0) {
-        alert(`⚠️ Không tìm thấy danh sách học sinh thuộc lớp ${targetClass}!`);
+        alert(`⚠️ Không tìm thấy danh sách học sinh thuộc lớp ${targetClass} trong Sheet HS!`);
         return;
       }
 
@@ -4595,7 +4604,7 @@
         const result = await apiRequest("getStudentViolations", {
           fromDate: startDate, toDate: endDate, className: targetClass
         });
-        const rawViolations = result.data;
+        const rawViolations = result.data || [];
 
         // Lọc các vi phạm đúng lớp
         const classViolations = rawViolations.filter(v => cleanStr(v.lop) === cleanStr(targetClass));
@@ -4634,7 +4643,7 @@
         const excelRows = [];
         excelRows.push([`BÁO CÁO TỔNG HỢP VI PHẠM NỀ NẾP HỌC SINH - LỚP ${targetClass.toUpperCase()}`]);
         excelRows.push([`Thời gian theo dõi: ${dateRangeText}`]);
-        excelRows.push([`Giáo viên chủ nhiệm: ${currentUser ? currentUser.name : ''}`]);
+        excelRows.push([`Người xuất báo cáo: ${currentUser ? currentUser.name : ''}`]);
         excelRows.push([]);
 
         // Hàng tiêu đề cột
@@ -4688,14 +4697,12 @@
         const ws = XLSX.utils.aoa_to_sheet(excelRows);
 
         ws["!cols"] = [
-          { wch: 6 },  // STT
-          { wch: 18 }, // Mã HS
-          { wch: 25 }, // Họ tên
-          { wch: 8 },  // Lớp
-          { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 },
-          { wch: 12 }, { wch: 22 }, { wch: 14 }, { wch: 24 }, { wch: 12 },
-          { wch: 18 }, { wch: 18 }, { wch: 14 }, { wch: 24 }, { wch: 12 },
-          { wch: 15 }  // Tổng số lỗi
+          { wch: 6 },
+          { wch: 18 },
+          { wch: 25 },
+          { wch: 8 },
+          ...ERROR_KEYS.map(() => ({ wch: 14 })),
+          { wch: 15 }
         ];
 
         XLSX.utils.book_append_sheet(wb, ws, `TongHop_${targetClass}`);
@@ -4704,7 +4711,7 @@
 
       } catch (err) {
         console.error("Lỗi khi xuất báo cáo:", err);
-        alert("❌ Có lỗi xảy ra khi tạo báo cáo Excel. Vui lòng thử lại!");
+        alert(`❌ Có lỗi xảy ra: ${err.message || "Vui lòng thử lại!"}`);
       } finally {
         if (btn) {
           btn.disabled = false;
@@ -4712,7 +4719,6 @@
         }
       }
     }
-
     // =========================================================================
     // 8. XUẤT BẢNG TỔNG HỢP THEO LỚP VIỆC THEO DÕI NỀN NẾP HỌC SINH (CHUẨN MẪU)
     // =========================================================================
