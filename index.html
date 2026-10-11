@@ -89,7 +89,7 @@
 
     <!-- VIEW 1: TRANG CHỦ PORTAL HUB -->
     <section id="portal-section" class="flex flex-col justify-between h-full space-y-3 sm:space-y-4">
-      
+
       <!-- HERO BANNER TRƯỜNG -->
       <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shadow-xl border border-indigo-500/20 flex-shrink-0">
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(99,102,241,0.3),transparent_70%)] pointer-events-none"></div>
@@ -101,7 +101,7 @@
               <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               Cổng Giáo Dục Số & Điều Hành Tác Nghiệp
             </div>
-            
+
             <div>
               <h2 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white drop-shadow-sm uppercase">
                 TRƯỜNG THPT TRẦN PHÚ
@@ -123,7 +123,7 @@
               </span>
             </div>
           </div>
-          
+
           <div class="w-full lg:w-[380px] xl:w-[440px] h-36 sm:h-44 rounded-xl overflow-hidden border-2 border-white/20 shadow-2xl relative flex-shrink-0 group">
             <img src="BIA.jpg" alt="Cảnh quan trường THPT Trần Phú" class="w-full h-full object-cover">
           </div>
@@ -140,7 +140,7 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-3.5 flex-1 items-stretch">
-          
+
           <!-- 1. KPI CỦA TÔI -->
           <div onclick="navigateToModule('kpi_me')" class="relative group bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 hover:border-indigo-500 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between shadow-sm">
             <div id="kpi-badge-tile" class="hidden absolute -top-2 -right-2 bg-rose-600 text-white font-extrabold text-[10px] px-2.5 py-0.5 rounded-full shadow-lg border-2 border-white animate-badge z-10">
@@ -638,7 +638,7 @@
 
    <!-- VIEW 4: PHÂN HỆ QUẢN LÝ HỌC SINH (GỒM 2 THẺ: NHẬP LIỆU & THỐNG KÊ) -->
     <section id="students-section" class="hidden max-w-7xl mx-auto p-1 sm:p-2 space-y-5 text-slate-800">
-      
+
       <!-- Header Phân hệ -->
       <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center gap-3">
@@ -1177,7 +1177,7 @@
             <p class="text-xs text-slate-500 font-medium">Năm học 2026 - 2027 • Trường THPT Trần Phú</p>
           </div>
         </div>
-       
+
       </div>
 
       <div class="bg-white rounded-2xl border border-slate-200 p-2 flex items-center gap-2 shadow-sm">
@@ -1227,7 +1227,7 @@
               </h3>
               <p class="text-[11px] text-slate-500">Phân bố tuần lễ công tác năm học 2026 - 2027</p>
             </div>
-            
+
             <div class="flex items-center gap-1.5 text-xs font-semibold">
               <span id="week-page-info" class="text-slate-500 mr-2">Trang 1 / 4</span>
               <button onclick="changeWeekPage(-1)" id="btn-prev-week" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 disabled:opacity-40 transition">
@@ -1530,7 +1530,7 @@
               ➕ Thêm ngày / tiết nghỉ mới
             </button>
           </div>
-          
+
           <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
             <table class="w-full text-left border-collapse">
               <thead>
@@ -1767,8 +1767,8 @@
     // DỮ LIỆU KẾ HOẠCH HOẠT ĐỘNG
     // -------------------------------------------------------------
     const MONTH_LABELS = [
-      "Tháng 08/2026", "Tháng 09/2026", "Tháng 10/2026", "Tháng 11/2026", 
-      "Tháng 12/2026", "Tháng 01/2027", "Tháng 02/2027", "Tháng 03/2027", 
+      "Tháng 08/2026", "Tháng 09/2026", "Tháng 10/2026", "Tháng 11/2026",
+      "Tháng 12/2026", "Tháng 01/2027", "Tháng 02/2027", "Tháng 03/2027",
       "Tháng 04/2027", "Tháng 05/2027", "Tháng 06/2027", "Tháng 07/2027"
     ];
 
@@ -1829,7 +1829,7 @@
     }
 
   function renderActionPlanModule() {
-    
+
       renderMonthPlanTable();
       renderWeekPlanTable();
     }
@@ -1839,7 +1839,7 @@
       let html = '';
 
       monthPlanData.forEach((item, index) => {
-        const fileDisplay = item.hasFile 
+        const fileDisplay = item.hasFile
           ? `<span class="inline-flex items-center gap-1.5 font-semibold text-slate-800"><span class="text-blue-600 text-base">📘</span> ${item.fileName}</span>`
           : `<span class="text-slate-400 italic">Chưa có tệp đính kèm</span>`;
 
@@ -1884,7 +1884,7 @@
       let html = '';
       pageItems.forEach((item, index) => {
         const globalStt = startIdx + index + 1;
-        const fileDisplay = item.hasFile 
+        const fileDisplay = item.hasFile
           ? `<span class="inline-flex items-center gap-1.5 font-semibold text-slate-800"><span class="text-blue-600 text-base">📘</span> ${item.fileName}</span>`
           : `<span class="text-slate-400 italic">Chưa có tệp đính kèm</span>`;
 
@@ -2023,8 +2023,8 @@
     }
 
     function viewDocPlan(type, id) {
-      let item = (type === 'month') 
-        ? monthPlanData.find(m => m.id === id) 
+      let item = (type === 'month')
+        ? monthPlanData.find(m => m.id === id)
         : weekPlanData.find(w => w.id === id);
 
       if (!item || !item.hasFile) {
@@ -2061,8 +2061,8 @@
       document.getElementById('view-doc-modal').classList.add('hidden');
     }
     function downloadDocPlan(type, id) {
-      let item = (type === 'month') 
-        ? monthPlanData.find(m => m.id === id) 
+      let item = (type === 'month')
+        ? monthPlanData.find(m => m.id === id)
         : weekPlanData.find(w => w.id === id);
 
       if (!item || !item.hasFile) {
@@ -2322,9 +2322,9 @@
       try {
         const res = await fetch(`${SCRIPT_API_URL}?action=getInitialData`);
         const json = await res.json();
-        
+
         if (json.tasks && Array.isArray(json.tasks)) appData.tasks = json.tasks;
-        
+
         if (json.staff && Array.isArray(json.staff) && json.staff.length > 0) {
           appData.staff = json.staff.map(s => {
             const subject = s.subject || s.mon || "Chuyên môn";
@@ -2516,7 +2516,7 @@
             levelBadge = `<span class="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium bg-blue-50 text-blue-700 border border-blue-200">⚙️ ${r.level || 'Đang thực hiện'}</span>`;
           }
 
-          const scoreBadge = (r.finalScore !== null && r.finalScore !== "") 
+          const scoreBadge = (r.finalScore !== null && r.finalScore !== "")
             ? `<span class="font-bold text-emerald-600">${r.finalScore} / ${r.baseScore}</span>`
             : `<span class="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-200">Chờ BGH chấm</span>`;
 
@@ -2542,8 +2542,8 @@
           const taskInfo = item.taskInfo;
           const rowHighlight = item.priorityRank === 1 ? 'bg-rose-50/40 hover:bg-rose-50' : 'hover:bg-slate-50/80';
 
-          const evidenceLink = r.evidence && String(r.evidence).trim() !== "" 
-            ? `<a href="${r.evidence}" target="_blank" class="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 underline font-semibold">📁 Xem Drive</a>` 
+          const evidenceLink = r.evidence && String(r.evidence).trim() !== ""
+            ? `<a href="${r.evidence}" target="_blank" class="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 underline font-semibold">📁 Xem Drive</a>`
             : `<span class="text-xs text-slate-400 italic">Chưa có</span>`;
 
           let reportBtn = "";
@@ -2646,8 +2646,8 @@
     function openEvidenceModal(taskId) {
       document.getElementById("evidence-task-id").value = taskId;
       document.getElementById("evidence-modal-subtitle").innerText = "Mã nhiệm vụ: " + taskId;
-      const reg = appData.registrations.find(r => 
-        (cleanStr(r.teacherCode) === cleanStr(currentUser.code) || cleanStr(r.teacherName).includes(cleanStr(currentUser.name))) && 
+      const reg = appData.registrations.find(r =>
+        (cleanStr(r.teacherCode) === cleanStr(currentUser.code) || cleanStr(r.teacherName).includes(cleanStr(currentUser.name))) &&
         cleanStr(r.taskId) === cleanStr(taskId)
       );
       document.getElementById("evidence-link-input").value = reg ? (reg.evidence || "") : "";
@@ -2663,8 +2663,8 @@
       const taskId = document.getElementById("evidence-task-id").value;
       const link = document.getElementById("evidence-link-input").value.trim();
 
-      const reg = appData.registrations.find(r => 
-        (cleanStr(r.teacherCode) === cleanStr(currentUser.code) || cleanStr(r.teacherName).includes(cleanStr(currentUser.name))) && 
+      const reg = appData.registrations.find(r =>
+        (cleanStr(r.teacherCode) === cleanStr(currentUser.code) || cleanStr(r.teacherName).includes(cleanStr(currentUser.name))) &&
         cleanStr(r.taskId) === cleanStr(taskId)
       );
 
@@ -2912,9 +2912,9 @@
 
       const teacherStats = (appData.staff || [])
         .filter(gv => {
-          const isBGHStaff = gv.role === "BGH" || 
-                             gv.subject === "BGH" || 
-                             cleanStr(gv.department) === "bgh" || 
+          const isBGHStaff = gv.role === "BGH" ||
+                             gv.subject === "BGH" ||
+                             cleanStr(gv.department) === "bgh" ||
                              cleanStr(gv.subject) === "bgh";
           return !isBGHStaff; // Chỉ giữ lại giáo viên, loại bỏ BGH
         })
@@ -2938,10 +2938,10 @@
 
       teacherStats.forEach((item, index) => {
         const gv = item.gv;
-        let taskOptions = eligibleTasks.map(t => 
+        let taskOptions = eligibleTasks.map(t =>
           `<option value="${t.id}">[${t.id}] ${t.title} (${t.score}đ - chỉ tiêu còn: ${t.remainingQuota})</option>`
         ).join("");
-        
+
         if (taskOptions === "") taskOptions = `<option value="">-- Hết việc còn chỉ tiêu --</option>`;
 
         tbody.innerHTML += `
@@ -2980,8 +2980,8 @@
       const task = appData.tasks.find(t => cleanStr(t.id) === cleanStr(taskId));
       if (!task) return;
 
-      const exists = appData.registrations.some(r => 
-        (cleanStr(r.teacherCode) === cleanStr(teacherCode) || cleanStr(r.teacherName).includes(cleanStr(teacherName))) && 
+      const exists = appData.registrations.some(r =>
+        (cleanStr(r.teacherCode) === cleanStr(teacherCode) || cleanStr(r.teacherName).includes(cleanStr(teacherName))) &&
         cleanStr(r.taskId) === cleanStr(taskId)
       );
       if (exists) {
@@ -3066,9 +3066,9 @@
 
       // 1. Lọc bỏ nhân sự Ban Giám Hiệu và tính tổng điểm KPI chuẩn xác
       const teachingStaff = (appData.staff || []).filter(s => {
-        const isBGHStaff = s.role === "BGH" || 
-                           s.subject === "BGH" || 
-                           cleanStr(s.department) === "bgh" || 
+        const isBGHStaff = s.role === "BGH" ||
+                           s.subject === "BGH" ||
+                           cleanStr(s.department) === "bgh" ||
                            cleanStr(s.subject) === "bgh";
         return !isBGHStaff;
       });
@@ -3151,7 +3151,7 @@
           }
         });
       }
-        
+
     }
 
     function exportToExcel() {
@@ -3396,7 +3396,7 @@
         tileBadge.classList.remove("hidden");
         tileBadge.innerText = `🔔 ${mySubPeriods.length} tiết dạy thay!`;
         const first = mySubPeriods[0];
-        document.getElementById("substitute-alert-msg").innerText = 
+        document.getElementById("substitute-alert-msg").innerText =
           `Thầy/Cô được xếp dạy thay cho ${first.fromTeacher} (Lớp ${first.class}, Tiết ${first.periodTKB}, Ngày ${first.leaveDate}). Xem bài dạy ngay!`;
       } else {
         banner.classList.add("hidden");
@@ -3477,12 +3477,12 @@
       }
 
       // 1. Tab đơn của tôi
-      const myTickets = (appData.leaveRequests || []).filter(r => 
-        (r.teacherCode && cleanStr(r.teacherCode) === cleanStr(currentUser.code)) || 
+      const myTickets = (appData.leaveRequests || []).filter(r =>
+        (r.teacherCode && cleanStr(r.teacherCode) === cleanStr(currentUser.code)) ||
         (r.teacherName && cleanStr(r.teacherName).includes(cleanStr(currentUser.name)))
       );
       document.getElementById("count-my-leaves").innerText = myTickets.length;
-      
+
       let totalSessionsOff = 0;
       myTickets.forEach(t => {
         if (t.status === "APPROVED_BGH") {
@@ -3500,7 +3500,7 @@
             const cls = (p.class || "Chưa rõ lớp").trim();
             const makeup = String(p.makeupSchedule || '').trim().toLowerCase();
             const isUnscheduled = !makeup || makeup === "--" || makeup === "-" || makeup === "chưa có" || makeup.includes("thỏa thuận") || makeup.includes("chưa xếp") || makeup.includes("chưa dạy bù");
-            
+
             if (isUnscheduled) {
               if (!classBalanceMap[cls]) classBalanceMap[cls] = { delayed: 0, ahead: 0 };
               classBalanceMap[cls].delayed++;
@@ -3549,7 +3549,7 @@
 
       if (delayedBadgeEl) {
         delayedBadgeEl.innerText = `${totalDelayedPeriods} tiết`;
-        delayedBadgeEl.className = totalDelayedPeriods > 0 
+        delayedBadgeEl.className = totalDelayedPeriods > 0
           ? "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200"
           : "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600";
       }
@@ -3569,7 +3569,7 @@
         if (classKeys.length === 0) {
           delayedDetailEl.innerHTML = `<span class="text-emerald-600 font-medium">✓ Đạt chuẩn tiến độ</span>`;
         } else {
-          delayedDetailEl.innerHTML = classKeys.map(cls => 
+          delayedDetailEl.innerHTML = classKeys.map(cls =>
             `<span class="inline-flex items-center gap-1 bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded-md font-bold text-[11px]">
               <b>${cls}:</b> ${delayedByClassMap[cls]} tiết
             </span>`
@@ -3583,7 +3583,7 @@
 
       if (aheadBadgeEl) {
         aheadBadgeEl.innerText = `${totalAheadPeriods} tiết`;
-        aheadBadgeEl.className = totalAheadPeriods > 0 
+        aheadBadgeEl.className = totalAheadPeriods > 0
           ? "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200"
           : "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600";
       }
@@ -3603,7 +3603,7 @@
         if (aheadKeys.length === 0) {
           aheadDetailEl.innerHTML = `<span class="text-slate-400 italic">Không có tiết vượt tiến độ.</span>`;
         } else {
-          aheadDetailEl.innerHTML = aheadKeys.map(cls => 
+          aheadDetailEl.innerHTML = aheadKeys.map(cls =>
             `<span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-md font-bold text-[11px]">
               <b>${cls}:</b> ${aheadByClassMap[cls]} tiết
             </span>`
@@ -3635,8 +3635,8 @@
               <td class="py-3 px-4 text-center font-bold text-rose-600">${sessionCount} buổi</td>
               <td class="py-3 px-4 text-center">${statusBadge}</td>
               <td class="py-3 px-4 text-center">
-                ${ticket.status === 'APPROVED_BGH' 
-                  ? `<button onclick="downloadLeaveDoc('${ticket.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-3 py-1.5 rounded-lg border border-rose-200 transition flex items-center gap-1 mx-auto text-xs">📥 Tải phiếu (.doc)</button>` 
+                ${ticket.status === 'APPROVED_BGH'
+                  ? `<button onclick="downloadLeaveDoc('${ticket.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-3 py-1.5 rounded-lg border border-rose-200 transition flex items-center gap-1 mx-auto text-xs">📥 Tải phiếu (.doc)</button>`
                   : `<span class="text-xs text-slate-400 italic">Đang chờ duyệt</span>`}
               </td>
             </tr>
@@ -3693,12 +3693,12 @@
 
       let ttcmAllList = (appData.leaveRequests || []).filter(ticket => {
         if (currentUser.role === "BGH") return true;
-        
+
         let ticketDept = cleanStr(ticket.department);
         let currentDept = cleanStr(currentUser.department);
         if (ticketDept && currentDept && ticketDept === currentDept) return true;
 
-        const teacherProfile = (appData.staff || []).find(s => 
+        const teacherProfile = (appData.staff || []).find(s =>
           (ticket.teacherCode && cleanStr(s.code) === cleanStr(ticket.teacherCode)) ||
           (cleanStr(s.name) === cleanStr(ticket.teacherName))
         );
@@ -3838,7 +3838,7 @@
             `;
           }
 
-          const ttcmStatusTxt = (ticket.status === "PENDING_TTCM") 
+          const ttcmStatusTxt = (ticket.status === "PENDING_TTCM")
             ? `<span class="text-amber-600 font-semibold text-xs">⏳ Chưa xếp</span>`
             : `<span class="text-emerald-600 font-semibold text-xs">✓ Đã xếp (${ticket.periods ? ticket.periods.length : 0} tiết)</span>`;
 
@@ -3902,7 +3902,7 @@
       const reasonCategory = document.getElementById("leave-reason-category").value;
       const reasonDetail = document.getElementById("leave-reason-detail").value.trim();
       const periodRows = document.querySelectorAll("#leave-periods-tbody tr");
-      
+
       if (periodRows.length === 0) {
         alert("Vui lòng thêm ít nhất 1 tiết nghỉ!");
         return;
@@ -3917,7 +3917,7 @@
         const d = new Date(rawDate);
         const dayOfWeek = daysOfWeekList[d.getDay()];
         const dateFormatted = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
-        
+
         distinctDates.add(`${dayOfWeek} (${dateFormatted})`);
 
         periods.push({
@@ -4231,11 +4231,11 @@
 
       const teachers = appData.staff || [];
       const reportRows = [
-        ["STT", "Mã GV", "Họ và Tên", "Bộ môn", 
-         "Nghỉ Công tác (Ngày/Buổi)", "Số buổi Công tác", 
-         "Nghỉ Ốm (Ngày/Buổi)", "Số buổi Ốm", 
-         "Nghỉ Việc riêng (Ngày/Buổi)", "Số buổi Việc riêng", 
-         "Nghỉ Chế độ (Ngày/Buổi)", "Số buổi Chế độ", 
+        ["STT", "Mã GV", "Họ và Tên", "Bộ môn",
+         "Nghỉ Công tác (Ngày/Buổi)", "Số buổi Công tác",
+         "Nghỉ Ốm (Ngày/Buổi)", "Số buổi Ốm",
+         "Nghỉ Việc riêng (Ngày/Buổi)", "Số buổi Việc riêng",
+         "Nghỉ Chế độ (Ngày/Buổi)", "Số buổi Chế độ",
          "TỔNG SỐ BUỔI NGHỈ"]
       ];
 
@@ -4246,8 +4246,8 @@
       let grandTotalAll = 0;
 
       teachers.forEach((t, idx) => {
-        const approvedTickets = (appData.leaveRequests || []).filter(ticket => 
-          (cleanStr(ticket.teacherCode) === cleanStr(t.code) || cleanStr(ticket.teacherName).includes(cleanStr(t.name))) && 
+        const approvedTickets = (appData.leaveRequests || []).filter(ticket =>
+          (cleanStr(ticket.teacherCode) === cleanStr(t.code) || cleanStr(ticket.teacherName).includes(cleanStr(t.name))) &&
           ticket.status === "APPROVED_BGH"
         );
 
@@ -4336,7 +4336,7 @@
         const gvCode = cleanStr(t.code);
         const gvName = cleanStr(t.name);
 
-        const myLeaveTickets = (appData.leaveRequests || []).filter(ticket => 
+        const myLeaveTickets = (appData.leaveRequests || []).filter(ticket =>
           (ticket.status === "APPROVED_BGH") &&
           ((ticket.teacherCode && cleanStr(ticket.teacherCode) === gvCode) || (ticket.teacherName && cleanStr(ticket.teacherName).includes(gvName)))
         );
@@ -4488,9 +4488,9 @@
     ];
 
     const ERROR_KEYS = [
-      "Nghỉ CP", "Nghỉ KP", "Bỏ tiết", "Đi muộn", "Vô lễ", 
-      "Đánh nhau", "Đánh nhau nghiêm trọng", "Vi phạm ATGT", 
-      "Vi phạm ATGT nghiêm trọng", "Không thẻ", "Trang phục, đầu tóc", 
+      "Nghỉ CP", "Nghỉ KP", "Bỏ tiết", "Đi muộn", "Vô lễ",
+      "Đánh nhau", "Đánh nhau nghiêm trọng", "Vi phạm ATGT",
+      "Vi phạm ATGT nghiêm trọng", "Không thẻ", "Trang phục, đầu tóc",
       "Không chuẩn bị bài", "Vi phạm QCT", "Vi phạm QCT nghiêm trọng", "VP khác"
     ];
 
@@ -4573,7 +4573,7 @@
       const dataList = document.getElementById("student-suggestions");
       const nameInput = document.getElementById("input-student-name");
       const codeInput = document.getElementById("input-student-code");
-      
+
       if (!dataList) return;
       dataList.innerHTML = "";
       if (nameInput) nameInput.value = "";
@@ -4594,8 +4594,8 @@
     function onStudentInputSearch(val) {
       const codeInput = document.getElementById("input-student-code");
       const targetClass = document.getElementById("input-student-class").value;
-      
-      const matched = studentListFromSheet.find(s => 
+
+      const matched = studentListFromSheet.find(s =>
         cleanStr(s.lop) === cleanStr(targetClass) && cleanStr(s.hoTen) === cleanStr(val)
       );
 
@@ -4771,7 +4771,7 @@
       tbody.innerHTML = "";
       pageItems.forEach((item, index) => {
         const globalIndex = startIndex + index + 1;
-        const errBadges = item.errors.map(e => 
+        const errBadges = item.errors.map(e =>
           `<span class="inline-block bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded-md text-[11px] font-bold mr-1 mb-1">
             • ${e}
           </span>`
@@ -5188,7 +5188,7 @@
         }
       }
     }
-	
+
   </script>
 </body>
 </html>
