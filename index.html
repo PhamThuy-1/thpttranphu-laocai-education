@@ -3786,10 +3786,8 @@
       const ttcmSigner = departmentStaff.find(person =>
         String(person.position || person.role || '').toUpperCase().includes('TTCM') ||
         String(person.position || person.role || '').toUpperCase().includes('TỔ TRƯỞNG'))?.name || '';
-      const vicePrincipalSigner = appData.staff.find(person =>
-        String(person.position || person.role || '').toUpperCase().includes('PHT'))?.name || '';
-      const principalSigner = appData.staff.find(person =>
-        String(person.position || person.role || '').toUpperCase().includes('HIỆU TRƯỞNG'))?.name || '';
+      const vicePrincipalSigner = "Dương Thị Bích Vân";
+      const principalSigner = "Hoàng Văn Chinh";
       const docContent = `
         <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
         <head>
