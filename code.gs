@@ -122,7 +122,7 @@ function authenticateRequest_(idToken) {
   if (typeof idToken !== 'string' || idToken.length < 100 || idToken.length > 10000) {
     throw new Error('Vui lòng đăng nhập bằng tài khoản Google của trường.');
   }
-  const clientId = 575102440654-fvv1hcq0p7buoh4ov3rgjk4p56o2d3bk.apps.googleusercontent.com; //PropertiesService.getScriptProperties().getProperty('GOOGLE_CLIENT_ID');
+  const clientId = "575102440654-fvv1hcq0p7buoh4ov3rgjk4p56o2d3bk.apps.googleusercontent.com"; //PropertiesService.getScriptProperties().getProperty('GOOGLE_CLIENT_ID');
   if (!clientId) throw new Error('Chưa cấu hình GOOGLE_CLIENT_ID trong Script Properties.');
 
   const response = UrlFetchApp.fetch(
