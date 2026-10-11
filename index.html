@@ -752,14 +752,21 @@
         </div>
 
         <!-- Bộ lọc tìm kiếm -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3.5 bg-slate-50/80 p-4 rounded-2xl border border-slate-200 text-xs font-bold text-slate-700">
+        <!-- Bộ lọc tìm kiếm -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3.5 bg-slate-50/80 p-4 rounded-2xl border border-slate-200 text-xs font-bold text-slate-700">
+          <div>
+            <label class="block mb-1">Lớp:</label>
+            <select id="filter-student-class" onchange="queryViolations()" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white">
+              <option value="">-- Tất cả các lớp --</option>
+            </select>
+          </div>
           <div>
             <label class="block mb-1">Mã Học Sinh:</label>
-            <input type="text" id="filter-student-code" placeholder="Nhập mã HS (ví dụ: HS1001)..." class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            <input type="text" id="filter-student-code" placeholder="Nhập mã HS..." class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
           </div>
           <div>
             <label class="block mb-1">Họ và Tên Học Sinh:</label>
-            <input type="text" id="filter-student-name" placeholder="Nhập họ tên cần lọc..." class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            <input type="text" id="filter-student-name" placeholder="Nhập họ tên..." class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
           </div>
           <div>
             <label class="block mb-1">Từ ngày:</label>
@@ -775,7 +782,6 @@
             </div>
           </div>
         </div>
-
         <!-- Bảng kết quả thống kê -->
         <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
           <div class="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
@@ -4168,31 +4174,53 @@
     }
 
     // 1. Tự động nhận diện lớp chủ nhiệm của giáo viên đăng nhập
+   // 1. Tự động nhận diện lớp chủ nhiệm & cấp toàn quyền chọn lớp cho BGH
     function setupTeacherHomeroomClass() {
       const classInput = document.getElementById("input-student-class");
       const bghSelect = document.getElementById("select-bgh-override-class");
-      if (!classInput) return;
+      const filterClassSelect = document.getElementById("filter-student-class");
+      
+      const allClasses = [...new Set((studentListFromSheet || []).map(s => String(s.lop || '').trim()).filter(Boolean))].sort();
+
+      // Cập nhật ô chọn lớp ở Thẻ Thống Kê
+      if (filterClassSelect) {
+        filterClassSelect.innerHTML = '<option value="">-- Tất cả các lớp --</option>';
+        allClasses.forEach(cls => {
+          const opt = document.createElement("option");
+          opt.value = cls;
+          opt.innerText = cls;
+          filterClassSelect.appendChild(opt);
+        });
+      }
 
       let targetClass = "";
 
       if (currentUser) {
-        if (currentUser.homeroom && currentUser.homeroom.trim() !== "") {
-          targetClass = currentUser.homeroom.trim();
-          classInput.value = targetClass;
-          if (bghSelect) bghSelect.classList.add("hidden");
-        } else if (currentUser.role === "BGH") {
+        if (currentUser.role === "BGH") {
+          // BGH CÓ TOÀN QUYỀN: hiển thị dropdown chọn lớp ở cả thẻ nhập liệu và thẻ thống kê
           if (bghSelect) {
             bghSelect.classList.remove("hidden");
             populateBghClassList();
-            targetClass = bghSelect.value || "";
-            classInput.value = targetClass;
+            targetClass = bghSelect.value || allClasses[0] || "";
+            if (classInput) classInput.value = targetClass;
+          }
+          if (filterClassSelect) {
+            filterClassSelect.value = ""; // Mặc định BGH xem toàn trường
+            filterClassSelect.disabled = false;
+          }
+        } else if (currentUser.homeroom && currentUser.homeroom.trim() !== "") {
+          // GVCN chỉ xem và nhập cho lớp mình
+          targetClass = currentUser.homeroom.trim();
+          if (classInput) classInput.value = targetClass;
+          if (bghSelect) bghSelect.classList.add("hidden");
+          if (filterClassSelect) {
+            filterClassSelect.value = targetClass;
+            filterClassSelect.disabled = true; // Khóa không cho GVCN chọn lớp khác
           }
         } else {
-          classInput.value = "Chưa phân công CN";
+          if (classInput) classInput.value = "Chưa phân công CN";
           targetClass = "";
         }
-      } else {
-        classInput.value = "";
       }
 
       loadStudentsForClass(targetClass);
@@ -4201,17 +4229,19 @@
     function populateBghClassList() {
       const bghSelect = document.getElementById("select-bgh-override-class");
       if (!bghSelect) return;
-      const allClasses = [...new Set(studentListFromSheet.map(s => s.lop))].filter(Boolean).sort();
+      const allClasses = [...new Set((studentListFromSheet || []).map(s => String(s.lop || '').trim()).filter(Boolean))].sort();
       const selected = bghSelect.value;
-      bghSelect.innerHTML = '<option value="">-- Chọn lớp --</option>';
+      bghSelect.innerHTML = '';
       allClasses.forEach(cls => {
         const opt = document.createElement("option");
         opt.value = cls;
         opt.innerText = cls;
-        opt.selected = cls === selected;
+        opt.selected = (cls === selected);
         bghSelect.appendChild(opt);
       });
-      if (!allClasses.includes(selected)) bghSelect.value = allClasses[0] || "";
+      if (!allClasses.includes(selected) && allClasses.length > 0) {
+        bghSelect.value = allClasses[0];
+      }
     }
 
     function renderViolationTypeOptions() {
@@ -4238,11 +4268,11 @@
     }
 
     function onBghClassOverride(newClass) {
-      document.getElementById("input-student-class").value = newClass;
+      const classInput = document.getElementById("input-student-class");
+      if (classInput) classInput.value = newClass;
       loadStudentsForClass(newClass);
     }
 
-    // 2. Đổ danh sách học sinh của lớp vào ô gợi ý datalist
     function loadStudentsForClass(className) {
       const dataList = document.getElementById("student-suggestions");
       const nameInput = document.getElementById("input-student-name");
@@ -4255,7 +4285,7 @@
 
       if (!className) return;
 
-      const students = studentListFromSheet.filter(s => cleanStr(s.lop) === cleanStr(className));
+      const students = (studentListFromSheet || []).filter(s => cleanStr(s.lop) === cleanStr(className));
       students.forEach(s => {
         const opt = document.createElement("option");
         opt.value = s.hoTen;
@@ -4267,27 +4297,27 @@
     function loadDisciplineStudents() {
       const className = document.getElementById("modal-disc-class").value;
       const studentList = document.getElementById("discipline-student-suggestions");
+      if (!studentList) return;
       studentList.replaceChildren();
       document.getElementById("modal-disc-student").value = "";
-      studentListFromSheet.filter(student => cleanStr(student.lop) === cleanStr(className)).forEach(student => {
+      (studentListFromSheet || []).filter(student => cleanStr(student.lop) === cleanStr(className)).forEach(student => {
         const option = document.createElement("option");
         option.value = student.hoTen;
         studentList.appendChild(option);
       });
     }
 
-    // 3. Khi GV chọn tên học sinh -> Tự động điền Mã HS
     function onStudentInputSearch(val) {
       const codeInput = document.getElementById("input-student-code");
       const targetClass = document.getElementById("input-student-class").value;
       
-      const matched = studentListFromSheet.find(s => 
+      const matched = (studentListFromSheet || []).find(s => 
         cleanStr(s.lop) === cleanStr(targetClass) && cleanStr(s.hoTen) === cleanStr(val)
       );
 
-      if (matched) {
+      if (matched && codeInput) {
         codeInput.value = matched.maHS;
-      } else {
+      } else if (codeInput) {
         codeInput.value = "";
       }
     }
@@ -4297,7 +4327,6 @@
       document.getElementById("input-student-code").value = "";
     }
 
-    // 4. Lưu thông tin vi phạm lên sheet dataHS
     async function handleSaveViolation(e) {
       e.preventDefault();
 
@@ -4343,8 +4372,7 @@
       }
     }
 
-    // 5. Tra cứu và thống kê vi phạm theo điều kiện lọc
-   // Biến điều khiển phân trang cho danh sách vi phạm
+    // Biến điều khiển phân trang
     let statsCurrentPage = 1;
     let statsItemsPerPage = 10;
 
@@ -4369,35 +4397,33 @@
       }
     }
 
-    // 5. Tra cứu và thống kê vi phạm (CHỈ HIỂN THỊ LỚP ĐƯỢC PHÂN CÔNG CHỦ NHIỆM)
+    // Tra cứu và thống kê vi phạm (BGH xem được tất cả hoặc lọc theo lớp tùy chọn)
     async function queryViolations() {
       const maHS = document.getElementById("filter-student-code").value.trim();
       const hoTen = document.getElementById("filter-student-name").value.trim();
       const startDate = document.getElementById("filter-start-date").value;
       const endDate = document.getElementById("filter-end-date").value;
+      const classSelect = document.getElementById("filter-student-class");
+      const selectedClass = classSelect ? classSelect.value.trim() : "";
 
       const tbody = document.getElementById("stats-table-body");
       tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">Đang tra cứu dữ liệu từ sheet dataHS...</td></tr>`;
 
-      // Xác định lớp của tài khoản đăng nhập
-      let userHomeroom = "";
-      if (currentUser) {
-        if (currentUser.homeroom && currentUser.homeroom.trim() !== "") {
-          userHomeroom = currentUser.homeroom.trim();
-        } else if (currentUser.role === "BGH") {
-          // BGH nếu có chọn lớp override thì lấy theo lớp đó, nếu không chọn thì để trống (xem toàn trường)
-          const overrideInput = document.getElementById("input-student-class");
-          if (overrideInput && overrideInput.value && overrideInput.value !== "Chưa phân công CN") {
-            userHomeroom = overrideInput.value.trim();
-          }
-        }
-      }
-
       try {
         const result = await apiRequest("getStudentViolations", {
-          maHS, hoTen, fromDate: startDate, toDate: endDate
+          maHS, hoTen, fromDate: startDate, toDate: endDate, className: selectedClass
         });
-        currentQueriedList = result.data;
+        
+        let list = result.data || [];
+        // Nếu chọn lọc lớp cụ thể trên giao diện
+        if (selectedClass) {
+          list = list.filter(item => cleanStr(item.lop) === cleanStr(selectedClass));
+        } else if (currentUser && currentUser.role !== "BGH" && currentUser.homeroom) {
+          // Nếu là GVCN thì chỉ xem lớp mình
+          list = list.filter(item => cleanStr(item.lop) === cleanStr(currentUser.homeroom));
+        }
+
+        currentQueriedList = list;
         statsCurrentPage = 1;
         renderStatsPaginatedTable();
       } catch (err) {
@@ -4405,7 +4431,6 @@
       }
     }
 
-    // Hiển thị dữ liệu lên bảng theo phân trang
     function renderStatsPaginatedTable() {
       const tbody = document.getElementById("stats-table-body");
       const totalCountEl = document.getElementById("stats-total-count");
@@ -4417,8 +4442,7 @@
       if (totalCountEl) totalCountEl.innerText = totalItems;
 
       if (!currentQueriedList || totalItems === 0) {
-        const myClass = (currentUser && currentUser.homeroom) ? `lớp ${currentUser.homeroom}` : 'lớp của bạn';
-        tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">Không có bản ghi vi phạm nào thuộc ${myClass} trong khoảng thời gian đã chọn.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">Không có bản ghi vi phạm nào trong khoảng thời gian và bộ lọc đã chọn.</td></tr>`;
         if (pInfo) pInfo.innerText = "Trang 1 / 1 (0 dòng)";
         if (btnP) btnP.disabled = true;
         if (btnN) btnN.disabled = true;
@@ -4438,7 +4462,7 @@
       tbody.innerHTML = "";
       pageItems.forEach((item, index) => {
         const globalIndex = startIndex + index + 1;
-        const errBadges = item.errors.map(e => 
+        const errBadges = (item.errors || []).map(e => 
           `<span class="inline-block bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded-md text-[11px] font-bold mr-1 mb-1">
             • ${e}
           </span>`
@@ -4452,48 +4476,21 @@
             <td class="py-3 px-3.5 font-semibold text-slate-900">${item.hoTen}</td>
             <td class="py-3 px-3.5 text-center font-bold text-slate-700">${item.lop}</td>
             <td class="py-3 px-3.5">${errBadges || '<span class="text-slate-400 italic">Không có lỗi</span>'}</td>
-            <td class="py-3 px-3.5 text-center font-black text-rose-600">${item.errors.length} lỗi</td>
+            <td class="py-3 px-3.5 text-center font-black text-rose-600">${(item.errors || []).length} lỗi</td>
           </tr>
         `;
       });
     }
 
-    // 6. Xuất file Nhật ký chi tiết: CHỈ CHO GVCN XUẤT LỚP MÌNH
+    // 6. Xuất file Nhật ký chi tiết (BGH xuất toàn trường hoặc theo lớp đã chọn, GVCN xuất lớp mình)
     function exportViolationsToExcel() {
       if (typeof XLSX === "undefined") {
         alert("⚠️ Đang tải thư viện Excel, vui lòng thử lại sau 2 giây!");
         return;
       }
 
-      // Kiểm tra quyền: chỉ GVCN hoặc BGH mới được xuất
-      let targetClass = "";
-      if (currentUser) {
-        if (currentUser.homeroom && currentUser.homeroom.trim() !== "") {
-          targetClass = currentUser.homeroom.trim();
-        } else if (currentUser.role === "BGH") {
-          const overrideInput = document.getElementById("input-student-class");
-          targetClass = (overrideInput && overrideInput.value && overrideInput.value !== "Chưa phân công CN") ? overrideInput.value.trim() : "";
-        }
-      }
-
-      if (!targetClass && (!currentUser || currentUser.role !== "BGH")) {
-        alert("⛔ BẠN KHÔNG CÓ QUYỀN!\n\nChức năng xuất nhật ký chi tiết chỉ dành cho Giáo viên chủ nhiệm xuất danh sách của lớp mình.");
-        return;
-      }
-
       if (!currentQueriedList || currentQueriedList.length === 0) {
         alert("Không có dữ liệu vi phạm để xuất Excel. Vui lòng bấm 'Lọc' dữ liệu trước!");
-        return;
-      }
-
-      // Lọc danh sách xuất: đảm bảo chỉ đúng lớp của GVCN
-      let exportList = currentQueriedList;
-      if (targetClass) {
-        exportList = exportList.filter(item => cleanStr(item.lop) === cleanStr(targetClass));
-      }
-
-      if (exportList.length === 0) {
-        alert(`Không có bản ghi vi phạm nào của lớp ${targetClass} để xuất file!`);
         return;
       }
 
@@ -4505,7 +4502,7 @@
 
       const excelRows = [headers];
 
-      exportList.forEach(item => {
+      currentQueriedList.forEach(item => {
         const row = [
           item.maHS,
           item.ngay,
@@ -4528,55 +4525,46 @@
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(excelRows);
 
-      ws["!cols"] = [
-        { wch: 18 }, { wch: 14 }, { wch: 8 }, { wch: 24 },
-        { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 },
-        { wch: 12 }, { wch: 22 }, { wch: 14 }, { wch: 24 }, { wch: 12 },
-        { wch: 18 }, { wch: 18 }, { wch: 14 }, { wch: 24 }, { wch: 12 },
-        { wch: 16 }
-      ];
+      const filterClassSelect = document.getElementById("filter-student-class");
+      const selectedClass = filterClassSelect ? filterClassSelect.value.trim() : "";
+      const sheetName = selectedClass ? `NhatKy_${selectedClass}` : "dataHS";
 
-      const sheetName = targetClass ? `NhatKy_${targetClass}` : "dataHS";
       XLSX.utils.book_append_sheet(wb, ws, sheetName);
       const dateStr = new Date().toLocaleDateString("vi-VN").replace(/\//g, "_");
-      const filePrefix = targetClass ? `Nhat_Ky_Vi_Pham_Lop_${targetClass}` : "Nhat_Ky_Vi_Pham";
+      const filePrefix = selectedClass ? `Nhat_Ky_Vi_Pham_Lop_${selectedClass}` : "Nhat_Ky_Vi_Pham_Toan_Truong";
       XLSX.writeFile(wb, `${filePrefix}_${dateStr}.xlsx`);
     }
-	// =========================================================================
-    // 7. XUẤT BÁO CÁO TỔNG HỢP THEO LỚP CHO GVCN (CÓ TỔNG CỘNG TỪNG CỘT LỖI)
-    // =========================================================================
-   async function exportClassSummaryReportExcel() {
+
+    // 7. XUẤT BÁO CÁO TỔNG HỢP THEO LỚP (BGH tự chọn lớp hoặc lấy từ bộ lọc)
+    async function exportClassSummaryReportExcel() {
       if (typeof XLSX === "undefined") {
         alert("⚠️ Đang tải thư viện xuất Excel, vui lòng thử lại sau 2 giây!");
         return;
       }
 
-      // 1. Xác định lớp cần xuất báo cáo
+      // Xác định lớp cần xuất
       let targetClass = "";
-      if (currentUser) {
-        if (currentUser.homeroom && currentUser.homeroom.trim() !== "") {
-          targetClass = currentUser.homeroom.trim();
-        } else if (currentUser.role === "BGH") {
-          // Kiểm tra xem BGH đã chọn lớp nào chưa
-          const bghSelect = document.getElementById("select-bgh-override-class");
-          if (bghSelect && bghSelect.value && bghSelect.value !== "") {
-            targetClass = bghSelect.value.trim();
-          } else {
-            // Nếu BGH chưa chọn lớp, lấy danh sách lớp có trong sheet và hỏi BGH
-            const allClasses = [...new Set((studentListFromSheet || []).map(s => String(s.lop || '').trim()).filter(Boolean))].sort();
-            const chosen = prompt(`Ban Giám Hiệu vui lòng nhập tên lớp cần xuất báo cáo:\n(Các lớp hiện có: ${allClasses.join(", ")})`, allClasses[0] || "");
-            if (!chosen) return;
-            targetClass = chosen.trim();
-          }
+      const filterClassSelect = document.getElementById("filter-student-class");
+      
+      if (currentUser && currentUser.role === "BGH") {
+        // BGH: nếu đã chọn lớp trên bộ lọc thì lấy luôn, nếu chưa chọn thì hiện danh sách hỏi BGH
+        if (filterClassSelect && filterClassSelect.value) {
+          targetClass = filterClassSelect.value.trim();
+        } else {
+          const allClasses = [...new Set((studentListFromSheet || []).map(s => String(s.lop || '').trim()).filter(Boolean))].sort();
+          const chosen = prompt(`BGH vui lòng nhập tên lớp cần xuất:\n(Các lớp: ${allClasses.join(", ")})`, allClasses[0] || "");
+          if (!chosen) return;
+          targetClass = chosen.trim();
         }
+      } else if (currentUser && currentUser.homeroom) {
+        targetClass = currentUser.homeroom.trim();
       }
 
       if (!targetClass) {
-        alert("⚠️ Không xác định được lớp để xuất báo cáo! Vui lòng chọn lớp trước khi xuất.");
+        alert("⚠️ Vui lòng chọn lớp cần xuất báo cáo tổng hợp!");
         return;
       }
 
-      // 2. Lấy khoảng thời gian lọc
       const startDate = document.getElementById("filter-start-date").value;
       const endDate = document.getElementById("filter-end-date").value;
 
@@ -4585,14 +4573,12 @@
         return;
       }
 
-      // 3. Lấy danh sách toàn bộ học sinh của lớp từ dữ liệu sheet HS
       const classStudents = (studentListFromSheet || []).filter(s => cleanStr(s.lop) === cleanStr(targetClass));
       if (classStudents.length === 0) {
-        alert(`⚠️ Không tìm thấy danh sách học sinh thuộc lớp ${targetClass} trong Sheet HS!`);
+        alert(`⚠️ Không tìm thấy học sinh thuộc lớp ${targetClass} trong danh sách Sheet HS!`);
         return;
       }
 
-      // Đổi trạng thái nút bấm
       const btn = (typeof event !== 'undefined' && event && event.target) ? event.target.closest('button') : null;
       const oldBtnText = btn ? btn.innerHTML : "";
       if (btn) {
@@ -4605,11 +4591,8 @@
           fromDate: startDate, toDate: endDate, className: targetClass
         });
         const rawViolations = result.data || [];
-
-        // Lọc các vi phạm đúng lớp
         const classViolations = rawViolations.filter(v => cleanStr(v.lop) === cleanStr(targetClass));
 
-        // 5. Khởi tạo bộ đếm số lần vi phạm từng lỗi của từng học sinh
         const studentStatsMap = {};
         classStudents.forEach(s => {
           const sKey = cleanStr(s.maHS);
@@ -4631,22 +4614,18 @@
           }
         });
 
-        // 6. Định dạng ngày hiển thị
         const formatD = (dStr) => {
           if (!dStr) return "";
           const p = dStr.split("-");
           return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : dStr;
         };
-        const dateRangeText = `Từ ngày ${formatD(startDate)} đến ngày ${formatD(endDate)}`;
 
-        // 7. Tạo bảng dữ liệu Excel
         const excelRows = [];
         excelRows.push([`BÁO CÁO TỔNG HỢP VI PHẠM NỀ NẾP HỌC SINH - LỚP ${targetClass.toUpperCase()}`]);
-        excelRows.push([`Thời gian theo dõi: ${dateRangeText}`]);
+        excelRows.push([`Thời gian theo dõi: Từ ngày ${formatD(startDate)} đến ngày ${formatD(endDate)}`]);
         excelRows.push([`Người xuất báo cáo: ${currentUser ? currentUser.name : ''}`]);
         excelRows.push([]);
 
-        // Hàng tiêu đề cột
         const tableHeaders = [
           "STT", "Mã HS", "Họ và tên", "Lớp",
           ...ERROR_KEYS,
@@ -4654,12 +4633,10 @@
         ];
         excelRows.push(tableHeaders);
 
-        // Biến tính tổng cho từng cột lỗi
         const columnTotals = {};
         ERROR_KEYS.forEach(k => columnTotals[k] = 0);
         let grandTotalErrors = 0;
 
-        // Đổ từng học sinh vào bảng
         classStudents.forEach((student, index) => {
           const sKey = cleanStr(student.maHS);
           const stats = studentStatsMap[sKey] || { total: 0 };
@@ -4682,25 +4659,18 @@
           excelRows.push(row);
         });
 
-        // Dòng tổng cộng cả lớp ở cuối bảng
-        const totalRow = [
-          "", "", "TỔNG CỘNG CẢ LỚP", ""
-        ];
+        const totalRow = ["", "", "TỔNG CỘNG CẢ LỚP", ""];
         ERROR_KEYS.forEach(k => {
           totalRow.push(columnTotals[k]);
         });
         totalRow.push(grandTotalErrors);
         excelRows.push(totalRow);
 
-        // 8. Xuất file Excel
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet(excelRows);
 
         ws["!cols"] = [
-          { wch: 6 },
-          { wch: 18 },
-          { wch: 25 },
-          { wch: 8 },
+          { wch: 6 }, { wch: 18 }, { wch: 25 }, { wch: 8 },
           ...ERROR_KEYS.map(() => ({ wch: 14 })),
           { wch: 15 }
         ];
@@ -4719,9 +4689,8 @@
         }
       }
     }
-    // =========================================================================
-    // 8. XUẤT BẢNG TỔNG HỢP THEO LỚP VIỆC THEO DÕI NỀN NẾP HỌC SINH (CHUẨN MẪU)
-    // =========================================================================
+
+    // 8. XUẤT BẢNG TỔNG HỢP THEO LỚP TOÀN TRƯỜNG (BGH)
     async function exportAllClassesSummaryExcel() {
       if (typeof XLSX === "undefined") {
         alert("⚠️ Đang tải thư viện xuất Excel, vui lòng thử lại sau 2 giây!");
@@ -4744,10 +4713,10 @@
       }
 
       try {
-        const allClasses = [...new Set(studentListFromSheet.map(student => String(student.lop || '').trim()).filter(Boolean))].sort();
+        const allClasses = [...new Set((studentListFromSheet || []).map(student => String(student.lop || '').trim()).filter(Boolean))].sort();
 
         const violationResult = await apiRequest("getStudentViolations", { fromDate: startDate, toDate: endDate });
-        const rawViolations = violationResult.data;
+        const rawViolations = violationResult.data || [];
 
         const classStatsMap = {};
         allClasses.forEach(cls => {
@@ -4822,15 +4791,14 @@
         XLSX.writeFile(wb, `Bang_Tong_Hop_Theo_Lop_Nen_Nep_THPT_Tran_Phu_${dateStr}.xlsx`);
       } catch (err) {
         console.error("Lỗi xuất bảng tổng hợp toàn trường:", err);
-        alert("❌ Có lỗi xảy ra khi tạo bảng tổng hợp. Vui lòng thử lại!");
+        alert(`❌ Có lỗi xảy ra: ${err.message || "Vui lòng thử lại!"}`);
       } finally {
         if (btn) {
           btn.disabled = false;
           btn.innerHTML = oldBtnText;
         }
       }
-    }
-	
+    }	
   </script>
 </body>
 </html>
