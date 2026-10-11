@@ -1342,47 +1342,12 @@
         🎓
       </div>
       <h3 class="text-xl font-black text-slate-900 mb-1">Xác Thực Tài Khoản</h3>
-      <p id="login-modal-msg" class="text-xs text-indigo-600 font-semibold mb-4 px-2">Vui lòng chọn tài khoản để trải nghiệm các phân hệ nghiệp vụ.</p>
+      <p id="login-modal-msg" class="text-xs text-indigo-600 font-semibold mb-4 px-2">Đăng nhập bằng tài khoản Google có trong danh sách nhân sự của trường.</p>
 
       <div class="flex justify-center mb-4">
         <div id="google-signin-btn"></div>
       </div>
 
-      <div class="relative flex py-2 items-center">
-        <div class="flex-grow border-t border-slate-200"></div>
-        <span class="flex-shrink mx-3 text-xs text-slate-400">Chọn tài khoản demo từ Sheet Nhân sự</span>
-        <div class="flex-grow border-t border-slate-200"></div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2 mt-2 text-left">
-        <button onclick="simulateLogin('hvchinh.c3nlb@yenbai.edu.vn', 'Hoàng Văn Chinh')" class="col-span-2 text-xs bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-900 py-2.5 px-3 rounded-xl transition">
-          👑 <b>BGH Điều Hành (Hiệu Trưởng)</b><br><span class="text-[10px] text-amber-700">Hoàng Văn Chinh - Quản lý toàn trường</span>
-        </button>
-
-        <button onclick="simulateLogin('dtbvan.c3tp@yenbai.edu.vn', 'Dương Thị Bích Vân')" class="text-xs bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 py-2.5 px-3 rounded-xl transition">
-          👑 <b>BGH Duyệt (PHT)</b><br><span class="text-[10px] text-amber-600">Dương Thị Bích Vân</span>
-        </button>
-
-        <button onclick="simulateLogin('ttdung.c3tp@yenbai.edu.vn', 'Trần Tiến Dũng')" class="text-xs bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-800 py-2.5 px-3 rounded-xl transition">
-          👤 <b>TTCM Toán: Trần Tiến Dũng</b><br><span class="text-[10px] text-indigo-600">Tổ KHTN - CN 11A5</span>
-        </button>
-
-        <button onclick="simulateLogin('ltnghia.c3tp@yenbai.edu.vn', 'Lương Thế Nghĩa')" class="text-xs bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-800 py-2.5 px-3 rounded-xl transition">
-          📋 <b>TTCM Xếp Lịch (GV26)</b><br><span class="text-[10px] text-indigo-600">Lương Thế Nghĩa (Tổ KHXH)</span>
-        </button>
-
-        <button onclick="simulateLogin('pthhanh.c3tp@yenbai.edu.vn', 'Phạm Thị Hồng Hạnh')" class="text-xs bg-slate-50 hover:bg-rose-50 border border-slate-200 text-slate-700 py-2.5 px-3 rounded-xl transition">
-          👩‍🏫 <b>GV19: Hồng Hạnh</b><br><span class="text-[10px] text-slate-500">Ngữ văn - CN 11A3 (Tổ KHXH)</span>
-        </button>
-
-        <button onclick="simulateLogin('htmhien.c3nlb@yenbai.edu.vn', 'Hà Thị Minh Hiền')" class="text-xs bg-slate-50 hover:bg-amber-50 border border-slate-200 text-slate-700 py-2.5 px-3 rounded-xl transition">
-          🔔 <b>GV25: Hà Hiền</b><br><span class="text-[10px] text-slate-500">Địa lý - Lịch dạy thay (Tổ KHXH)</span>
-        </button>
-
-        <button onclick="simulateLogin('pbhoai.c3tp@yenbai.edu.vn', 'Phan Bích Hoài')" class="text-xs bg-slate-50 hover:bg-indigo-50 border border-slate-200 text-slate-700 py-2.5 px-3 rounded-xl transition">
-          👤 <b>GV2: Phan Bích Hoài</b><br><span class="text-[10px] text-slate-500">Toán (Tổ KHTN)</span>
-        </button>
-      </div>
     </div>
   </div>
 
@@ -1460,11 +1425,7 @@
       <form onsubmit="handleSaveDiscipline(event)" class="space-y-3 text-sm">
         <div>
           <label class="block font-medium text-slate-700 mb-1">Chọn lớp:</label>
-          <select id="modal-disc-class" class="w-full border border-slate-300 rounded-lg px-3 py-2 bg-white">
-            <option value="10A1">10A1</option>
-            <option value="11A5" selected>11A5</option>
-            <option value="12A2">12A2</option>
-          </select>
+          <select id="modal-disc-class" class="w-full border border-slate-300 rounded-lg px-3 py-2 bg-white"></select>
         </div>
         <div>
           <label class="block font-medium text-slate-700 mb-1">Tên học sinh:</label>
@@ -1633,41 +1594,18 @@
     // --- CẤU HÌNH API GOOGLE APPS SCRIPT ---
     const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbxKqmkVAW2iGr96AF8-icSKKNdOGLEXqwAEAiANm1VYD21ARQk0KzHnbY-_BGRTwtsB0A/exec";
     const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com";
-    const BGH_EMAILS = [
-      "bgh@laocai.edu.vn",
-      "hieutruong.c3tp@yenbai.edu.vn",
-      "hvchinh.c3nlb@yenbai.edu.vn",
-      "dtbvan.c3tp@yenbai.edu.vn"
-    ];
-
-    // DANH SÁCH KHỞI TẠO CHÍNH XÁC TỪ SHEET NHÂN SỰ
-    const DEFAULT_STAFF = [
-      { code: "GV1", name: "Trần Tiến Dũng", email: "ttdung.c3tp@yenbai.edu.vn", subject: "Toán", department: "KHTN", homeroom: "11A5", isTTCM: true },
-      { code: "GV2", name: "Phan Bích Hoài", email: "pbhoai.c3tp@yenbai.edu.vn", subject: "Toán", department: "KHTN", homeroom: "", isTTCM: false },
-      { code: "GV14", name: "Phạm Thị Thùy", email: "ptthuy.c3tp@yenbai.edu.vn", subject: "BGH", department: "KHTN", homeroom: "", isTTCM: false },
-      { code: "GV19", name: "Phạm Thị Hồng Hạnh", email: "pthhanh.c3tp@yenbai.edu.vn", subject: "Văn", department: "KHXH", homeroom: "11A3", isTTCM: false },
-      { code: "GV25", name: "Hà Thị Minh Hiền", email: "htmhien.c3nlb@yenbai.edu.vn", subject: "Địa", department: "KHXH", homeroom: "12A4", isTTCM: true },
-      { code: "GV26", name: "Lương Thế Nghĩa", email: "ltnghia.c3tp@yenbai.edu.vn", subject: "Sử", department: "KHXH", homeroom: "", isTTCM: true },
-      { code: "GV38", name: "Dương Thị Bích Vân", email: "dtbvan.c3tp@yenbai.edu.vn", subject: "BGH", department: "BGH", homeroom: "", isTTCM: false },
-      { code: "GV39", name: "Hoàng Văn Chinh", email: "hvchinh.c3nlb@yenbai.edu.vn", subject: "BGH", department: "BGH", homeroom: "", isTTCM: false }
-    ];
 
     let appData = {
-      staff: JSON.parse(JSON.stringify(DEFAULT_STAFF)),
+      staff: [],
       tasks: [],
       registrations: [],
       leaveRequests: [],
-      disciplines: [
-        { date: "07/10/2026", class: "11A5", student: "Nguyễn Văn Tuấn", content: "Đi học muộn 15 phút", points: -2, recorder: "Đội cờ đỏ" },
-        { date: "06/10/2026", class: "10A1", student: "Lê Hoàng Yến", content: "Đạt giải Nhất cuộc thi Sáng tạo KHKT cấp trường", points: 10, recorder: "Trần Tiến Dũng" }
-      ],
-      equipmentBorrows: [
-        { id: "MT01", teacherCode: "GV1", teacherName: "Trần Tiến Dũng", item: "Máy chiếu di động số 02", period: "Tiết 3 - Lớp 11A5", date: "07/10/2026", status: "Đang mượn" },
-        { id: "MT02", teacherCode: "GV6", teacherName: "Vũ Văn Tấn", item: "Bộ thí nghiệm Quang học Vật lý", period: "Tiết 1, 2 - Lớp 10A1", date: "06/10/2026", status: "Đã trả" }
-      ]
+      disciplines: [],
+      equipmentBorrows: []
     };
 
     let currentUser = null;
+    let sessionIdToken = null;
     let bghActiveTab = "grading";
     let bghPage = 1;
     let bghItemsPerPage = 10;
@@ -1685,9 +1623,27 @@
       return String(s || '').trim().toLowerCase();
     }
 
+    function hasPermission(permission) {
+      return Boolean(currentUser && Array.isArray(currentUser.permissions) &&
+        currentUser.permissions.includes(permission));
+    }
+
     function isBGH() {
-      if (!currentUser) return false;
-      return currentUser.role === "BGH" || BGH_EMAILS.some(e => cleanStr(e) === cleanStr(currentUser.email));
+      return hasPermission("kpi.manage");
+    }
+
+    async function apiRequest(action, payload = {}) {
+      if (!sessionIdToken) throw new Error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+      const response = await fetch(SCRIPT_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ ...payload, action, idToken: sessionIdToken })
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Máy chủ từ chối yêu cầu.");
+      }
+      return result;
     }
 
     function parseDateSafe(dateStr) {
@@ -1717,91 +1673,12 @@
       });
       return set.size;
     }
-// =============================================================
-    // KHỞI TẠO INDEXEDDB LƯU TRỮ TỆP PDF KHÔNG GIỚI HẠN DUNG LƯỢNG
-    // =============================================================
-    let dbPlan;
-    const requestDB = indexedDB.open("PlanFilesDB", 1);
-    requestDB.onupgradeneeded = function(e) {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains("pdf_files")) {
-        db.createObjectStore("pdf_files", { keyPath: "id" });
-      }
-    };
-    requestDB.onsuccess = function(e) {
-      dbPlan = e.target.result;
-    };
-    requestDB.onerror = function(e) {
-      console.error("Lỗi mở IndexedDB:", e);
-    };
-
-    function savePdfToDB(id, fileData, callback) {
-      if (!dbPlan) {
-        if (callback) callback();
-        return;
-      }
-      const tx = dbPlan.transaction("pdf_files", "readwrite");
-      const store = tx.objectStore("pdf_files");
-      store.put({ id: id, data: fileData });
-      tx.oncomplete = function() {
-        if (callback) callback();
-      };
-    }
-
-    function getPdfFromDB(id, callback) {
-      if (!dbPlan) {
-        callback(null);
-        return;
-      }
-      const tx = dbPlan.transaction("pdf_files", "readonly");
-      const store = tx.objectStore("pdf_files");
-      const req = store.get(id);
-      req.onsuccess = function() {
-        callback(req.result ? req.result.data : null);
-      };
-      req.onerror = function() {
-        callback(null);
-      };
-    }
     // -------------------------------------------------------------
-    // DỮ LIỆU KẾ HOẠCH HOẠT ĐỘNG
+    // DỮ LIỆU KẾ HOẠCH HOẠT ĐỘNG ĐƯỢC TẢI TỪ BACKEND
     // -------------------------------------------------------------
-    const MONTH_LABELS = [
-      "Tháng 08/2026", "Tháng 09/2026", "Tháng 10/2026", "Tháng 11/2026",
-      "Tháng 12/2026", "Tháng 01/2027", "Tháng 02/2027", "Tháng 03/2027",
-      "Tháng 04/2027", "Tháng 05/2027", "Tháng 06/2027", "Tháng 07/2027"
-    ];
-
-    let monthPlanData = JSON.parse(localStorage.getItem('PLAN_MONTH_DATA_2026_2027') || 'null');
-    if (!monthPlanData) {
-      monthPlanData = MONTH_LABELS.map((m, idx) => ({
-        id: `M-${idx + 1}`,
-        title: m,
-        fileName: "",
-        hasFile: false,
-        fileData: "",
-        updatedAt: "--"
-      }));
-      localStorage.setItem('PLAN_MONTH_DATA_2026_2027', JSON.stringify(monthPlanData));
-    }
-
-    let weekPlanData = JSON.parse(localStorage.getItem('PLAN_WEEK_DATA_2026_2027') || 'null');
-    if (!weekPlanData) {
-      weekPlanData = [];
-      for (let i = 1; i <= 40; i++) {
-        const numStr = i < 10 ? `0${i}` : `${i}`;
-        weekPlanData.push({
-          id: `W-${numStr}`,
-          weekNum: i,
-          title: `Tuần ${numStr}`,
-          fileName: "",
-          hasFile: false,
-          fileData: "",
-          updatedAt: "--"
-        });
-      }
-      localStorage.setItem('PLAN_WEEK_DATA_2026_2027', JSON.stringify(weekPlanData));
-    }
+    let monthPlanData = [];
+    let weekPlanData = [];
+    let currentPlanObjectUrl = null;
 
     let currentWeekPage = 1;
     const WEEKS_PER_PAGE = 10;
@@ -1963,7 +1840,7 @@
       document.getElementById('upload-doc-modal').classList.add('hidden');
     }
 
-    function confirmUploadDocFile() {
+    async function confirmUploadDocFile() {
       const fileInput = document.getElementById('upload-file-input');
       if (!fileInput.files || fileInput.files.length === 0) {
         alert("Vui lòng chọn tệp định dạng .pdf từ máy tính của bạn!");
@@ -1976,53 +1853,32 @@
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const base64Data = e.target.result;
-        const now = new Date();
-        const timeStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-
-        const targetId = currentUploadTarget.id;
-
-        // Lưu file nặng vào IndexedDB (không làm phình localStorage)
-        savePdfToDB(targetId, base64Data, function() {
-          if (currentUploadTarget.type === 'month') {
-            const item = monthPlanData.find(m => m.id === targetId);
-            if (item) {
-              item.fileName = file.name;
-              item.hasFile = true;
-              item.updatedAt = timeStr;
-              item.fileData = ""; // Để trống fileData trong localStorage
-              try {
-                localStorage.setItem('PLAN_MONTH_DATA_2026_2027', JSON.stringify(monthPlanData));
-              } catch(err) {
-                console.warn("Lỗi ghi localStorage:", err);
-              }
-            }
-          } else if (currentUploadTarget.type === 'week') {
-            const item = weekPlanData.find(w => w.id === targetId);
-            if (item) {
-              item.fileName = file.name;
-              item.hasFile = true;
-              item.updatedAt = timeStr;
-              item.fileData = ""; // Để trống fileData trong localStorage
-              try {
-                localStorage.setItem('PLAN_WEEK_DATA_2026_2027', JSON.stringify(weekPlanData));
-              } catch(err) {
-                console.warn("Lỗi ghi localStorage:", err);
-              }
-            }
-          }
-
-          closeUploadDocModal();
-          renderActionPlanModule();
-          alert(`✅ Đã tải lên và lưu thành công tệp: ${file.name}`);
+      if (file.size > 8 * 1024 * 1024 || file.type !== "application/pdf") {
+        alert("Tệp PDF phải nhỏ hơn 8 MB.");
+        return;
+      }
+      try {
+        const base64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(new Error("Không đọc được tệp PDF."));
+          reader.readAsDataURL(file);
         });
-      };
-      reader.readAsDataURL(file);
+        await apiRequest("uploadActionPlan", {
+          type: currentUploadTarget.type,
+          id: currentUploadTarget.id,
+          fileName: file.name,
+          fileData: base64
+        });
+        closeUploadDocModal();
+        await fetchRemoteData();
+        alert(`✅ Đã tải lên tệp: ${file.name}`);
+      } catch (error) {
+        alert(error.message);
+      }
     }
 
-    function viewDocPlan(type, id) {
+    async function viewDocPlan(type, id) {
       let item = (type === 'month')
         ? monthPlanData.find(m => m.id === id)
         : weekPlanData.find(w => w.id === id);
@@ -2035,32 +1891,26 @@
       document.getElementById('view-doc-title').innerText = item.title.toUpperCase();
       document.getElementById('view-file-name').innerText = item.fileName;
       document.getElementById('view-file-meta').innerText = `Cập nhật: ${item.updatedAt} • Phê duyệt bởi BGH`;
-
-      const iframe = document.getElementById('pdf-viewer-frame');
-      iframe.src = "about:blank";
-
-      // Lấy file từ IndexedDB ra để hiển thị trên iframe
-      getPdfFromDB(id, function(fileData) {
-        const dataToShow = fileData || item.fileData;
-        if (dataToShow) {
-          iframe.src = dataToShow;
-        } else {
-          alert("Tệp chưa có dữ liệu tải lên thực tế.");
-        }
-      });
-
-      document.getElementById('btn-modal-download').onclick = function() {
-        downloadDocPlan(type, id);
-      };
-
-      document.getElementById('view-doc-modal').classList.remove('hidden');
+      try {
+        const file = await apiRequest("getActionPlanFile", { type, id });
+        const bytes = Uint8Array.from(atob(file.fileData), char => char.charCodeAt(0));
+        if (currentPlanObjectUrl) URL.revokeObjectURL(currentPlanObjectUrl);
+        currentPlanObjectUrl = URL.createObjectURL(new Blob([bytes], { type: file.contentType }));
+        document.getElementById('pdf-viewer-frame').src = currentPlanObjectUrl;
+        document.getElementById('btn-modal-download').onclick = () => downloadDocPlan(type, id);
+        document.getElementById('view-doc-modal').classList.remove('hidden');
+      } catch (error) {
+        alert(error.message);
+      }
     }
  function closeViewDocModal() {
       const iframe = document.getElementById('pdf-viewer-frame');
       if (iframe) iframe.src = "about:blank";
+      if (currentPlanObjectUrl) URL.revokeObjectURL(currentPlanObjectUrl);
+      currentPlanObjectUrl = null;
       document.getElementById('view-doc-modal').classList.add('hidden');
     }
-    function downloadDocPlan(type, id) {
+    async function downloadDocPlan(type, id) {
       let item = (type === 'month')
         ? monthPlanData.find(m => m.id === id)
         : weekPlanData.find(w => w.id === id);
@@ -2070,19 +1920,18 @@
         return;
       }
 
-      getPdfFromDB(id, function(fileData) {
-        const dataToDownload = fileData || item.fileData;
-        if (dataToDownload) {
-          const link = document.createElement('a');
-          link.href = dataToDownload;
-          link.download = item.fileName || `${item.title}.pdf`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        } else {
-          alert("Tệp này chưa có dữ liệu tải lên thực tế.");
-        }
-      });
+      try {
+        const file = await apiRequest("getActionPlanFile", { type, id });
+        const bytes = Uint8Array.from(atob(file.fileData), char => char.charCodeAt(0));
+        const url = URL.createObjectURL(new Blob([bytes], { type: file.contentType }));
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = file.fileName;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } catch (error) {
+        alert(error.message);
+      }
     }
 
     // --- CẬP NHẬT THÔNG BÁO SỐ NHIỆM VỤ KPI CẦN HOÀN THÀNH ---
@@ -2182,8 +2031,16 @@
     }
 
     function navigateToModule(moduleKey) {
-      if (!currentUser && moduleKey !== "actionplan") {
-        openLoginModal("Vui lòng đăng nhập để truy cập phân hệ nghiệp vụ này.");
+      const modulePermissions = {
+        kpi_me: ["kpi.read.self"],
+        kpi_bgh: ["kpi.manage"],
+        students: ["students.read.class", "students.read.all"],
+        leave: ["leave.read"],
+        equipment: ["equipment.read"],
+        actionplan: ["plan.read"]
+      };
+      if (!(modulePermissions[moduleKey] || []).some(hasPermission)) {
+        openLoginModal("Vui lòng đăng nhập bằng tài khoản có quyền truy cập phân hệ này.");
         return;
       }
 
@@ -2203,7 +2060,7 @@
         switchBghTab(bghActiveTab);
       } else if (moduleKey === "students") {
         document.getElementById("students-section").classList.remove("hidden");
-		setupTeacherHomeroomClass(); // <-- THÊM DÒNG NÀY ĐỂ TỰ NHẬN DIỆN LỚP
+		setupTeacherHomeroomClass();
         renderStudentsSection();
       } else if (moduleKey === "leave") {
         document.getElementById("leave-substitute-section").classList.remove("hidden");
@@ -2233,7 +2090,7 @@
       const badge = document.getElementById("current-date-badge");
       if (badge) badge.innerText = `📅 Ngày ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
 
-      if (window.google) {
+      if (window.google && !GOOGLE_CLIENT_ID.includes("YOUR_GOOGLE_CLIENT_ID")) {
         google.accounts.id.initialize({
           client_id: GOOGLE_CLIENT_ID,
           callback: handleGoogleLoginResponse
@@ -2242,71 +2099,35 @@
           document.getElementById("google-signin-btn"),
           { theme: "outline", size: "large", width: 280, text: "signin_with" }
         );
+      } else {
+        document.getElementById("login-modal-msg").innerText =
+          "Quản trị viên cần cấu hình Google Client ID để bật đăng nhập.";
       }
       goToHome();
-      fetchRemoteData();
+      applyPermissions();
     };
 
-    function parseJwt(token) {
+    async function handleGoogleLoginResponse(response) {
+      sessionIdToken = response.credential;
+      currentUser = { avatar: response.picture || "" };
       try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        return JSON.parse(decodeURIComponent(escape(window.atob(base64))));
-      } catch (e) {
-        return null;
-      }
-    }
-
-    function handleGoogleLoginResponse(response) {
-      const payload = parseJwt(response.credential);
-      if (payload) {
-        processUserSession(payload.email, payload.name, payload.picture);
-      }
-    }
-
-    function simulateLogin(email, name) {
-      processUserSession(email, name, "https://api.dicebear.com/7.x/avataaars/svg?seed=" + encodeURIComponent(name));
-    }
-
-    function processUserSession(email, name, avatar) {
-      const lowerEmail = cleanStr(email);
-      let role = "GV";
-
-      const isBGHRole = BGH_EMAILS.some(e => cleanStr(e) === lowerEmail);
-
-      let staffProfile = (appData.staff || []).find(s => cleanStr(s.email) === lowerEmail);
-      if (!staffProfile) {
-        staffProfile = (appData.staff || []).find(s => cleanStr(s.name) === cleanStr(name));
-      }
-
-      if (isBGHRole || (staffProfile && staffProfile.role === "BGH")) {
-        role = "BGH";
-      }
-
-      currentUser = {
-        email: lowerEmail,
-        name: staffProfile ? staffProfile.name : name,
-        code: staffProfile ? staffProfile.code : (role === "BGH" ? "BGH" : "GV"),
-        subject: staffProfile ? staffProfile.subject : "Chuyên môn",
-        department: staffProfile ? staffProfile.department : "Khoa học xã hội",
-        homeroom: staffProfile ? staffProfile.homeroom : "",
-        isTTCM: staffProfile ? staffProfile.isTTCM : false,
-        role: role,
-        avatar: avatar
-      };
-
-      closeLoginModal();
-      renderAppView();
-      checkSubstituteNotifications();
-      updateKpiNotificationBadge();
-
-      if (!document.getElementById('actionplan-section').classList.contains('hidden')) {
-        renderActionPlanModule();
+        await fetchRemoteData();
+        closeLoginModal();
+      } catch (error) {
+        sessionIdToken = null;
+        currentUser = null;
+        applyPermissions();
+        alert(error.message);
       }
     }
 
     function logout() {
+      sessionIdToken = null;
       currentUser = null;
+      appData = { staff: [], tasks: [], registrations: [], leaveRequests: [], disciplines: [], equipmentBorrows: [] };
+      studentListFromSheet = [];
+      monthPlanData = [];
+      weekPlanData = [];
       document.getElementById("user-info-bar").classList.add("hidden");
       document.getElementById("nav-guest-box").classList.remove("hidden");
       checkSubstituteNotifications();
@@ -2315,70 +2136,51 @@
         renderActionPlanModule();
       }
       goToHome();
+      applyPermissions();
     }
 
     async function fetchRemoteData() {
-      if (!SCRIPT_API_URL || SCRIPT_API_URL.includes("YOUR_DEPLOYED_ID_HERE")) return;
-      try {
-        const res = await fetch(`${SCRIPT_API_URL}?action=getInitialData`);
-        const json = await res.json();
+      const [json, equipment, plans] = await Promise.all([
+        apiRequest("getInitialData"),
+        apiRequest("getEquipment"),
+        apiRequest("getActionPlan")
+      ]);
+      currentUser = { ...json.user, avatar: currentUser?.avatar || "" };
+      appData.staff = json.staff || [];
+      appData.tasks = json.tasks || [];
+      appData.registrations = json.registrations || [];
+      appData.leaveRequests = json.leaveRequests || [];
+      appData.disciplines = json.disciplines || [];
+      appData.equipmentBorrows = equipment.equipment || [];
+      studentListFromSheet = json.students || [];
+      monthPlanData = plans.months || [];
+      weekPlanData = plans.weeks || [];
+      renderAppView();
+      applyPermissions();
+      checkSubstituteNotifications();
+      updateKpiNotificationBadge();
+      if (currentModule === "students") setupTeacherHomeroomClass();
+      if (currentModule === "kpi_me") renderTeacherDashboard();
+      if (currentModule === "kpi_bgh") switchBghTab(bghActiveTab);
+      if (currentModule === "leave") renderLeaveModule();
+      if (currentModule === "equipment") renderEquipmentSection();
+      if (currentModule === "actionplan") renderActionPlanModule();
+    }
 
-        if (json.tasks && Array.isArray(json.tasks)) appData.tasks = json.tasks;
-
-        if (json.staff && Array.isArray(json.staff) && json.staff.length > 0) {
-          appData.staff = json.staff.map(s => {
-            const subject = s.subject || s.mon || "Chuyên môn";
-            const isTTCM = Boolean(s.isTTCM || String(s.role || '').toUpperCase().includes("TỔ TRƯỞNG") || String(s.role || '').toUpperCase().includes("TTCM"));
-            return {
-              code: String(s.code || s.maGV || '').trim(),
-              name: String(s.name || s.hoTen || '').trim(),
-              email: cleanStr(s.email),
-              subject: subject,
-              department: s.department || "Khoa học xã hội",
-              homeroom: String(s.homeroom || s.chuNhiem || '').trim(),
-              isTTCM: isTTCM,
-              role: s.role || 'GV'
-            };
-          });
-        }
-
-        if (json.registrations && Array.isArray(json.registrations)) {
-          appData.registrations = json.registrations;
-        }
-
-        if (json.leaveRequests && Array.isArray(json.leaveRequests)) {
-          appData.leaveRequests = json.leaveRequests;
-        }
-		if (json.students && Array.isArray(json.students)) {
-          studentListFromSheet = json.students;
-          if (currentModule === "students") setupTeacherHomeroomClass();
-        }
-
-        if (currentUser) {
-          const profile = appData.staff.find(s => cleanStr(s.email) === cleanStr(currentUser.email) || cleanStr(s.name) === cleanStr(currentUser.name));
-          if (profile) {
-            currentUser.code = profile.code;
-            currentUser.name = profile.name;
-            currentUser.subject = profile.subject;
-            currentUser.department = profile.department;
-            currentUser.homeroom = profile.homeroom;
-            currentUser.isTTCM = profile.isTTCM;
-            if (profile.role === "BGH") currentUser.role = "BGH";
-          }
-          renderAppView();
-        }
-
-        checkSubstituteNotifications();
-        updateKpiNotificationBadge();
-
-        if (currentModule === "kpi_me") renderTeacherDashboard();
-        if (currentModule === "kpi_bgh") switchBghTab(bghActiveTab);
-        if (currentModule === "leave") renderLeaveModule();
-        if (currentModule === "actionplan") renderActionPlanModule();
-
-      } catch (err) {
-        console.warn("Lỗi đồng bộ dữ liệu từ Apps Script:", err);
-      }
+    function applyPermissions() {
+      const access = {
+        kpi_me: ["kpi.read.self"],
+        kpi_bgh: ["kpi.manage"],
+        students: ["students.read.class", "students.read.all"],
+        leave: ["leave.read"],
+        actionplan: ["plan.read"],
+        equipment: ["equipment.read"]
+      };
+      document.querySelectorAll('[onclick*="navigateToModule("]').forEach(element => {
+        const match = element.getAttribute("onclick").match(/navigateToModule\('([^']+)'\)/);
+        if (!match) return;
+        element.classList.toggle("hidden", !(access[match[1]] || []).some(hasPermission));
+      });
     }
 
     function renderAppView() {
@@ -2386,7 +2188,7 @@
       document.getElementById("user-info-bar").classList.remove("hidden");
 
       document.getElementById("user-display-name").innerText = currentUser.name;
-      document.getElementById("user-avatar").src = currentUser.avatar;
+      if (currentUser.avatar) document.getElementById("user-avatar").src = currentUser.avatar;
       const roleBadge = document.getElementById("user-role-badge");
 
       if (currentUser.role === "BGH") {
@@ -2668,71 +2470,33 @@
         cleanStr(r.taskId) === cleanStr(taskId)
       );
 
-      if (reg) {
-        reg.evidence = link;
-        reg.level = "Chờ nghiệm thu";
-      }
-
-      closeEvidenceModal();
-      renderTeacherDashboard();
-      updateKpiNotificationBadge();
-
       try {
-        await fetch(SCRIPT_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({
-            action: "submitEvidence",
-            taskId: taskId,
-            teacherCode: currentUser.code,
-            evidence: link
-          })
-        });
+        await apiRequest("submitEvidence", { taskId, evidence: link });
+        if (reg) {
+          reg.evidence = link;
+          reg.level = "Chờ nghiệm thu";
+        }
+        closeEvidenceModal();
+        renderTeacherDashboard();
+        updateKpiNotificationBadge();
+        alert(`✅ Đã gửi báo cáo hoàn thành nhiệm vụ [${taskId}] thành công!`);
+        await fetchRemoteData();
       } catch (err) {
-        console.error("Lỗi gửi báo cáo minh chứng:", err);
+        alert(err.message);
       }
-
-      alert(`✅ Đã gửi báo cáo hoàn thành nhiệm vụ [${taskId}] thành công!`);
-      setTimeout(fetchRemoteData, 1500);
     }
 
     async function registerKPI(taskId) {
       const task = appData.tasks.find(t => cleanStr(t.id) === cleanStr(taskId));
       if (!task) return;
 
-      const newRegistration = {
-        rowIndex: appData.registrations.length + 2,
-        taskId: task.id,
-        teacherCode: currentUser.code,
-        teacherName: currentUser.name,
-        level: "Đang thực hiện",
-        baseScore: task.score,
-        finalScore: null,
-        evidence: ""
-      };
-
-      appData.registrations.push(newRegistration);
-      renderTeacherDashboard();
-      updateKpiNotificationBadge();
-
       try {
-        await fetch(SCRIPT_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({
-            action: "registerKPI",
-            taskId: task.id,
-            teacherCode: currentUser.code,
-            teacherName: currentUser.name,
-            score: task.score
-          })
-        });
+        await apiRequest("registerKPI", { taskId: task.id, score: task.score });
+        alert(`Đăng ký thành công nhiệm vụ [${task.id}]!`);
+        await fetchRemoteData();
       } catch (e) {
-        console.error("Gửi dữ liệu đăng ký thất bại:", e);
+        alert(e.message);
       }
-
-      alert(`Đăng ký thành công nhiệm vụ [${task.id}]! Dữ liệu đã được chuyển vào Sheet data.`);
-      setTimeout(fetchRemoteData, 1500);
     }
 
     // ==========================================
@@ -2863,29 +2627,17 @@
         return;
       }
       const score = Number(val);
-      reg.finalScore = score;
-      reg.level = "Đã xong";
-
-      renderBGHGradingTable();
-      updateKpiNotificationBadge();
-
       try {
-        await fetch(SCRIPT_API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: 'gradeTask',
-            maViec: reg.taskId,
-            maGV: reg.teacherCode,
-            score: score
-          })
-        });
+        await apiRequest("gradeTask", { taskId: reg.taskId, teacherCode: reg.teacherCode, score });
+        reg.finalScore = score;
+        reg.level = "Đã xong";
+        renderBGHGradingTable();
+        updateKpiNotificationBadge();
+        alert(`✅ Đã lưu điểm ${score} cho giáo viên ${reg.teacherName} (Nhiệm vụ: ${reg.taskId})!`);
+        await fetchRemoteData();
       } catch (err) {
-        console.error("Lỗi gửi điểm chấm:", err);
+        alert(err.message);
       }
-
-      alert(`✅ Đã lưu điểm ${score} cho giáo viên ${reg.teacherName} (Nhiệm vụ: ${reg.taskId})!`);
-      setTimeout(fetchRemoteData, 1500);
     }
 
     // TAB 2: Giao việc cho giáo viên
@@ -2989,38 +2741,13 @@
         return;
       }
 
-      const newReg = {
-        rowIndex: appData.registrations.length + 2,
-        taskId: task.id,
-        teacherCode: teacherCode,
-        teacherName: teacherName,
-        level: "Đang thực hiện",
-        baseScore: task.score,
-        finalScore: null,
-        evidence: ""
-      };
-      appData.registrations.push(newReg);
-      renderBghAssignTable();
-      updateKpiNotificationBadge();
-
       try {
-        await fetch(SCRIPT_API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: 'registerTask',
-            taskId: task.id,
-            teacherCode: teacherCode,
-            teacherName: teacherName,
-            score: task.score
-          })
-        });
+        await apiRequest("assignTask", { taskId: task.id, teacherCode });
+        alert(`✅ Đã giao nhiệm vụ [${task.id}] cho GV ${teacherName} thành công!`);
+        await fetchRemoteData();
       } catch (err) {
-        console.error("Lỗi giao việc:", err);
+        alert(err.message);
       }
-
-      alert(`✅ Đã giao nhiệm vụ [${task.id}] cho GV ${teacherName} thành công!`);
-      setTimeout(fetchRemoteData, 1500);
     }
 
     function renderBghStatsDashboard() {
@@ -3280,39 +3007,15 @@
       const deadline = document.getElementById("modal-task-deadline").value;
       const quota = Number(document.getElementById("modal-task-quota").value);
 
-      appData.tasks.push({
-        id: taskId,
-        title: title,
-        desc: desc,
-        score: score,
-        deadline: deadline,
-        quota: quota,
-        status: "Còn việc"
-      });
-
-      closeCreateTaskModal();
-      document.getElementById("new-task-form").reset();
-      alert(`Đã lưu và xuất bản thành công nhiệm vụ [${taskId}] vào Kho KPI!`);
-      if (bghActiveTab === "assign") renderBghAssignTable();
-
       try {
-        await fetch(SCRIPT_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({
-            action: "createTask",
-            taskId: taskId,
-            title: title,
-            desc: desc,
-            score: score,
-            deadline: deadline,
-            quota: quota
-          })
-        });
+        await apiRequest("createTask", { taskId, title, desc, score, deadline, quota });
+        closeCreateTaskModal();
+        document.getElementById("new-task-form").reset();
+        alert(`Đã lưu nhiệm vụ [${taskId}] vào Kho KPI.`);
+        await fetchRemoteData();
       } catch (err) {
-        console.error("Lỗi tạo việc mới lên sheet:", err);
+        alert(err.message);
       }
-      setTimeout(fetchRemoteData, 1500);
     }
 
     // ==========================================
@@ -3338,26 +3041,35 @@
       });
     }
 
-    function openAddDisciplineModal() { document.getElementById("discipline-modal").classList.remove("hidden"); }
+    function openAddDisciplineModal() {
+      const select = document.getElementById("modal-disc-class");
+      select.innerHTML = "";
+      const classes = [...new Set(studentListFromSheet.map(student => student.lop))].filter(Boolean).sort();
+      classes.forEach(className => {
+        const option = document.createElement("option");
+        option.value = className;
+        option.textContent = className;
+        select.appendChild(option);
+      });
+      document.getElementById("discipline-modal").classList.remove("hidden");
+    }
     function closeAddDisciplineModal() { document.getElementById("discipline-modal").classList.add("hidden"); }
 
-    function handleSaveDiscipline(e) {
+    async function handleSaveDiscipline(e) {
       e.preventDefault();
-      const now = new Date();
-      const dateStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
-
-      appData.disciplines.unshift({
-        date: dateStr,
-        class: document.getElementById("modal-disc-class").value,
-        student: document.getElementById("modal-disc-student").value.trim(),
-        content: document.getElementById("modal-disc-content").value.trim(),
-        points: Number(document.getElementById("modal-disc-points").value),
-        recorder: currentUser.name
-      });
-
-      closeAddDisciplineModal();
-      renderStudentsSection();
-      alert("Đã lưu ghi nhận nề nếp học sinh!");
+      try {
+        await apiRequest("saveDiscipline", {
+          class: document.getElementById("modal-disc-class").value,
+          student: document.getElementById("modal-disc-student").value.trim(),
+          content: document.getElementById("modal-disc-content").value.trim(),
+          points: Number(document.getElementById("modal-disc-points").value)
+        });
+        closeAddDisciplineModal();
+        alert("Đã lưu ghi nhận nề nếp học sinh.");
+        await fetchRemoteData();
+      } catch (error) {
+        alert(error.message);
+      }
     }
 
     // =========================================================================
@@ -3952,29 +3664,19 @@
         periods: periods
       };
 
-      appData.leaveRequests.unshift(newTicket);
-      closeCreateLeaveModal();
-      renderLeaveModule();
-
       const btn = document.getElementById("btn-submit-leave");
       if (btn) btn.innerText = "Đang lưu vào Sheet LichNghi...";
 
       try {
-        await fetch(SCRIPT_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({
-            action: "createLeaveRequest",
-            ticket: newTicket
-          })
-        });
+        await apiRequest("createLeaveRequest", { ticket: newTicket });
+        closeCreateLeaveModal();
+        await fetchRemoteData();
+        alert(`✅ Đã gửi đơn nghỉ gồm ${sessionCount} buổi.`);
       } catch(err) {
-        console.error("Lỗi khi gửi lên sheet LichNghi:", err);
+        alert(err.message);
+      } finally {
+        if (btn) btn.innerText = "Gửi Đơn Lên Tổ Trưởng Chuyên Môn ➔";
       }
-
-      if (btn) btn.innerText = "Gửi Đơn Lên Tổ Trưởng Chuyên Môn ➔";
-      alert(`✅ Đã gửi đơn thành công gồm ${sessionCount} buổi nghỉ và lưu vào sheet LichNghi!`);
-      setTimeout(fetchRemoteData, 1500);
     }
 
     function openTtcmAssignModal(ticketId) {
@@ -4025,6 +3727,7 @@
       if (!ticket) return;
 
       const rows = document.querySelectorAll("#ttcm-assign-tbody tr");
+      const periods = ticket.periods.map(period => ({ ...period }));
       for (let i = 0; i < rows.length; i++) {
         const subT = rows[i].querySelector(".ttcm-sub-teacher").value;
         const subS = rows[i].querySelector(".ttcm-sub-subject").value;
@@ -4035,32 +3738,21 @@
           return;
         }
 
-        ticket.periods[i].subTeacher = subT;
-        ticket.periods[i].subSubject = subS || ticket.subject;
-        ticket.periods[i].makeupSchedule = subM || "Chưa dạy bù";
+        periods[i].subTeacher = subT;
+        periods[i].subSubject = subS || ticket.subject;
+        periods[i].makeupSchedule = subM || "Chưa dạy bù";
       }
-
-      ticket.status = "PENDING_BGH";
-      closeTtcmModal();
-      renderLeaveModule();
 
       try {
-        await fetch(SCRIPT_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({
-            action: "updateLeaveStatus",
-            ticketId: ticket.id,
-            status: "PENDING_BGH",
-            periods: ticket.periods
-          })
+        await apiRequest("updateLeaveStatus", {
+          ticketId: ticket.id, status: "PENDING_BGH", periods
         });
+        closeTtcmModal();
+        await fetchRemoteData();
+        alert("✅ Đã xếp lịch và chuyển đơn lên BGH duyệt.");
       } catch(err) {
-        console.error("Lỗi khi cập nhật phân công lên Sheet:", err);
+        alert(err.message);
       }
-
-      alert("✅ Đã hoàn tất xếp lịch dạy thay! Dữ liệu đã đồng bộ lên Google Sheet và chuyển Ban Giám Hiệu duyệt.");
-      setTimeout(fetchRemoteData, 1500);
     }
 
     async function approveTicketByBGH(ticketId) {
@@ -4073,27 +3765,13 @@
       if (!ticket) return;
 
       if (confirm(`Xác nhận phê duyệt đơn nghỉ & kế hoạch dạy thay cho giáo viên ${ticket.teacherName}?`)) {
-        ticket.status = "APPROVED_BGH";
-        renderLeaveModule();
-        checkSubstituteNotifications();
-
         try {
-          await fetch(SCRIPT_API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({
-              action: "updateLeaveStatus",
-              ticketId: ticket.id,
-              status: "APPROVED_BGH",
-              periods: ticket.periods
-            })
-          });
+          await apiRequest("updateLeaveStatus", { ticketId: ticket.id, status: "APPROVED_BGH" });
+          await fetchRemoteData();
+          alert("✅ BGH đã phê duyệt đơn nghỉ.");
         } catch(err) {
-          console.error("Lỗi khi duyệt lên Sheet:", err);
+          alert(err.message);
         }
-
-        alert("✅ BGH ĐÃ PHÊ DUYỆT THÀNH CÔNG!\n\nDữ liệu trên Google Sheet đã chuyển trạng thái APPROVED_BGH.");
-        setTimeout(fetchRemoteData, 1500);
       }
     }
 
@@ -4444,48 +4122,39 @@
     function openEquipmentModal() { document.getElementById("equipment-modal").classList.remove("hidden"); }
     function closeEquipmentModal() { document.getElementById("equipment-modal").classList.add("hidden"); }
 
-    function handleSaveEquipment(e) {
+    async function handleSaveEquipment(e) {
       e.preventDefault();
-      const id = "MT" + String(appData.equipmentBorrows.length + 1).padStart(2, '0');
-
-      appData.equipmentBorrows.unshift({
-        id: id,
-        teacherCode: currentUser.code,
-        teacherName: currentUser.name,
+      try {
+        const result = await apiRequest("createEquipmentBorrow", {
         item: document.getElementById("modal-equip-name").value,
-        period: document.getElementById("modal-equip-period").value.trim(),
+          period: document.getElementById("modal-equip-period").value.trim(),
         date: document.getElementById("modal-equip-date").value,
-        status: "Đang mượn"
-      });
-
-      closeEquipmentModal();
-      renderEquipmentSection();
-      alert(`Đã đăng ký mượn thiết bị thành công với mã: [${id}]!`);
+        });
+        closeEquipmentModal();
+        alert(`Đã đăng ký mượn thiết bị thành công với mã: [${result.id}].`);
+        await fetchRemoteData();
+      } catch (error) {
+        alert(error.message);
+      }
     }
 
-    function returnEquipment(idx) {
-      appData.equipmentBorrows[idx].status = "Đã trả";
-      renderEquipmentSection();
-      alert("Đã cập nhật tình trạng: Hoàn trả thiết bị thành công!");
+    async function returnEquipment(idx) {
+      const item = appData.equipmentBorrows[idx];
+      if (!item) return;
+      try {
+        await apiRequest("returnEquipment", { id: item.id });
+        alert("Đã cập nhật tình trạng: Hoàn trả thiết bị thành công.");
+        await fetchRemoteData();
+      } catch (error) {
+        alert(error.message);
+      }
     }
 	// =========================================================================
     // PHÂN HỆ QUẢN LÝ HỌC SINH (TỰ ĐỘNG LẤY LỚP GVCN & GỢI Ý HỌC SINH SHEET HS)
     // =========================================================================
 
     // Dữ liệu học sinh lấy từ sheet HS (kèm dữ liệu dự phòng)
-    let studentListFromSheet = [
-      { maHS: "15000717-00-3330", lop: "10A1", hoTen: "Bùi Quang Anh" },
-      { maHS: "15000717-00-3327", lop: "10A1", hoTen: "Đào Châm Anh" },
-      { maHS: "15000717-00-3329", lop: "10A1", hoTen: "Lê Kiều Anh" },
-      { maHS: "15000717-00-3334", lop: "10A1", hoTen: "Lê Tấn Dũng" },
-      { maHS: "15000717-00-3335", lop: "10A1", hoTen: "Nguyễn Thị Thu Giang" },
-      { maHS: "15000717-00-3337", lop: "10A1", hoTen: "Đỗ Trọng Hiếu" },
-      { maHS: "15000717-00-3357", lop: "11A5", hoTen: "Trần Mạnh Quân" },
-      { maHS: "15000717-00-3359", lop: "11A5", hoTen: "Lương Như Quỳnh" },
-      { maHS: "15000717-00-3363", lop: "11A5", hoTen: "Nguyễn Đức Toàn" },
-      { maHS: "15000717-00-3366", lop: "11A3", hoTen: "Đặng Thị Minh Trang" },
-      { maHS: "15000717-00-3368", lop: "12A2", hoTen: "Trần Thanh Trúc" }
-    ];
+    let studentListFromSheet = [];
 
     const ERROR_KEYS = [
       "Nghỉ CP", "Nghỉ KP", "Bỏ tiết", "Đi muộn", "Vô lễ",
@@ -4535,7 +4204,7 @@
           if (bghSelect) {
             bghSelect.classList.remove("hidden");
             populateBghClassList();
-            targetClass = bghSelect.value || "10A1";
+            targetClass = bghSelect.value || "";
             classInput.value = targetClass;
           }
         } else {
@@ -4543,8 +4212,8 @@
           targetClass = "";
         }
       } else {
-        classInput.value = "11A5";
-        targetClass = "11A5";
+        classInput.value = "";
+        targetClass = "";
       }
 
       loadStudentsForClass(targetClass);
@@ -4628,14 +4297,10 @@
         return;
       }
 
-      const dParts = dateVal.split("-");
-      const formattedDate = `${dParts[2]}/${dParts[1]}/${dParts[0]}`;
-
       const payload = {
-        action: "saveViolation",
-        ngay: formattedDate,
-        lop: lop,
-        hoTen: hoTen,
+        ngay: dateVal,
+        class: lop,
+        student: hoTen,
         maHS: maHS,
         selectedErrors: selectedErrors
       };
@@ -4645,19 +4310,15 @@
       submitBtn.innerText = "⏳ Đang ghi vào sheet dataHS...";
 
       try {
-        await fetch(SCRIPT_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
-        });
-
-        alert(`✅ Đã lưu thành công bản ghi vi phạm cho học sinh ${hoTen} (${maHS}) vào sheet dataHS!`);
+        await apiRequest("saveViolation", payload);
+        alert(`✅ Đã lưu bản ghi vi phạm cho học sinh ${hoTen} (${maHS}).`);
         document.getElementById("violation-form").reset();
         setupTeacherHomeroomClass();
         document.getElementById("input-violation-date").value = new Date().toISOString().split("T")[0];
+        await fetchRemoteData();
       } catch (err) {
         console.error(err);
-        alert("❌ Có lỗi xảy ra khi lưu dữ liệu lên Google Sheets. Vui lòng kiểm tra lại kết nối!");
+        alert(err.message);
       } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = "<span>💾</span> Lưu Lên Sheet dataHS";
@@ -4700,37 +4361,17 @@
       const tbody = document.getElementById("stats-table-body");
       tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">Đang tra cứu dữ liệu từ sheet dataHS...</td></tr>`;
 
-      // Xác định lớp của tài khoản đăng nhập
-      let userHomeroom = "";
-      if (currentUser) {
-        if (currentUser.homeroom && currentUser.homeroom.trim() !== "") {
-          userHomeroom = currentUser.homeroom.trim();
-        } else if (currentUser.role === "BGH") {
-          // BGH nếu có chọn lớp override thì lấy theo lớp đó, nếu không chọn thì để trống (xem toàn trường)
-          const overrideInput = document.getElementById("input-student-class");
-          if (overrideInput && overrideInput.value && overrideInput.value !== "Chưa phân công CN") {
-            userHomeroom = overrideInput.value.trim();
-          }
-        }
-      }
-
       let dataList = [];
 
       try {
-        const queryUrl = `${SCRIPT_API_URL}?action=getStudentViolations&maHS=${encodeURIComponent(maHS)}&hoTen=${encodeURIComponent(hoTen)}&fromDate=${startDate}&toDate=${endDate}`;
-        const res = await fetch(queryUrl);
-        const json = await res.json();
-        dataList = json.data || [];
+        const result = await apiRequest("getStudentViolations", {
+          maHS, hoTen, fromDate: startDate, toDate: endDate,
+          className: currentUser.role === "BGH" ? document.getElementById("input-student-class").value : ""
+        });
+        dataList = result.data || [];
       } catch (err) {
-        console.warn("Lỗi tra cứu:", err);
-      }
-
-      // LỌC CHẶT CHẼ: Giáo viên chỉ thấy danh sách lỗi của lớp mình chủ nhiệm
-      if (userHomeroom && (!currentUser || currentUser.role !== "BGH")) {
-        dataList = dataList.filter(d => cleanStr(d.lop) === cleanStr(userHomeroom));
-      } else if (!currentUser || (!currentUser.homeroom && currentUser.role !== "BGH")) {
-        // Tài khoản không phải BGH và không chủ nhiệm lớp nào
-        dataList = [];
+        alert(err.message);
+        return;
       }
 
       currentQueriedList = dataList;
@@ -4925,20 +4566,10 @@
       }
 
       try {
-        // 4. Lấy dữ liệu vi phạm từ Google Apps Script (Timeout 8s chống đơ)
-        let rawViolations = [];
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 8000);
-          const queryUrl = `${SCRIPT_API_URL}?action=getStudentViolations&maHS=&hoTen=&fromDate=${startDate}&toDate=${endDate}`;
-          const res = await fetch(queryUrl, { signal: controller.signal });
-          clearTimeout(timeoutId);
-          const json = await res.json();
-          rawViolations = json.data || [];
-        } catch (fetchErr) {
-          console.warn("Dùng dữ liệu tra cứu hiện tại:", fetchErr);
-          rawViolations = currentQueriedList || [];
-        }
+        const result = await apiRequest("getStudentViolations", {
+          maHS: "", hoTen: "", fromDate: startDate, toDate: endDate, className: targetClass
+        });
+        const rawViolations = result.data || [];
 
         // Lọc các vi phạm đúng lớp
         const classViolations = rawViolations.filter(v => cleanStr(v.lop) === cleanStr(targetClass));
@@ -5081,31 +4712,11 @@
       }
 
       try {
-        const ALL_CLASSES = [
-          "10A1", "10A2", "10A3", "10A4", "10A5", "10A6", "10A7",
-          "11A1", "11A2", "11A3", "11A4", "11A5", "11A6", "11A7",
-          "12A1", "12A2", "12A3", "12A4", "12A5", "12A6", "12A7"
-        ];
-
-        const DEFAULT_CLASS_SIZES = {
-          "10A1": 46, "10A2": 45, "10A3": 45, "10A4": 45, "10A5": 46, "10A6": 46, "10A7": 46,
-          "11A1": 41, "11A2": 44, "11A3": 42, "11A4": 46, "11A5": 46, "11A6": 43, "11A7": 40,
-          "12A1": 44, "12A2": 47, "12A3": 47, "12A4": 47, "12A5": 43, "12A6": 44, "12A7": 43
-        };
-
-        let rawViolations = [];
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 8000);
-          const queryUrl = `${SCRIPT_API_URL}?action=getStudentViolations&maHS=&hoTen=&fromDate=${startDate}&toDate=${endDate}`;
-          const res = await fetch(queryUrl, { signal: controller.signal });
-          clearTimeout(timeoutId);
-          const json = await res.json();
-          rawViolations = json.data || [];
-        } catch (fetchErr) {
-          console.warn("Dùng dữ liệu hiện tại:", fetchErr);
-          rawViolations = currentQueriedList || [];
-        }
+        const ALL_CLASSES = [...new Set(studentListFromSheet.map(student => student.lop).filter(Boolean))].sort();
+        const result = await apiRequest("getStudentViolations", {
+          maHS: "", hoTen: "", fromDate: startDate, toDate: endDate
+        });
+        const rawViolations = result.data || [];
 
         const classStatsMap = {};
         ALL_CLASSES.forEach(cls => {
@@ -5147,7 +4758,7 @@
 
         ALL_CLASSES.forEach(cls => {
           const countInList = (studentListFromSheet || []).filter(s => cleanStr(s.lop) === cleanStr(cls)).length;
-          const classSize = countInList > 20 ? countInList : (DEFAULT_CLASS_SIZES[cls] || 45);
+          const classSize = countInList;
           totalAllStudents += classSize;
 
           const row = [classSize, cls];
