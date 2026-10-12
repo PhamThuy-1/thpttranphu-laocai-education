@@ -170,7 +170,14 @@ function authenticateRequest_(idToken) {
 }
 
 function authorizeAction_(identity, action) {
-  const permissions = identity.permissions;
+  const permissions = identity.permissions || [];
+  const isBgh = permissions.includes('students.read.all') || identity.role === 'BGH';
+
+  // Nếu là BGH, cho phép toàn quyền truy cập các mục nề nếp học sinh
+  if (isBgh && ['getStudentViolations', 'saveViolation', 'getDiscipline', 'saveDiscipline'].includes(action)) {
+    return;
+  }
+
   const required = {
     getInitialData: 'kpi.read.self', getData: 'kpi.read.self',
     submitEvidence: 'kpi.register', submitProof: 'kpi.register',
@@ -184,15 +191,16 @@ function authorizeAction_(identity, action) {
     returnEquipment: 'equipment.write', getActionPlan: 'plan.read',
     getActionPlanFile: 'plan.read', uploadActionPlan: 'plan.write'
   };
+  
   const permission = required[action];
   if (!permission || permissions.indexOf(permission) === -1) {
     throw new Error('Bạn không có quyền thực hiện thao tác này.');
   }
-  if (action === 'getDiscipline' && !permissions.includes('students.read.all') && !identity.homeroom) {
+
+  if (action === 'getDiscipline' && !isBgh && !identity.homeroom) {
     throw new Error('Tài khoản chưa được phân công lớp chủ nhiệm.');
   }
 }
-
 function text_(value) {
   return String(value === null || value === undefined ? '' : value).trim();
 }
@@ -512,11 +520,18 @@ function getLeaveRequests_(ss, identity) {
   }).filter(Boolean);
 }
 
-function createLeaveRequest(payload, user) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+function createLeaveRequest_(identity, ticket) {
+  if (!ticket || !Array.isArray(ticket.periods) || ticket.periods.length === 0) {
+    throw new Error('Dữ liệu đơn xin nghỉ hoặc danh sách tiết nghỉ không hợp lệ.');
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = ss.getSheetByName("LichNghi");
+  if (!sheet) {
+    throw new Error("Không tìm thấy sheet LichNghi trên bảng tính.");
+  }
   
-  // 1. Đọc dữ liệu cột chứa Mã đơn (giả sử cột A từ dòng 2)
+  // 1. Quét tìm mã đơn lớn nhất để sinh mã tăng dần DN-00x
   const lastRow = sheet.getLastRow();
   let maxIndex = 0;
 
@@ -524,7 +539,6 @@ function createLeaveRequest(payload, user) {
     const ids = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
     ids.forEach(row => {
       const idStr = String(row[0] || '').trim();
-      // Bắt các mẫu mã dạng DN-xxx hoặc lấy số cuối
       const match = idStr.match(/^DN-(\d+)$/i);
       if (match) {
         const num = parseInt(match[1], 10);
@@ -533,19 +547,55 @@ function createLeaveRequest(payload, user) {
     });
   }
 
-  // 2. Tăng số thứ tự và format thành 3 chữ số (DN-001, DN-002, ...)
   const nextIndex = maxIndex + 1;
   const newId = "DN-" + String(nextIndex).padStart(3, '0');
 
-  // 3. Tiến hành ghi đơn với newId vào Sheet LichNghi
-  // ... (Ghi các dòng periods kèm newId vào sheet)
+  // 2. Chuẩn bị dữ liệu ghi khớp chuẩn với cấu trúc sheet LichNghi
+  const rowsToAppend = [];
+  const teacherCode = identity.code;
+  const teacherName = identity.name;
+  const subject = identity.subject;
+  const department = identity.department;
+  const reasonCategory = text_(ticket.reasonCategory || 'Việc riêng');
+  const reasonDetail = text_(ticket.reason || '');
+
+  ticket.periods.forEach(p => {
+    const leaveDate = parseApiDate_(p.leaveDate || p.rawDate);
+    const dateFormatted = formatSheetDate_(leaveDate) || text_(p.leaveDate);
+
+    rowsToAppend.push([
+      newId,                              // Cột A (0): Mã đơn
+      teacherCode,                        // Cột B (1): Mã GV
+      teacherName,                        // Cột C (2): Tên GV
+      subject,                            // Cột D (3): Môn
+      department,                         // Cột E (4): Tổ CM
+      reasonCategory,                     // Cột F (5): Loại lý do
+      reasonDetail,                       // Cột G (6): Chi tiết lý do
+      new Date(),                         // Cột H (7): Ngày tạo đơn
+      dateFormatted,                      // Cột I (8): Ngày nghỉ
+      text_(p.session || 'Sáng'),         // Cột J (9): Buổi
+      text_(p.class),                     // Cột K (10): Lớp
+      Number(p.periodTKB) || 1,           // Cột L (11): Tiết TKB
+      Number(p.periodPPCT) || 1,          // Cột M (12): Tiết PPCT
+      text_(p.lessonName),                // Cột N (13): Tên bài dạy
+      '',                                 // Cột O (14): Người dạy thay (để TTCM xếp)
+      'Chưa dạy bù',                      // Cột P (15): Lịch dạy bù
+      'PENDING_TTCM',                     // Cột Q (16): Trạng thái
+      new Date()                          // Cột R (17): Thời gian cập nhật
+    ]);
+  });
+
+  // 3. Ghi toàn bộ tiết vào Sheet LichNghi
+  if (rowsToAppend.length > 0) {
+    sheet.getRange(sheet.getLastRow() + 1, 1, rowsToAppend.length, rowsToAppend[0].length).setValues(rowsToAppend);
+  }
+  SpreadsheetApp.flush();
 
   return {
     success: true,
     id: newId
   };
 }
-
 function updateLeaveStatus_(identity, data) {
   const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('LichNghi');
   if (!sheet) return { success: false, error: 'Thiếu sheet LichNghi.' };
@@ -598,27 +648,25 @@ function getStudentViolations_(identity, filters) {
   const code = text_(filters.maHS).toLowerCase();
   const name = text_(filters.hoTen).toLowerCase();
   const requestedClass = text_(filters.className || filters.lop).toLowerCase();
-  if (requestedClass && !identity.permissions.includes('students.read.all') &&
-      requestedClass !== identity.homeroom.toLowerCase()) {
+  
+  const isBgh = identity.permissions.includes('students.read.all') || identity.role === 'BGH';
+
+  // GVCN chỉ được xem lớp mình, BGH được xem mọi lớp
+  if (!isBgh && requestedClass && requestedClass !== identity.homeroom.toLowerCase()) {
     throw new Error('Bạn chỉ được tra cứu lớp chủ nhiệm.');
   }
-  const students = sheetRows_('HS').slice(1);
-  const classes = new Set(students.map(row => text_(row[1]).toLowerCase()).filter(Boolean));
-  if (requestedClass && !classes.has(requestedClass)) {
-    return { success: false, error: 'Lớp cần tra cứu không tồn tại trong sheet HS.' };
-  }
+
   const types = values[0].slice(4);
   const data = values.slice(1).map((row, index) => {
     const date = formatSheetDate_(row[1]);
-    const parsedDate = parseApiDate_(date);
     return {
       rowIndex: index + 2, maHS: text_(row[0]), date: date,
       class: text_(row[2]), student: text_(row[3]),
       errors: types.filter((label, typeIndex) => label && Number(row[typeIndex + 4]) > 0).map(text_)
     };
   }).filter(item => item.maHS && item.student)
-    .filter(item => identity.permissions.includes('students.read.all') ||
-      item.class.toLowerCase() === identity.homeroom.toLowerCase())
+    // Nếu là BGH thì lấy tất cả; nếu là GVCN thì lọc đúng lớp của mình
+    .filter(item => isBgh || item.class.toLowerCase() === identity.homeroom.toLowerCase())
     .filter(item => !code || item.maHS.toLowerCase().includes(code))
     .filter(item => !name || item.student.toLowerCase().includes(name))
     .filter(item => !requestedClass || item.class.toLowerCase() === requestedClass)
@@ -626,9 +674,9 @@ function getStudentViolations_(identity, filters) {
       const date = parseApiDate_(item.date);
       return (!fromDate || (date && date >= fromDate)) && (!toDate || (date && date <= toDate));
     }).map(item => Object.assign({}, item, { ngay: item.date, lop: item.class, hoTen: item.student }));
+
   return { success: true, data: data };
 }
-
 function saveViolation_(identity, data) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const studentsSheet = ss.getSheetByName('HS');
