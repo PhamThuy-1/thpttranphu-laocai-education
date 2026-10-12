@@ -3735,19 +3735,32 @@
       if (btn) btn.innerText = "Đang lưu vào Sheet LichNghi...";
 
       try {
+        const ticketPayload = {
+          teacherName: currentUser?.name || document.getElementById("leave-teacher-name").value,
+          teacherCode: currentUser?.code || "",
+          subject: currentUser?.subject || document.getElementById("leave-subject-name").value,
+          department: currentUser?.department || "",
+          reasonCategory: reasonCategory,
+          reason: reasonDetail,
+          timeDisplay: timeDisplay,
+          periods: periods
+        };
+
         const result = await apiRequest("createLeaveRequest", {
-          ticket: { reasonCategory, reason: reasonDetail, periods }
+          ticket: ticketPayload
         });
+
         await fetchRemoteData();
         closeCreateLeaveModal();
         renderLeaveModule();
-        alert(`Đã gửi đơn ${result.id}, gồm ${sessionCount} buổi nghỉ.`);
+        
+        const createdId = result.id || result.ticketId || (result.data && result.data.id) || "mới";
+        alert(`Đã gửi đơn [${createdId}], gồm ${sessionCount} buổi nghỉ.`);
       } catch (error) {
         alert(`Không thể gửi đơn nghỉ: ${error.message}`);
       } finally {
         if (btn) btn.innerText = "Gửi Đơn Lên Tổ Trưởng Chuyên Môn ➔";
-      }
-    }
+      }    }
 
     function openTtcmAssignModal(ticketId) {
       const ticket = appData.leaveRequests.find(t => cleanStr(t.id) === cleanStr(ticketId));
