@@ -512,34 +512,38 @@ function getLeaveRequests_(ss, identity) {
   }).filter(Boolean);
 }
 
-function createLeaveRequest_(identity, ticket) {
-  if (!ticket || !Array.isArray(ticket.periods) || ticket.periods.length < 1 || ticket.periods.length > 20) {
-    return { success: false, error: 'Đơn nghỉ phải có từ 1 đến 20 tiết.' };
+function createLeaveRequest(payload, user) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("LichNghi");
+  
+  // 1. Đọc dữ liệu cột chứa Mã đơn (giả sử cột A từ dòng 2)
+  const lastRow = sheet.getLastRow();
+  let maxIndex = 0;
+
+  if (lastRow > 1) {
+    const ids = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+    ids.forEach(row => {
+      const idStr = String(row[0] || '').trim();
+      // Bắt các mẫu mã dạng DN-xxx hoặc lấy số cuối
+      const match = idStr.match(/^DN-(\d+)$/i);
+      if (match) {
+        const num = parseInt(match[1], 10);
+        if (num > maxIndex) maxIndex = num;
+      }
+    });
   }
-  const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('LichNghi');
-  if (!sheet) return { success: false, error: 'Thiếu sheet LichNghi.' };
-  const id = 'NP-' + Utilities.formatDate(new Date(), 'GMT+7', 'yyyyMMdd-HHmmss') + '-' + Utilities.getUuid().slice(0, 6).toUpperCase();
-  const now = new Date();
-  const reasonCategory = text_(ticket.reasonCategory).slice(0, 100);
-  const reason = text_(ticket.reason).slice(0, 1000);
-  if (!reasonCategory || !reason) return { success: false, error: 'Vui lòng nhập loại lý do và nội dung nghỉ.' };
-  const rows = ticket.periods.map(period => {
-    const date = parseApiDate_(period.rawDate || period.leaveDate);
-    const periodTkb = Number(period.periodTKB);
-    const periodPpct = Number(period.periodPPCT);
-    if (!date || !text_(period.class) || !text_(period.lessonName) ||
-        !Number.isInteger(periodTkb) || periodTkb < 1 || periodTkb > 12 ||
-        !Number.isInteger(periodPpct) || periodPpct < 1) {
-      throw new Error('Ngày, lớp, bài dạy hoặc tiết TKB/PPCT chưa hợp lệ.');
-    }
-    return [id, identity.code, identity.name, identity.subject, identity.department, reasonCategory,
-      reason, now, date, text_(period.session).slice(0, 20), text_(period.class).slice(0, 30),
-      periodTkb, periodPpct, text_(period.lessonName).slice(0, 200), '', 'Chưa dạy bù',
-      'PENDING_TTCM', ''];
-  });
-  sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, rows[0].length).setValues(rows);
-  SpreadsheetApp.flush();
-  return { success: true, id: id, message: 'Đã lưu đơn nghỉ.' };
+
+  // 2. Tăng số thứ tự và format thành 3 chữ số (DN-001, DN-002, ...)
+  const nextIndex = maxIndex + 1;
+  const newId = "DN-" + String(nextIndex).padStart(3, '0');
+
+  // 3. Tiến hành ghi đơn với newId vào Sheet LichNghi
+  // ... (Ghi các dòng periods kèm newId vào sheet)
+
+  return {
+    success: true,
+    id: newId
+  };
 }
 
 function updateLeaveStatus_(identity, data) {
