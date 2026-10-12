@@ -3271,7 +3271,11 @@
         (r.teacherName && cleanStr(r.teacherName).includes(cleanStr(currentUser.name)))
       );
       document.getElementById("count-my-leaves").innerText = myTickets.length;
-      
+      myTickets.sort((a, b) => {
+        const numA = parseInt((String(a.id || '').match(/\d+/) || [0])[0], 10);
+        const numB = parseInt((String(b.id || '').match(/\d+/) || [0])[0], 10);
+        return numB - numA;
+      });
       let totalSessionsOff = 0;
       myTickets.forEach(t => {
         if (t.status === "APPROVED_BGH") {
@@ -3506,9 +3510,9 @@
         const bPending = (b.status === "PENDING_TTCM") ? 0 : 1;
         if (aPending !== bPending) return aPending - bPending;
 
-        const idA = parseInt(String(a.id || '').replace(/\D/g, ''), 10) || 0;
-        const idB = parseInt(String(b.id || '').replace(/\D/g, ''), 10) || 0;
-        return idB - idA;
+        const numA = parseInt((String(a.id || '').match(/\d+/) || [0])[0], 10);
+        const numB = parseInt((String(b.id || '').match(/\d+/) || [0])[0], 10);
+        return numB - numA;
       });
 
       const ttcmTotalPages = Math.ceil(ttcmAllList.length / ttcmLeaveItemsPerPage) || 1;
@@ -3577,14 +3581,14 @@
       const bghPendingCount = bghAllList.filter(r => r.status === "PENDING_BGH").length;
       document.getElementById("count-bgh-pending").innerText = bghPendingCount;
 
-      bghAllList.sort((a, b) => {
+     bghAllList.sort((a, b) => {
         const aPending = (a.status === "PENDING_BGH") ? 0 : 1;
         const bPending = (b.status === "PENDING_BGH") ? 0 : 1;
         if (aPending !== bPending) return aPending - bPending;
 
-        const idA = parseInt(String(a.id || '').replace(/\D/g, ''), 10) || 0;
-        const idB = parseInt(String(b.id || '').replace(/\D/g, ''), 10) || 0;
-        return idB - idA;
+        const numA = parseInt((String(a.id || '').match(/\d+/) || [0])[0], 10);
+        const numB = parseInt((String(b.id || '').match(/\d+/) || [0])[0], 10);
+        return numB - numA;
       });
 
       const bghTotalPages = Math.ceil(bghAllList.length / bghLeaveItemsPerPage) || 1;
