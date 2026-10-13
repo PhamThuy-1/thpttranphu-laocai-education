@@ -2184,10 +2184,6 @@
     }
 
     function processUserSession(identity, avatar) {
-      // Kiểm tra nếu là email của cô Thủy thì gán vai trò BGH
-      const userEmail = String(identity.email || '').trim().toLowerCase();
-      const userRole = (userEmail === 'ptthuy.c3tp@yenbai.edu.vn') ? 'BGH' : identity.role;
-
       currentUser = {
         email: identity.email,
         name: identity.name,
@@ -2197,7 +2193,7 @@
         position: identity.position,
         homeroom: identity.homeroom,
         isTTCM: Boolean(identity.isTTCM),
-        role: userRole, // <-- Sử dụng vai trò đã gán BGH ở trên
+        role: identity.role,
         permissions: identity.permissions || [],
         avatar: avatar || "https://placehold.co/100x100?text=GV"
       };
@@ -2210,6 +2206,7 @@
         renderActionPlanModule();
       }
     }
+
     function logout() {
       currentUser = null;
       apiIdToken = "";
@@ -3738,32 +3735,19 @@
       if (btn) btn.innerText = "Đang lưu vào Sheet LichNghi...";
 
       try {
-        const ticketPayload = {
-          teacherName: currentUser?.name || document.getElementById("leave-teacher-name").value,
-          teacherCode: currentUser?.code || "",
-          subject: currentUser?.subject || document.getElementById("leave-subject-name").value,
-          department: currentUser?.department || "",
-          reasonCategory: reasonCategory,
-          reason: reasonDetail,
-          timeDisplay: timeDisplay,
-          periods: periods
-        };
-
         const result = await apiRequest("createLeaveRequest", {
-          ticket: ticketPayload
+          ticket: { reasonCategory, reason: reasonDetail, periods }
         });
-
         await fetchRemoteData();
         closeCreateLeaveModal();
         renderLeaveModule();
-        
-        const createdId = result.id || result.ticketId || (result.data && result.data.id) || "mới";
-        alert(`Đã gửi đơn [${createdId}], gồm ${sessionCount} buổi nghỉ.`);
+        alert(`Đã gửi đơn ${result.id}, gồm ${sessionCount} buổi nghỉ.`);
       } catch (error) {
         alert(`Không thể gửi đơn nghỉ: ${error.message}`);
       } finally {
         if (btn) btn.innerText = "Gửi Đơn Lên Tổ Trưởng Chuyên Môn ➔";
-      }    }
+      }
+    }
 
     function openTtcmAssignModal(ticketId) {
       const ticket = appData.leaveRequests.find(t => cleanStr(t.id) === cleanStr(ticketId));
