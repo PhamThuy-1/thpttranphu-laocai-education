@@ -2184,6 +2184,10 @@
     }
 
     function processUserSession(identity, avatar) {
+      // Kiểm tra nếu là email của cô Thủy thì gán vai trò BGH
+      const userEmail = String(identity.email || '').trim().toLowerCase();
+      const userRole = (userEmail === 'ptthuy.c3tp@yenbai.edu.vn') ? 'BGH' : identity.role;
+
       currentUser = {
         email: identity.email,
         name: identity.name,
@@ -2193,7 +2197,7 @@
         position: identity.position,
         homeroom: identity.homeroom,
         isTTCM: Boolean(identity.isTTCM),
-        role: identity.role,
+        role: userRole, // <-- Sử dụng vai trò đã gán BGH ở trên
         permissions: identity.permissions || [],
         avatar: avatar || "https://placehold.co/100x100?text=GV"
       };
@@ -2206,7 +2210,6 @@
         renderActionPlanModule();
       }
     }
-
     function logout() {
       currentUser = null;
       apiIdToken = "";
