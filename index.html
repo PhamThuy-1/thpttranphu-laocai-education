@@ -330,15 +330,35 @@
           </div>
         </div>
       </div>
-      <!-- MY REGISTERED TASKS -->
+      <!-- MY REGISTERED TASKS WITH 4 TABS -->
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="p-5 border-b border-slate-100 flex flex-wrap justify-between items-center gap-2">
+        <div class="p-5 border-b border-slate-100 flex flex-wrap justify-between items-center gap-3">
           <div>
-            <h4 class="font-bold text-slate-900">Chi Tiết Nhiệm Vụ & Điểm Số</h4>
-            <p class="text-xs text-slate-500 mt-0.5">Tự động ưu tiên: <b class="text-rose-600">🚨 Quá hạn</b> → <b class="text-blue-600">⚙️ Đang thực hiện / Chờ nghiệm thu</b> → <b class="text-emerald-600">✓ Đã nghiệm thu</b></p>
+            <h4 class="font-bold text-slate-900 text-base">Chi Tiết Nhiệm Vụ & Điểm Số</h4>
+            <p class="text-xs text-slate-500 mt-0.5">Phân loại chi tiết tiến độ thực hiện nhiệm vụ cá nhân.</p>
           </div>
-          <span class="text-xs text-slate-400">Đồng bộ trực tiếp từ Sheet data</span>
+          
+          <!-- 4 TABS CHO CHI TIẾT NHIỆM VỤ -->
+          <div class="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+            <button onclick="switchMyTaskTab('completed')" id="mytask-tab-completed" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+              <span>✓ Đã hoàn thành</span>
+              <span id="badge-count-completed" class="px-1.5 py-0.2 bg-slate-200 text-slate-700 rounded-full text-[10px] font-bold">0</span>
+            </button>
+            <button onclick="switchMyTaskTab('overdue')" id="mytask-tab-overdue" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+              <span>🚨 Quá hạn</span>
+              <span id="badge-count-overdue" class="px-1.5 py-0.2 bg-rose-100 text-rose-700 rounded-full text-[10px] font-bold">0</span>
+            </button>
+            <button onclick="switchMyTaskTab('upcoming')" id="mytask-tab-upcoming" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+              <span>⏰ Sắp tới hạn</span>
+              <span id="badge-count-upcoming" class="px-1.5 py-0.2 bg-amber-100 text-amber-800 rounded-full text-[10px] font-bold">0</span>
+            </button>
+            <button onclick="switchMyTaskTab('incomplete')" id="mytask-tab-incomplete" class="px-3 py-1.5 rounded-lg bg-white text-indigo-600 shadow-sm transition font-bold flex items-center gap-1.5">
+              <span>⏳ Chưa hoàn thành</span>
+              <span id="badge-count-incomplete" class="px-1.5 py-0.2 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-bold">0</span>
+            </button>
+          </div>
         </div>
+
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse text-sm">
             <thead>
@@ -356,7 +376,6 @@
           </table>
         </div>
       </div>
-
       <!-- TASK CATALOG (KHO KPI CÓ CHIA TAB & PHÂN TRANG) -->
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
