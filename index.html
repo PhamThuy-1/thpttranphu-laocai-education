@@ -2064,6 +2064,23 @@
     let currentKpiTab = "all";
     let currentPage = 1;
     let itemsPerPage = 10;
+	  // Biến quản lý tab nhiệm vụ cá nhân hiện tại
+    let currentMyTaskTab = "incomplete"; // Mặc định hiển thị tab chưa hoàn thành
+
+    function switchMyTaskTab(tabKey) {
+      currentMyTaskTab = tabKey;
+      const tabs = ["completed", "overdue", "upcoming", "incomplete"];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`mytask-tab-${t}`);
+        if (!btn) return;
+        if (t === tabKey) {
+          btn.className = "px-3 py-1.5 rounded-lg bg-white text-indigo-600 shadow-sm transition font-bold flex items-center gap-1.5";
+        } else {
+          btn.className = "px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5";
+        }
+      });
+      renderTeacherDashboard();
+    }
 
     function switchKpiTab(tabName) {
       currentKpiTab = tabName;
@@ -2319,129 +2336,83 @@
 
       const totalScore = myRegs.reduce((sum, r) => sum + (r.finalScore !== null && r.finalScore !== "" ? Number(r.finalScore) : 0), 0);
 
-      const teachingStaff = (appData.staff || []).filter(s => {
-        const isBGHStaff = s.role === "BGH" || s.subject === "BGH" || cleanStr(s.department) === "bgh" || cleanStr(s.subject) === "bgh";
-        return !isBGHStaff;
-      });
+      // Phân loại nhiệm vụ theo 4 tiêu chí
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
 
-      const allTeacherScores = teachingStaff.map(gv => {
-        const gvCode = cleanStr(gv.code);
-        const gvName = cleanStr(gv.name);
+      const threeDaysLater = new Date(now);
+      threeDaysLater.setDate(now.getDate() + 3);
 
-        const gvRegs = (appData.registrations || []).filter(r => {
-          const rCode = cleanStr(r.teacherCode);
-          if (gvCode && rCode) return rCode === gvCode;
-          return cleanStr(r.teacherName) === gvName;
-        });
+      let completedTasks = [];
+      let overdueTasks = [];
+      let upcomingTasks = [];
+      let incompleteTasks = [];
 
-        const score = gvRegs.reduce((sum, r) => sum + (r.finalScore !== null && r.finalScore !== "" ? Number(r.finalScore) : 0), 0);
-        return {
-          code: gv.code,
-          name: gv.name,
-          score: score,
-          taskCount: gvRegs.length
-        };
-      });
+      myRegs.forEach((r, index) => {
+        const taskInfo = appData.tasks.find(t => cleanStr(t.id) === cleanStr(r.taskId)) || { title: "Nhiệm vụ " + r.taskId, deadline: "" };
+        const deadlineDate = parseDateSafe(taskInfo.deadline);
+        const isGraded = (r.finalScore !== null && r.finalScore !== "" && !isNaN(Number(r.finalScore)));
+        const isWaiting = !isGraded && (r.level === "Chờ nghiệm thu" || Boolean(r.evidence && String(r.evidence).trim() !== ""));
+        const isOverdue = !isGraded && !isWaiting && deadlineDate && (deadlineDate < now);
 
-      allTeacherScores.sort((a, b) => b.score - a.score || b.taskCount - a.taskCount);
+        const item = { reg: r, taskInfo, deadlineDate, isGraded, isWaiting, isOverdue };
 
-      let myRank = "--";
-      let currentRank = 1;
-
-      for (let i = 0; i < allTeacherScores.length; i++) {
-        if (i > 0) {
-          const prev = allTeacherScores[i - 1];
-          const curr = allTeacherScores[i];
-          if (curr.score !== prev.score || curr.taskCount !== prev.taskCount) {
-            currentRank = i + 1;
+        if (isGraded || r.level === "Đã nghiệm thu" || r.level === "Đã xong") {
+          completedTasks.push(item);
+        } else {
+          incompleteTasks.push(item);
+          if (isOverdue) {
+            overdueTasks.push(item);
+          } else if (deadlineDate && deadlineDate >= now && deadlineDate <= threeDaysLater) {
+            upcomingTasks.push(item);
           }
         }
+      });
 
-        const isCurrentTeacher = (myCodeClean && cleanStr(allTeacherScores[i].code) === myCodeClean) ||
-                                (!myCodeClean && cleanStr(allTeacherScores[i].name) === myNameClean);
-        if (isCurrentTeacher) {
-          myRank = currentRank;
-          break;
-        }
-      }
+      const remainingCount = incompleteTasks.length;
 
-      const totalTeachers = teachingStaff.length || 1;
-
+      // Cập nhật số liệu lên 3 thẻ tổng hợp
       document.getElementById("stat-tasks-count").innerText = myRegs.length;
       document.getElementById("stat-total-score").innerHTML = `${totalScore} <span class="text-sm font-normal text-slate-500">điểm</span>`;
+      document.getElementById("stat-remaining-count").innerText = remainingCount;
 
-      const rankEl = document.getElementById("stat-potential-score");
-      if (rankEl) {
-        rankEl.innerText = `#${myRank}`;
-      }
-      const rankDescEl = document.getElementById("stat-rank-desc");
-      if (rankDescEl) {
-        if (myRank === 1) {
-          rankDescEl.innerText = "🏆 Dẫn đầu thi đua toàn trường";
-        } else if (myRank === "--") {
-          rankDescEl.innerText = "Không thuộc danh sách xếp hạng GV";
-        } else {
-          rankDescEl.innerText = `Xếp thứ ${myRank} theo điểm BGH chấm`;
-        }
-      }
+      // Cập nhật số lượng trên các badge thông báo của 4 tab
+      document.getElementById("badge-count-completed").innerText = completedTasks.length;
+      document.getElementById("badge-count-overdue").innerText = overdueTasks.length;
+      document.getElementById("badge-count-upcoming").innerText = upcomingTasks.length;
+      document.getElementById("badge-count-incomplete").innerText = incompleteTasks.length;
+
+      // Lọc danh sách hiển thị theo tab đang chọn
+      let displayList = [];
+      if (currentMyTaskTab === "completed") displayList = completedTasks;
+      else if (currentMyTaskTab === "overdue") displayList = overdueTasks;
+      else if (currentMyTaskTab === "upcoming") displayList = upcomingTasks;
+      else displayList = incompleteTasks;
 
       const myTableBody = document.getElementById("my-tasks-table");
       myTableBody.innerHTML = "";
-      if (myRegs.length === 0) {
-        myTableBody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400">Bạn chưa được phân công hoặc chưa đăng ký nhiệm vụ nào trong sheet data.</td></tr>`;
+
+      if (displayList.length === 0) {
+        myTableBody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">Không có nhiệm vụ nào trong mục này.</td></tr>`;
       } else {
-        const now = new Date();
-
-        const formattedTasks = myRegs.map((r, index) => {
-          const taskInfo = appData.tasks.find(t => cleanStr(t.id) === cleanStr(r.taskId)) || { title: "Nhiệm vụ " + r.taskId, deadline: "" };
-          const deadlineDate = parseDateSafe(taskInfo.deadline);
-
-          const isGraded = (r.finalScore !== null && r.finalScore !== "" && !isNaN(Number(r.finalScore)));
-          const isWaiting = !isGraded && (r.level === "Chờ nghiệm thu" || Boolean(r.evidence && String(r.evidence).trim() !== ""));
-          const isOverdue = !isGraded && !isWaiting && deadlineDate && (deadlineDate < now);
+        displayList.forEach(item => {
+          const r = item.reg;
+          const taskInfo = item.taskInfo;
 
           let levelBadge = "";
-          let priorityRank = 3;
-
-          if (isGraded) {
-            priorityRank = 4;
+          if (item.isGraded) {
             levelBadge = `<span class="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium bg-emerald-100 text-emerald-700 border border-emerald-200">✓ ${r.level || 'Đã nghiệm thu'}</span>`;
-          } else if (isOverdue) {
-            priorityRank = 1;
+          } else if (item.isOverdue) {
             levelBadge = `<span class="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-bold bg-rose-100 text-rose-700 border border-rose-300">🚨 Quá hạn</span>`;
-          } else if (isWaiting) {
-            priorityRank = 2;
+          } else if (item.isWaiting) {
             levelBadge = `<span class="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium bg-amber-100 text-amber-800 border border-amber-200">⏳ Chờ nghiệm thu</span>`;
           } else {
-            priorityRank = 3;
             levelBadge = `<span class="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium bg-blue-50 text-blue-700 border border-blue-200">⚙️ ${r.level || 'Đang thực hiện'}</span>`;
           }
 
           const scoreBadge = (r.finalScore !== null && r.finalScore !== "") 
             ? `<span class="font-bold text-emerald-600">${r.finalScore} / ${r.baseScore}</span>`
             : `<span class="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-200">Chờ BGH chấm</span>`;
-
-          return {
-            reg: r,
-            taskInfo: taskInfo,
-            priorityRank: priorityRank,
-            levelBadge: levelBadge,
-            scoreBadge: scoreBadge,
-            isGraded: isGraded,
-            isWaiting: isWaiting,
-            originalIndex: index
-          };
-        });
-
-        formattedTasks.sort((a, b) => {
-          if (a.priorityRank !== b.priorityRank) return a.priorityRank - b.priorityRank;
-          return a.originalIndex - b.originalIndex;
-        });
-
-        formattedTasks.forEach(item => {
-          const r = item.reg;
-          const taskInfo = item.taskInfo;
-          const rowHighlight = item.priorityRank === 1 ? 'bg-rose-50/40 hover:bg-rose-50' : 'hover:bg-slate-50/80';
 
           const evidenceLink = r.evidence && String(r.evidence).trim() !== "" 
             ? `<a href="${r.evidence}" target="_blank" class="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 underline font-semibold">📁 Xem Drive</a>` 
@@ -2457,18 +2428,22 @@
           }
 
           myTableBody.innerHTML += `
-            <tr class="${rowHighlight} transition border-b border-slate-100">
+            <tr class="hover:bg-slate-50 transition border-b border-slate-100">
               <td class="py-3 px-4 font-semibold text-indigo-600">${r.taskId}</td>
-              <td class="py-3 px-4 font-medium text-slate-800">${taskInfo.title}</td>
+              <td class="py-3 px-4 font-medium text-slate-800">${taskInfo.title} <br><span class="text-[11px] text-slate-400">Hạn: ${taskInfo.deadline || '--'}</span></td>
               <td class="py-3 px-4 text-center font-semibold text-slate-700">${r.baseScore}</td>
-              <td class="py-3 px-4 text-center">${item.levelBadge}</td>
+              <td class="py-3 px-4 text-center">${levelBadge}</td>
               <td class="py-3 px-4 text-center">${evidenceLink}</td>
-              <td class="py-3 px-4 text-center">${item.scoreBadge}</td>
+              <td class="py-3 px-4 text-center">${scoreBadge}</td>
               <td class="py-3 px-4 text-center">${reportBtn}</td>
             </tr>
           `;
         });
       }
+
+      // Giữ nguyên phần render Kho KPI bên dưới...
+      renderKhoKpiCatalog(myRegs);
+    }
 
       // Kho KPI hiển thị
       const registeredTaskIds = new Set(myRegs.map(r => cleanStr(r.taskId)));
