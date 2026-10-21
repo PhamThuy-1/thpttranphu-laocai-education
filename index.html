@@ -535,9 +535,9 @@
               <p class="text-xs text-slate-500 mt-0.5">Sắp xếp tự động: Tổng điểm tăng dần, người ít việc hơn đứng trước.</p>
             </div>
             <div>
-              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
-                Chỉ giao việc Còn chỉ tiêu
-              </span>
+              <button onclick="openBulkAssignModal()" class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-sm transition">
+                <span>🎯</span> Giao việc hàng loạt
+              </button>
             </div>
           </div>
 
@@ -4879,6 +4879,188 @@
         }
       }
     }	
+let currentEligibleBulkTasks = [];
+
+    function openBulkAssignModal() {
+      const taskSelect = document.getElementById("bulk-select-task");
+      
+      // Lọc các nhiệm vụ còn việc (remainingQuota > 0)
+      currentEligibleBulkTasks = (appData.tasks || []).map(t => {
+        const totalQuota = Number(t.quota) || 1;
+        const registeredCount = (appData.registrations || []).filter(r => cleanStr(r.taskId) === cleanStr(t.id)).length;
+        const remainingQuota = Math.max(0, totalQuota - registeredCount);
+        return { ...t, remainingQuota, registeredCount, totalQuota };
+      }).filter(t => t.remainingQuota > 0 && (t.status || "").trim() !== "Hết việc");
+
+      taskSelect.innerHTML = "";
+      if (currentEligibleBulkTasks.length === 0) {
+        taskSelect.innerHTML = `<option value="">-- Hiện không có nhiệm vụ nào còn trống chỉ tiêu --</option>`;
+        document.getElementById("bulk-task-quota-hint").innerText = "Tất cả nhiệm vụ đã đủ chỉ tiêu.";
+      } else {
+        currentEligibleBulkTasks.forEach(t => {
+          taskSelect.innerHTML += `<option value="${t.id}">[${t.id}] ${t.title} (${t.score}đ)</option>`;
+        });
+        updateBulkTaskQuotaInfo();
+      }
+
+      renderBulkTeacherList();
+      document.getElementById("bulk-assign-modal").classList.remove("hidden");
+    }
+
+    function closeBulkAssignModal() {
+      document.getElementById("bulk-assign-modal").classList.add("hidden");
+    }
+
+    function updateBulkTaskQuotaInfo() {
+      const taskId = document.getElementById("bulk-select-task").value;
+      const task = currentEligibleBulkTasks.find(t => t.id === taskId);
+      const hintEl = document.getElementById("bulk-task-quota-hint");
+      if (task && hintEl) {
+        hintEl.innerText = `💡 Chỉ tiêu tối đa: ${task.totalQuota} người | Đã nhận: ${task.registeredCount} | Còn lại có thể giao: ${task.remainingQuota} người`;
+      }
+    }
+
+    function renderBulkTeacherList() {
+      const container = document.getElementById("bulk-teacher-checkboxes-container");
+      container.innerHTML = "";
+
+      // Lấy danh sách giáo viên (loại bỏ BGH) và sắp xếp ưu tiên điểm KPI tăng dần giống Tab 2
+      const teacherStats = (appData.staff || [])
+        .filter(gv => {
+          const isBGHStaff = gv.role === "BGH" || gv.subject === "BGH" || cleanStr(gv.department) === "bgh" || cleanStr(gv.subject) === "bgh";
+          return !isBGHStaff;
+        })
+        .map(gv => {
+          const gvCodeClean = cleanStr(gv.code);
+          const myRegs = (appData.registrations || []).filter(r => cleanStr(r.teacherCode) === gvCodeClean);
+          const taskCount = myRegs.length;
+          const totalScore = myRegs.reduce((sum, r) => sum + (r.finalScore !== null && r.finalScore !== "" ? Number(r.finalScore) : 0), 0);
+          return { gv, taskCount, totalScore };
+        });
+
+      teacherStats.sort((a, b) => a.totalScore - b.totalScore || a.taskCount - b.taskCount);
+
+      if (teacherStats.length === 0) {
+        container.innerHTML = `<p class="text-slate-400 italic">Không tìm thấy giáo viên nào.</p>`;
+        return;
+      }
+
+      teacherStats.forEach((item, idx) => {
+        const gv = item.gv;
+        const alreadyAssigned = isTeacherAlreadyAssignedTask(gv.code);
+
+        container.innerHTML += `
+          <label class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-slate-200 cursor-pointer hover:bg-indigo-50/50 transition">
+            <div class="flex items-center gap-2.5">
+              <input type="checkbox" value="${gv.code}" ${alreadyAssigned ? 'disabled' : ''} class="bulk-teacher-chk w-4 h-4 text-indigo-600 rounded border-slate-300">
+              <div>
+                <span class="font-bold text-slate-800">${idx + 1}. ${gv.name}</span>
+                <span class="text-slate-400 text-[11px]">(${gv.code} - ${gv.subject || 'Chung'})</span>
+              </div>
+            </div>
+            <div class="text-right text-[11px]">
+              <span class="text-indigo-600 font-bold">${item.totalScore} điểm</span> | 
+              <span class="text-slate-500">${item.taskCount} việc</span>
+              ${alreadyAssigned ? '<span class="ml-2 text-amber-600 font-semibold">[Đã nhận việc này]</span>' : ''}
+            </div>
+          </label>
+        `;
+      });
+    }
+
+    function isTeacherAlreadyAssignedTask(teacherCode) {
+      const taskId = document.getElementById("bulk-select-task").value;
+      if (!taskId) return false;
+      return (appData.registrations || []).some(r => cleanStr(r.taskId) === cleanStr(taskId) && cleanStr(r.teacherCode) === cleanStr(teacherCode));
+    }
+
+    function toggleSelectAllBulkTeachers(status) {
+      const checkboxes = document.querySelectorAll(".bulk-teacher-chk:not(:disabled)");
+      checkboxes.forEach(chk => chk.checked = status);
+    }
+
+    async function confirmBulkAssign() {
+      const taskId = document.getElementById("bulk-select-task").value;
+      if (!taskId) {
+        alert("⚠️ Vui lòng chọn một nhiệm vụ hợp lệ!");
+        return;
+      }
+
+      const task = currentEligibleBulkTasks.find(t => t.id === taskId);
+      const checkedBoxes = document.querySelectorAll(".bulk-teacher-chk:checked");
+      const selectedCount = checkedBoxes.length;
+
+      if (selectedCount === 0) {
+        alert("⚠️ Vui lòng tích chọn ít nhất một giáo viên để giao việc!");
+        return;
+      }
+
+      // KIỂM TRA HẠN MỨC CHỈ TIÊU (QUOTA VALIDATION)
+      if (task && selectedCount > task.remainingQuota) {
+        alert(`❌ CẢNH BÁO: Số lượng giáo viên bạn chọn (${selectedCount} người) đã vượt quá chỉ tiêu còn lại (${task.remainingQuota} người) của nhiệm vụ [${taskId}]!\n\nVui lòng bỏ bớt giáo viên và làm lại.`);
+        return;
+      }
+
+      const teacherCodes = Array.from(checkedBoxes).map(chk => chk.value);
+
+      if (!confirm(`Xác nhận phân công nhiệm vụ [${taskId}] cho ${teacherCodes.length} giáo viên đã chọn?`)) {
+        return;
+      }
+
+      try {
+        for (const code of teacherCodes) {
+          await apiRequest("assignTask", { taskId, teacherCode: code });
+        }
+        await fetchRemoteData();
+        closeBulkAssignModal();
+        alert(`✅ Đã giao thành công nhiệm vụ [${taskId}] cho ${teacherCodes.length} giáo viên.`);
+      } catch (err) {
+        alert(`❌ Không thể thực hiện giao việc hàng loạt: ${err.message}`);
+      }
+    }
   </script>
+<!-- MODAL: GIAO VIỆC HÀNG LOẠT CHO GIÁO VIÊN -->
+  <div id="bulk-assign-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl my-8 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-lg font-black text-slate-900">🎯 Giao Việc Hàng Loạt Cho Giáo Viên</h3>
+          <p class="text-xs text-slate-500">Phân công nhiệm vụ nhanh chóng, tự động kiểm soát chỉ tiêu nhân sự.</p>
+        </div>
+        <button onclick="closeBulkAssignModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl">✕</button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1.5">1. Chọn nhiệm vụ còn việc:</label>
+          <select id="bulk-select-task" onchange="updateBulkTaskQuotaInfo()" class="w-full border border-slate-300 rounded-xl px-3 py-2.5 bg-white font-semibold text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            <!-- Render động -->
+          </select>
+          <p id="bulk-task-quota-hint" class="text-[11px] text-indigo-600 font-semibold mt-1">--</p>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="font-bold text-slate-700">2. Chọn giáo viên nhận việc (Ưu tiên ít điểm nhất):</label>
+            <div class="flex gap-2">
+              <button type="button" onclick="toggleSelectAllBulkTeachers(true)" class="text-indigo-600 hover:underline font-semibold">Chọn tất cả</button>
+              <span class="text-slate-300">|</span>
+              <button type="button" onclick="toggleSelectAllBulkTeachers(false)" class="text-slate-500 hover:underline font-semibold">Bỏ chọn</button>
+            </div>
+          </div>
+          <div class="border border-slate-200 rounded-2xl max-h-64 overflow-y-auto p-3 bg-slate-50 space-y-2" id="bulk-teacher-checkboxes-container">
+            <!-- Render động danh sách GV -->
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-4 border-t border-slate-100">
+          <button type="button" onclick="closeBulkAssignModal()" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-50 font-bold">Hủy bỏ</button>
+          <button type="button" onclick="confirmBulkAssign()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md transition">
+            ✓ Xác Nhận Giao Việc
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
