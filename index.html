@@ -2441,10 +2441,6 @@
         });
       }
 
-      // Giữ nguyên phần render Kho KPI bên dưới...
-      renderKhoKpiCatalog(myRegs);
-    }
-
       // Kho KPI hiển thị
       const registeredTaskIds = new Set(myRegs.map(r => cleanStr(r.taskId)));
       const uniqueTasks = (appData.tasks || []).filter(t => t && t.id);
@@ -2518,7 +2514,6 @@
         });
       }
     }
-
     function openEvidenceModal(taskId) {
       document.getElementById("evidence-task-id").value = taskId;
       document.getElementById("evidence-modal-subtitle").innerText = "Mã nhiệm vụ: " + taskId;
