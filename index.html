@@ -632,22 +632,11 @@
       </div>
     </section>
 
-   <!-- VIEW 4: PHÂN HỆ QUẢN LÝ HỌC SINH (GỒM 2 THẺ: NHẬP LIỆU & THỐNG KÊ) -->
+   <!-- VIEW 4: PHÂN HỆ QUẢN LÝ HỌC SINH -->
     <section id="students-section" class="hidden max-w-7xl mx-auto p-1 sm:p-2 space-y-5 text-slate-800">
       
-      <!-- Header Phân hệ -->
-      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl font-bold shadow-sm">
-            👨‍🎓
-          </div>
-          <div>
-            <h2 class="text-base sm:text-lg font-black text-slate-900 tracking-tight uppercase">Quản Lý Nề Nếp & Vi Phạm Học Sinh</h2>
-            <p class="text-xs text-slate-500">Đồng bộ trực tiếp dữ liệu với sheet <b>dataHS</b> trên Google Spreadsheet</p>
-          </div>
-        </div>
-
-        <!-- 2 Thẻ chuyển đổi: Nhập dữ liệu & Thống kê -->
+      <!-- GIỮ LẠI THANH 2 THẺ CHUYỂN ĐỔI & ĐẨY LÊN GỌN GÀNG -->
+      <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-end">
         <div class="flex items-center bg-slate-100 p-1.5 rounded-xl text-xs font-bold">
           <button id="tab-btn-entry" onclick="switchStudentTab('entry')" class="px-4 py-2 rounded-lg bg-white text-indigo-700 shadow-sm transition">
             ✏️ Thẻ Nhập Dữ Liệu
@@ -660,15 +649,8 @@
 
       <!-- ==================== THẺ 1: NHẬP DỮ LIỆU VI PHẠM ==================== -->
       <div id="student-tab-entry" class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-        <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
-          <h3 class="font-extrabold text-slate-900 text-sm sm:text-base flex items-center gap-2">
-            <span class="text-indigo-600">📝</span> Nhập Thông Tin Vi Phạm Của Học Sinh
-          </h3>
-          <span class="text-xs text-slate-400 italic">* Dữ liệu sẽ tự động lưu nối tiếp vào dòng trống đầu tiên</span>
-        </div>
-
         <form id="violation-form" onsubmit="handleSaveViolation(event)" class="space-y-5">
-         <!-- Hàng 1: Ngày vi phạm, Lớp tự nhận diện, Tên HS gợi ý, Mã HS -->
+          <!-- Hàng 1: Ngày vi phạm, Lớp tự nhận diện, Tên HS gợi ý, Mã HS -->
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs font-bold text-slate-700">
             <div>
               <label class="block mb-1.5">Ngày vi phạm:</label>
@@ -679,7 +661,6 @@
               <label class="block mb-1.5">Lớp chủ nhiệm (Tự nhận diện):</label>
               <div class="flex gap-1.5">
                 <input type="text" id="input-student-class" readonly placeholder="Đang nhận diện lớp..." class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2.5 text-sm font-bold text-emerald-700 focus:outline-none">
-                <!-- Dropdown chỉ hiển thị nếu là BGH muốn chuyển lớp khác -->
                 <select id="select-bgh-override-class" onchange="onBghClassOverride(this.value)" class="hidden border border-slate-300 rounded-xl px-2 py-2 text-xs bg-white text-indigo-700 font-bold">
                 </select>
               </div>
@@ -697,7 +678,7 @@
             </div>
           </div>
 
-          <!-- Danh mục loại vi phạm được đọc từ hàng tiêu đề Sheet dataHS -->
+          <!-- Danh mục loại vi phạm -->
           <div>
             <label class="block text-xs font-bold text-slate-800 mb-2">
               Chọn các loại lỗi vi phạm phát sinh (Tích chọn một hoặc nhiều lỗi):
@@ -744,7 +725,6 @@
         </div>
 
         <!-- Bộ lọc tìm kiếm -->
-        <!-- Bộ lọc tìm kiếm -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3.5 bg-slate-50/80 p-4 rounded-2xl border border-slate-200 text-xs font-bold text-slate-700">
           <div>
             <label class="block mb-1">Lớp:</label>
@@ -774,6 +754,7 @@
             </div>
           </div>
         </div>
+
         <!-- Bảng kết quả thống kê -->
         <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
           <div class="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
@@ -803,7 +784,8 @@
               </tbody>
             </table>
           </div>
-		  <!-- THANH PHÂN TRANG DANH SÁCH VI PHẠM -->
+
+          <!-- THANH PHÂN TRANG DANH SÁCH VI PHẠM -->
           <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
             <div class="flex items-center gap-2">
               <span>Hiển thị mỗi trang:</span>
@@ -830,7 +812,6 @@
 
       </div>
     </section>
-
     <!-- VIEW 5: PHÂN HỆ ĐĂNG KÝ NGHỈ DẠY & DẠY THAY -->
     <section id="leave-substitute-section" class="hidden space-y-6">
       <div class="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-slate-200">
