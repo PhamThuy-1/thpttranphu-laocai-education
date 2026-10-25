@@ -5000,13 +5000,50 @@ let currentEligibleBulkTasks = [];
         alert(`❌ Không thể thực hiện giao việc hàng loạt: ${err.message}`);
       }
     }
-	// Hàm tự động gọi Backend soát TKB khi GV chọn ngày nghỉ
-// Sửa lại hàm này ở cuối thẻ <script> trong file testhtml2.html
+	// 1. Hàm thêm dòng mới với đầy đủ tham số TKB
+function addPeriodRow(dateVal = "", session = "Sáng", className = "", tkb = 1, ppct = 1, lesson = "", subject = "") {
+  const tbody = document.getElementById("leave-periods-tbody");
+  if (!tbody) return;
+  const idx = tbody.children.length;
+  
+  // Chuẩn hóa định dạng ngày về YYYY-MM-DD để thẻ input type="date" nhận diện chính xác
+  let formattedDate = dateVal;
+  if (dateVal && dateVal.includes("/")) {
+    const parts = dateVal.split("/");
+    if (parts.length === 3) {
+      formattedDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+    }
+  }
+  const todayStr = formattedDate || new Date().toISOString().split('T')[0];
+
+  const tr = document.createElement("tr");
+  tr.id = `period-row-${idx}`;
+  tr.className = "period-row-item";
+  tr.innerHTML = `
+    <td class="p-2">
+      <input type="date" value="${todayStr}" required class="border rounded p-1 text-xs w-full row-date-val">
+    </td>
+    <td class="p-2">
+      <select class="border rounded p-1 text-xs w-full session-val">
+        <option value="Sáng" ${session === 'Sáng' ? 'selected' : ''}>Sáng</option>
+        <option value="Chiều" ${session === 'Chiều' ? 'selected' : ''}>Chiều</option>
+      </select>
+    </td>
+    <td class="p-2"><input type="text" value="${className}" placeholder="12A4" required class="border rounded p-1 text-xs w-full class-val"></td>
+    <td class="p-2 text-center"><input type="number" min="1" max="10" value="${tkb}" required class="border rounded p-1 text-xs w-12 text-center tkb-val"></td>
+    <td class="p-2 text-center"><input type="number" min="1" value="${ppct}" required class="border rounded p-1 text-xs w-12 text-center ppct-val"></td>
+    <td class="p-2"><input type="text" value="${lesson}" placeholder="${subject ? 'Môn: ' + subject : 'Tên bài giảng'}" required class="border rounded p-1 text-xs w-full lesson-val"></td>
+    <td class="p-2 text-center"><button type="button" onclick="document.getElementById('period-row-${idx}').remove()" class="text-rose-500 font-bold hover:text-rose-700">✕</button></td>
+  `;
+  tbody.appendChild(tr);
+}
+
+// 2. Hàm tự động gọi Backend quét TKB và đổ dữ liệu vào màn hình
 function setupAutoLoadTkbOnDateChange() {
   document.addEventListener("change", async function(e) {
     if (e.target && e.target.classList.contains("row-date-val")) {
       const changedDateInput = e.target;
-      const dateVal = changedDateInput.value;
+      const dateVal = changedDateInput.value; // Đã là chuẩn YYYY-MM-DD từ input date
       
       if (!dateVal || !currentUser || !currentUser.code) {
         alert("⚠️ Vui lòng đăng nhập hệ thống trước khi chọn ngày nghỉ!");
@@ -5023,21 +5060,16 @@ function setupAutoLoadTkbOnDateChange() {
           dateStr: dateVal 
         });
 
-        // ==================== ĐOẠN CODE DEBUG ====================
-        console.log("Dữ liệu TKB thô từ Server:", res);
-        if (res && res.schedules) {
-          let debugText = `🔍 Tìm thấy ${res.schedules.length} tiết cho ngày ${dateVal}:\n\n`;
-          res.schedules.forEach((s, idx) => {
-            debugText += `${idx + 1}. [${s.session}] Lớp ${s.class} - Tiết ${s.periodTKB} - Môn: ${s.subject}\n`;
-          });
-          alert(debugText); // Hiển thị thông báo kiểm tra trực tiếp trên màn hình
-        } else {
-          alert("⚠️ Server trả về mảng rỗng hoặc không có dữ liệu schedules.");
-        }
-        // ========================================================
-
         if (res && res.schedules && res.schedules.length > 0) {
+          // Xóa các dòng cũ thừa phía dưới (nếu có) để nạp lại từ đầu cho sạch
+          const allRows = Array.from(tbody.querySelectorAll("tr"));
+          allRows.forEach((r, index) => {
+            if (index > 0) r.remove(); // Giữ lại dòng đầu tiên để điền
+          });
+
+          // Điền dữ liệu tiết đầu tiên vào dòng hiện tại
           const firstSch = res.schedules[0];
+          currentRow.querySelector(".row-date-val").value = dateVal; // Cập nhật đúng ngày vừa chọn
           currentRow.querySelector(".class-val").value = firstSch.class || "";
           currentRow.querySelector(".tkb-val").value = firstSch.periodTKB || 1;
           currentRow.querySelector(".session-val").value = firstSch.session || "Sáng";
@@ -5047,10 +5079,13 @@ function setupAutoLoadTkbOnDateChange() {
             lessonInput.placeholder = `Môn: ${firstSch.subject} - Nhập tên bài dạy`;
           }
 
+          // Nếu có từ 2 tiết trở đi, tự động sinh thêm các dòng tiếp theo
           for (let i = 1; i < res.schedules.length; i++) {
             const sch = res.schedules[i];
             addPeriodRow(dateVal, sch.session, sch.class, sch.periodTKB, 1, sch.lessonName || "", sch.subject);
           }
+
+          alert(`📅 Đã nạp thành công ${res.schedules.length} tiết dạy của bạn trong ngày này!`);
         } else {
           alert(`📅 Không tìm thấy lịch dạy nào của bạn vào ngày ${dateVal} trên TKB.`);
         }
