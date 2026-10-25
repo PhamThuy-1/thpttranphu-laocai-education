@@ -5001,28 +5001,61 @@ let currentEligibleBulkTasks = [];
       }
     }
 	// Hàm tự động gọi Backend soát TKB khi GV chọn ngày nghỉ
+// Sửa lại hàm này ở cuối thẻ <script> trong file testhtml2.html
 function setupAutoLoadTkbOnDateChange() {
   document.addEventListener("change", async function(e) {
     if (e.target && e.target.classList.contains("row-date-val")) {
       const row = e.target.closest("tr");
       const dateVal = e.target.value;
-      if (!dateVal || !currentUser) return;
+      
+      // Kiểm tra xem đã đăng nhập và có thông tin mã giáo viên chưa
+      if (!dateVal || !currentUser || !currentUser.code) {
+        alert("⚠️ Vui lòng đăng nhập hệ thống trước khi chọn ngày nghỉ!");
+        return;
+      }
 
       try {
-        const res = await apiRequest("getTeacherScheduleByDate", { dateStr: dateVal });
+        // Truyền đúng mã giáo viên (currentUser.code) lên Backend
+        const res = await apiRequest("getTeacherScheduleByDate", { 
+          teacherCode: currentUser.code, 
+          dateStr: dateVal 
+        });
+
         if (res && res.schedules && res.schedules.length > 0) {
-          // Lấy tiết đầu tiên tìm được điền vào dòng hiện tại
+          // Xóa hết các dòng hiện tại đang có trong bảng chi tiết tiết nghỉ nếu có, hoặc điền vào dòng đầu tiên
           const sch = res.schedules[0];
           row.querySelector(".class-val").value = sch.class || "";
           row.querySelector(".tkb-val").value = sch.periodTKB || 1;
           row.querySelector(".session-val").value = sch.session || "Sáng";
           const lessonInput = row.querySelector(".lesson-val");
-          if (lessonInput) lessonInput.placeholder = `Môn: ${sch.subject} - Nhập tên bài dạy`;
+          if (lessonInput) {
+            lessonInput.value = sch.lessonName || "";
+            lessonInput.placeholder = `Môn: ${sch.subject} - Nhập tên bài dạy`;
+          }
+
+          // Nếu giáo viên có nhiều tiết trong ngày đó, tự động sinh thêm các dòng tiếp theo
+          for (let i = 1; i < res.schedules.length; i++) {
+            addPeriodRow(); // Gọi hàm thêm dòng có sẵn của giao diện
+            const tbody = document.getElementById("leave-periods-tbody");
+            const newRow = tbody.lastElementChild;
+            const extraSch = res.schedules[i];
+            
+            newRow.querySelector(".row-date-val").value = dateVal;
+            newRow.querySelector(".class-val").value = extraSch.class || "";
+            newRow.querySelector(".tkb-val").value = extraSch.periodTKB || 1;
+            newRow.querySelector(".session-val").value = extraSch.session || "Sáng";
+            const extraLessonInput = newRow.querySelector(".lesson-val");
+            if (extraLessonInput) {
+              extraLessonInput.placeholder = `Môn: ${extraSch.subject} - Nhập tên bài dạy`;
+            }
+          }
+
         } else {
           alert("📅 Không tìm thấy tiết dạy nào của bạn trong ngày này trên TKB!");
         }
       } catch (err) {
         console.error("Lỗi tự động tải TKB:", err);
+        alert("Lỗi kết nối khi quét TKB: " + err.message);
       }
     }
   });
