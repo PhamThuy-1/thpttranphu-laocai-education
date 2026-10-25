@@ -5000,6 +5000,38 @@ let currentEligibleBulkTasks = [];
         alert(`❌ Không thể thực hiện giao việc hàng loạt: ${err.message}`);
       }
     }
+	// Hàm tự động gọi Backend soát TKB khi GV chọn ngày nghỉ
+function setupAutoLoadTkbOnDateChange() {
+  document.addEventListener("change", async function(e) {
+    if (e.target && e.target.classList.contains("row-date-val")) {
+      const row = e.target.closest("tr");
+      const dateVal = e.target.value;
+      if (!dateVal || !currentUser) return;
+
+      try {
+        const res = await apiRequest("getTeacherScheduleByDate", { dateStr: dateVal });
+        if (res && res.schedules && res.schedules.length > 0) {
+          // Lấy tiết đầu tiên tìm được điền vào dòng hiện tại
+          const sch = res.schedules[0];
+          row.querySelector(".class-val").value = sch.class || "";
+          row.querySelector(".tkb-val").value = sch.periodTKB || 1;
+          row.querySelector(".session-val").value = sch.session || "Sáng";
+          const lessonInput = row.querySelector(".lesson-val");
+          if (lessonInput) lessonInput.placeholder = `Môn: ${sch.subject} - Nhập tên bài dạy`;
+        } else {
+          alert("📅 Không tìm thấy tiết dạy nào của bạn trong ngày này trên TKB!");
+        }
+      } catch (err) {
+        console.error("Lỗi tự động tải TKB:", err);
+      }
+    }
+  });
+}
+
+// Gọi kích hoạt hàm khi trang load xong (đặt trong window.onload hoặc dưới script)
+document.addEventListener("DOMContentLoaded", function() {
+  setupAutoLoadTkbOnDateChange();
+});
   </script>
 <!-- MODAL: GIAO VIỆC HÀNG LOẠT CHO GIÁO VIÊN -->
   <div id="bulk-assign-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
