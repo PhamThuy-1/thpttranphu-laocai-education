@@ -3692,7 +3692,7 @@
       }
     }
 
-    async function openTtcmAssignModal(ticketId) {
+  async function openTtcmAssignModal(ticketId) {
   const ticket = appData.leaveRequests.find(t => cleanStr(t.id) === cleanStr(ticketId));
   if (!ticket) return;
 
@@ -3713,20 +3713,48 @@
         class: p.class,
         subject: ticket.subject
       });
-      suggestionsByPeriod.push(res.suggestions || []);
+      // Nhận trực tiếp group1 và group2 từ API
+      suggestionsByPeriod.push({
+        group1: res.group1 || [],
+        group2: res.group2 || []
+      });
     } catch (e) {
-      suggestionsByPeriod.push(appData.staff || []);
+      // Loại bỏ hoàn toàn fallback về appData.staff để không bị lộ danh sách toàn trường khi lỗi
+      suggestionsByPeriod.push({ group1: [], group2: [] });
     }
   }
 
   tbody.innerHTML = "";
   (ticket.periods || []).forEach((p, idx) => {
-    const sugList = suggestionsByPeriod[idx] || [];
-    const optionsHtml = sugList.map(s => 
-      `<option value="${s.name}" ${cleanStr(s.name) === cleanStr(p.subTeacher) ? 'selected' : ''}>
-        ${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)
-      </option>`
-    ).join("");
+    const groups = suggestionsByPeriod[idx] || { group1: [], group2: [] };
+    const g1 = groups.group1;
+    const g2 = groups.group2;
+
+    let optionsHtml = `<option value="">-- Chọn GV dạy thay (Ưu tiên Nhóm 1, sau đó Nhóm 2) --</option>`;
+
+    // Render Nhóm 1: Giáo viên dạy lớp đó (Trống tiết)
+    if (g1.length > 0) {
+      optionsHtml += `<optgroup label="⭐ Nhóm 1: Giáo viên dạy lớp đó (Trống tiết)">`;
+      g1.forEach(s => {
+        const selected = cleanStr(s.name) === cleanStr(p.subTeacher) ? 'selected' : '';
+        optionsHtml += `<option value="${s.name}" ${selected}>${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)</option>`;
+      });
+      optionsHtml += `</optgroup>`;
+    }
+
+    // Render Nhóm 2: Giáo viên cùng môn (Trống tiết)
+    if (g2.length > 0) {
+      optionsHtml += `<optgroup label="📌 Nhóm 2: Giáo viên cùng môn (Trống tiết)">`;
+      g2.forEach(s => {
+        const selected = cleanStr(s.name) === cleanStr(p.subTeacher) ? 'selected' : '';
+        optionsHtml += `<option value="${s.name}" ${selected}>${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)</option>`;
+      });
+      optionsHtml += `</optgroup>`;
+    }
+
+    if (g1.length === 0 && g2.length === 0) {
+      optionsHtml += `<option value="" disabled>Không tìm thấy giáo viên trống tiết phù hợp</option>`;
+    }
 
     const makeupVal = (p.makeupSchedule && p.makeupSchedule !== "Theo thỏa thuận") ? p.makeupSchedule : "Chưa dạy bù";
 
@@ -3739,7 +3767,6 @@
         <td class="p-3 font-medium text-slate-800">${p.lessonName}</td>
         <td class="p-3">
           <select class="border rounded-lg p-1.5 w-full ttcm-sub-teacher">
-            <option value="">-- Chọn GV dạy thay (Đã ưu tiên gợi ý) --</option>
             ${optionsHtml}
           </select>
         </td>
