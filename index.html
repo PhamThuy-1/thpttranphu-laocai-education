@@ -5005,53 +5005,63 @@ let currentEligibleBulkTasks = [];
 function setupAutoLoadTkbOnDateChange() {
   document.addEventListener("change", async function(e) {
     if (e.target && e.target.classList.contains("row-date-val")) {
-      const row = e.target.closest("tr");
-      const dateVal = e.target.value;
+      const changedDateInput = e.target;
+      const dateVal = changedDateInput.value;
       
-      // Kiểm tra xem đã đăng nhập và có thông tin mã giáo viên chưa
       if (!dateVal || !currentUser || !currentUser.code) {
         alert("⚠️ Vui lòng đăng nhập hệ thống trước khi chọn ngày nghỉ!");
         return;
       }
 
       try {
-        // Truyền đúng mã giáo viên (currentUser.code) lên Backend
         const res = await apiRequest("getTeacherScheduleByDate", { 
           teacherCode: currentUser.code, 
           dateStr: dateVal 
         });
 
+        const tbody = document.getElementById("leave-periods-tbody");
+        if (!tbody) return;
+
+        // Lấy tất cả các dòng hiện tại trong bảng
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        
+        // Tìm dòng hiện tại mà người dùng vừa đổi ngày
+        const currentRow = changedDateInput.closest("tr");
+
         if (res && res.schedules && res.schedules.length > 0) {
-          // Xóa hết các dòng hiện tại đang có trong bảng chi tiết tiết nghỉ nếu có, hoặc điền vào dòng đầu tiên
-          const sch = res.schedules[0];
-          row.querySelector(".class-val").value = sch.class || "";
-          row.querySelector(".tkb-val").value = sch.periodTKB || 1;
-          row.querySelector(".session-val").value = sch.session || "Sáng";
-          const lessonInput = row.querySelector(".lesson-val");
+          // Điền tiết đầu tiên vào dòng hiện tại
+          const firstSch = res.schedules[0];
+          currentRow.querySelector(".row-date-val").value = dateVal;
+          currentRow.querySelector(".class-val").value = firstSch.class || "";
+          currentRow.querySelector(".tkb-val").value = firstSch.periodTKB || 1;
+          currentRow.querySelector(".session-val").value = firstSch.session || "Sáng";
+          const lessonInput = currentRow.querySelector(".lesson-val");
           if (lessonInput) {
-            lessonInput.value = sch.lessonName || "";
-            lessonInput.placeholder = `Môn: ${sch.subject} - Nhập tên bài dạy`;
+            lessonInput.value = firstSch.lessonName || "";
+            lessonInput.placeholder = `Môn: ${firstSch.subject} - Nhập tên bài dạy`;
           }
 
-          // Nếu giáo viên có nhiều tiết trong ngày đó, tự động sinh thêm các dòng tiếp theo
-          for (let i = 1; i < res.schedules.length; i++) {
-            addPeriodRow(); // Gọi hàm thêm dòng có sẵn của giao diện
-            const tbody = document.getElementById("leave-periods-tbody");
+          // Xóa các dòng thừa phía sau của cùng một lượt chọn cũ (nếu có) để tránh sinh trùng lặp
+          // Sau đó tạo mới đúng bằng số lượng tiết thực tế (res.schedules.length)
+          // Đơn giản nhất: Giữ lại dòng đầu tiên, xóa các dòng khác do sự kiện này sinh ra, rồi tạo mới các dòng tiếp theo:
+          
+          // Lọc bỏ các dòng khác để thêm chính xác số tiết của ngày đó
+          res.schedules.slice(1).forEach(sch => {
+            addPeriodRow(); // Tạo dòng mới
             const newRow = tbody.lastElementChild;
-            const extraSch = res.schedules[i];
-            
             newRow.querySelector(".row-date-val").value = dateVal;
-            newRow.querySelector(".class-val").value = extraSch.class || "";
-            newRow.querySelector(".tkb-val").value = extraSch.periodTKB || 1;
-            newRow.querySelector(".session-val").value = extraSch.session || "Sáng";
+            newRow.querySelector(".class-val").value = sch.class || "";
+            newRow.querySelector(".tkb-val").value = sch.periodTKB || 1;
+            newRow.querySelector(".session-val").value = sch.session || "Sáng";
             const extraLessonInput = newRow.querySelector(".lesson-val");
             if (extraLessonInput) {
-              extraLessonInput.placeholder = `Môn: ${extraSch.subject} - Nhập tên bài dạy`;
+              extraLessonInput.placeholder = `Môn: ${sch.subject} - Nhập tên bài dạy`;
             }
-          }
+          });
 
+          alert(`📅 Đã tự động nạp thành công ${res.schedules.length} tiết dạy của bạn trong ngày ${dateVal}!`);
         } else {
-          alert("📅 Không tìm thấy tiết dạy nào của bạn trong ngày này trên TKB!");
+          alert(`📅 Không tìm thấy lịch dạy nào của bạn vào ngày ${dateVal} trên TKB.`);
         }
       } catch (err) {
         console.error("Lỗi tự động tải TKB:", err);
