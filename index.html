@@ -5000,8 +5000,7 @@ let currentEligibleBulkTasks = [];
         alert(`❌ Không thể thực hiện giao việc hàng loạt: ${err.message}`);
       }
     }
-	// 1. Hàm thêm dòng mới với đầy đủ tham số TKB
-// 1. Hàm tạo phần tử dòng HTML chuẩn cho bảng tiết nghỉ
+	// 1. Hàm tạo phần tử dòng HTML chuẩn cho bảng tiết nghỉ
 function createPeriodRowElement(dateVal = "", session = "Sáng", className = "", tkb = 1, ppct = 1, lesson = "", subject = "", isAuto = false) {
   const tr = document.createElement("tr");
   if (isAuto) {
@@ -5111,7 +5110,6 @@ function setupAutoLoadTkbOnDateChange() {
     }
   });
 }
-
 // Gọi kích hoạt hàm khi trang load xong (đặt trong window.onload hoặc dưới script)
   setupAutoLoadTkbOnDateChange();
   </script>
