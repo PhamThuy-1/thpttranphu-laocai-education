@@ -3692,43 +3692,69 @@
       }
     }
 
-    function openTtcmAssignModal(ticketId) {
-      const ticket = appData.leaveRequests.find(t => cleanStr(t.id) === cleanStr(ticketId));
-      if (!ticket) return;
+    async function openTtcmAssignModal(ticketId) {
+  const ticket = appData.leaveRequests.find(t => cleanStr(t.id) === cleanStr(ticketId));
+  if (!ticket) return;
 
-      document.getElementById("ttcm-current-ticket-id").value = ticketId;
-      document.getElementById("ttcm-modal-subtitle").innerText = `Phân công dạy thay cho GV ${ticket.teacherName} (${ticket.timeDisplay})`;
+  document.getElementById("ttcm-current-ticket-id").value = ticketId;
+  document.getElementById("ttcm-modal-subtitle").innerText = `Phân công dạy thay cho GV ${ticket.teacherName} (${ticket.timeDisplay})`;
 
-      const tbody = document.getElementById("ttcm-assign-tbody");
-      tbody.innerHTML = "";
+  const tbody = document.getElementById("ttcm-assign-tbody");
+  tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-500">Đang tải gợi ý giáo viên trống tiết thông minh từ TKB...</td></tr>`;
 
-      (ticket.periods || []).forEach((p, idx) => {
-        const makeupVal = (p.makeupSchedule && p.makeupSchedule !== "Theo thỏa thuận" && p.makeupSchedule !== "Chưa dạy bù") ? p.makeupSchedule : "";
-        tbody.innerHTML += `
-          <tr id="ttcm-row-${idx}">
-            <td class="p-3">
-              <span class="font-bold text-rose-600">${p.dayOfWeek || ''}, ${p.leaveDate}</span><br>
-              <span class="font-bold text-indigo-700">Lớp ${p.class}</span> (${p.session} - Tiết ${p.periodTKB})
-            </td>
-            <td class="p-3 font-medium text-slate-800">${p.lessonName}</td>
-            <td class="p-3">
-              <select class="border rounded-lg p-1.5 w-full ttcm-sub-teacher">
-                <option value="">-- Chọn GV dạy thay từ sheet Nhân sự --</option>
-                ${(appData.staff || []).map(s => `<option value="${s.name}" ${cleanStr(s.name) === cleanStr(p.subTeacher) ? 'selected' : ''}>${s.name} (${s.subject})</option>`).join("")}
-              </select>
-            </td>
-            <td class="p-3">
-              <input type="text" placeholder="Môn thay" value="${p.subSubject || ticket.subject}" class="border rounded-lg p-1.5 w-full ttcm-sub-subject">
-            </td>
-            <td class="p-3">
-              <input type="text" placeholder="Chưa dạy bù" value="${makeupVal}" class="border rounded-lg p-1.5 w-full ttcm-sub-makeup">
-            </td>
-          </tr>
-        `;
+  let suggestionsByPeriod = [];
+  for (let i = 0; i < (ticket.periods || []).length; i++) {
+    const p = ticket.periods[i];
+    try {
+      const res = await apiRequest("getSubstituteSuggestions", {
+        leaveDate: p.leaveDate,
+        periodTKB: p.periodTKB,
+        session: p.session,
+        class: p.class,
+        subject: ticket.subject
       });
-
-      document.getElementById("ttcm-assign-modal").classList.remove("hidden");
+      suggestionsByPeriod.push(res.suggestions || []);
+    } catch (e) {
+      suggestionsByPeriod.push(appData.staff || []);
     }
+  }
+
+  tbody.innerHTML = "";
+  (ticket.periods || []).forEach((p, idx) => {
+    const sugList = suggestionsByPeriod[idx] || [];
+    const optionsHtml = sugList.map(s => 
+      `<option value="${s.name}" ${cleanStr(s.name) === cleanStr(p.subTeacher) ? 'selected' : ''}>
+        ${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)
+      </option>`
+    ).join("");
+
+    const makeupVal = (p.makeupSchedule && p.makeupSchedule !== "Theo thỏa thuận") ? p.makeupSchedule : "Chưa dạy bù";
+
+    tbody.innerHTML += `
+      <tr id="ttcm-row-${idx}">
+        <td class="p-3">
+          <span class="font-bold text-rose-600">${p.dayOfWeek || ''}, ${p.leaveDate}</span><br>
+          <span class="font-bold text-indigo-700">Lớp ${p.class}</span> (${p.session} - Tiết ${p.periodTKB})
+        </td>
+        <td class="p-3 font-medium text-slate-800">${p.lessonName}</td>
+        <td class="p-3">
+          <select class="border rounded-lg p-1.5 w-full ttcm-sub-teacher">
+            <option value="">-- Chọn GV dạy thay (Đã ưu tiên gợi ý) --</option>
+            ${optionsHtml}
+          </select>
+        </td>
+        <td class="p-3">
+          <input type="text" placeholder="Môn thay" value="${p.subSubject || ticket.subject}" class="border rounded-lg p-1.5 w-full ttcm-sub-subject">
+        </td>
+        <td class="p-3">
+          <input type="text" placeholder="Chưa dạy bù" value="${makeupVal}" class="border rounded-lg p-1.5 w-full ttcm-sub-makeup">
+        </td>
+      </tr>
+    `;
+  });
+
+  document.getElementById("ttcm-assign-modal").classList.remove("hidden");
+}
 
     function closeTtcmModal() {
       document.getElementById("ttcm-assign-modal").classList.add("hidden");
