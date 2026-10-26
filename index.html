@@ -3706,6 +3706,7 @@
   for (let i = 0; i < (ticket.periods || []).length; i++) {
     const p = ticket.periods[i];
     try {
+      // Hàm apiRequest tự động trả về phần thân JSON đã bóc tách (result)
       const res = await apiRequest("getSubstituteSuggestions", {
         leaveDate: p.leaveDate,
         periodTKB: p.periodTKB,
@@ -3713,13 +3714,14 @@
         class: p.class,
         subject: ticket.subject
       });
-      // Nhận trực tiếp group1 và group2 từ API
+      
+      // Đảm bảo lấy đúng mảng group1 và group2 trả về từ Apps Script
       suggestionsByPeriod.push({
-        group1: res.group1 || [],
-        group2: res.group2 || []
+        group1: (res && res.group1) ? res.group1 : [],
+        group2: (res && res.group2) ? res.group2 : []
       });
     } catch (e) {
-      // Loại bỏ hoàn toàn fallback về appData.staff để không bị lộ danh sách toàn trường khi lỗi
+      console.error("Lỗi lấy gợi ý tiết:", e);
       suggestionsByPeriod.push({ group1: [], group2: [] });
     }
   }
