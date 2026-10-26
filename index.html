@@ -3649,28 +3649,28 @@
       const distinctDates = new Set();
 
       periodRows.forEach(row => {
-        const rawDate = row.querySelector(".row-date-val").value;
-        const d = new Date(rawDate);
-        const dayOfWeek = daysOfWeekList[d.getDay()];
-        const dateFormatted = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
-        
-        distinctDates.add(`${dayOfWeek} (${dateFormatted})`);
+  const rawDate = row.querySelector(".row-date-val").value;
+  const d = new Date(rawDate);
+  const dayOfWeek = daysOfWeekList[d.getDay()];
+  const dateFormatted = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+  
+  distinctDates.add(`${dayOfWeek} (${dateFormatted})`);
 
-        periods.push({
-          rawDate: rawDate,
-          leaveDate: dateFormatted,
-          dayOfWeek: dayOfWeek,
-          session: row.querySelector(".session-val").value,
-          class: row.querySelector(".class-val").value.trim(),
-		  subject: row.querySelector(".subject-val").value.trim(),
-          periodTKB: Number(row.querySelector(".tkb-val").value),
-          periodPPCT: Number(row.querySelector(".ppct-val").value),
-          lessonName: row.querySelector(".lesson-val").value.trim(),
-          subTeacher: "",
-          subSubject: "",
-          makeupSchedule: "Chưa dạy bù"
-        });
-      });
+  periods.push({
+    rawDate: rawDate,
+    leaveDate: dateFormatted,
+    dayOfWeek: dayOfWeek,
+    session: row.querySelector(".session-val").value,
+    class: row.querySelector(".class-val").value.trim(),
+    subject: row.querySelector(".subject-val").value.trim(), // 👈 Lấy giá trị cột Môn lưu vào sheet LichNghi
+    periodTKB: Number(row.querySelector(".tkb-val").value),
+    periodPPCT: Number(row.querySelector(".ppct-val").value), // 👈 Lấy giá trị Tiết PPCT do GV tự nhập
+    lessonName: row.querySelector(".lesson-val").value.trim(),
+    subTeacher: "",
+    subSubject: "",
+    makeupSchedule: "Chưa dạy bù"
+  });
+});
 
       const timeDisplay = Array.from(distinctDates).join("; ");
       const sessionCount = countDistinctSessions(periods);
@@ -5082,7 +5082,7 @@ function setupAutoLoadTkbOnDateChange() {
   document.addEventListener("change", async function(e) {
     if (e.target && e.target.classList.contains("row-date-val")) {
       const changedDateInput = e.target;
-      const dateVal = changedDateInput.value; // Định dạng YYYY-MM-DD từ input date
+      const dateVal = changedDateInput.value;
       
       if (!dateVal || !currentUser || !currentUser.code) {
         alert("⚠️ Vui lòng đăng nhập hệ thống trước khi chọn ngày nghỉ!");
@@ -5093,7 +5093,6 @@ function setupAutoLoadTkbOnDateChange() {
       const tbody = document.getElementById("leave-periods-tbody");
       if (!tbody || !currentRow) return;
 
-      // Xóa các dòng phụ (auto-generated) cũ nằm ngay sau dòng này (tránh chồng chéo khi đổi lại ngày)
       let nextRow = currentRow.nextElementSibling;
       while (nextRow && nextRow.classList.contains("auto-generated-row")) {
         const rowToRemove = nextRow;
@@ -5110,20 +5109,27 @@ function setupAutoLoadTkbOnDateChange() {
         if (res && res.schedules && res.schedules.length > 0) {
           // Điền tiết đầu tiên vào đúng dòng đang thao tác
           const firstSch = res.schedules[0];
-          currentRow.querySelector(".class-val").value = firstSch.class || "";
-          currentRow.querySelector(".tkb-val").value = firstSch.periodTKB || 1;
           currentRow.querySelector(".session-val").value = firstSch.session || "Sáng";
-          const lessonInput = currentRow.querySelector(".lesson-val");
-          if (lessonInput) {
-            lessonInput.value = firstSch.lessonName || "";
-            lessonInput.placeholder = `Môn: ${firstSch.subject} - Nhập tên bài dạy`;
-          }
+          currentRow.querySelector(".tkb-val").value = firstSch.periodTKB || 1; // 👈 Tự động điền Tiết TKB
+          currentRow.querySelector(".class-val").value = firstSch.class || "";       // 👈 Tự động điền Lớp
+          currentRow.querySelector(".subject-val").value = firstSch.subject || "";   // 👈 Tự động điền Môn
+          currentRow.querySelector(".lesson-val").value = firstSch.lessonName || ""; // 👈 Tự động điền Tên bài dạy
 
           // Chèn các tiết còn lại ngay sau dòng hiện tại
           let insertAfterNode = currentRow;
           for (let i = 1; i < res.schedules.length; i++) {
             const sch = res.schedules[i];
-            const newRow = createPeriodRowElement(dateVal, sch.session, sch.class, sch.subject || "", sch.periodTKB, 1, sch.lessonName || "", true);
+            // Thứ tự truyền: dateVal, session, tkb, className, subject, ppct, lesson, isAuto
+            const newRow = createPeriodRowElement(
+              dateVal, 
+              sch.session || "Sáng", 
+              sch.periodTKB || 1, 
+              sch.class || "", 
+              sch.subject || "", 
+              1, 
+              sch.lessonName || "", 
+              true
+            );
             insertAfterNode.after(newRow);
             insertAfterNode = newRow;
           }
