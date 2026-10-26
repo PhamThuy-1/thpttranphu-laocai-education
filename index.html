@@ -1396,7 +1396,6 @@
             <label class="block font-semibold text-slate-700 mb-1">Loại lý do xin nghỉ:</label>
             <select id="leave-reason-category" required class="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-rose-500 focus:outline-none font-semibold">
               <option value="Việc riêng">Việc riêng</option>
-              <option value="Ốm">Ốm</option>
               <option value="Công tác">Công tác</option>
               <option value="Chế độ">Chế độ (Thai sản/Phép năm...)</option>
             </select>
@@ -1423,6 +1422,7 @@
                   <th class="py-2.5 px-3 w-36">Ngày nghỉ</th>
                   <th class="py-2.5 px-3 w-24">Buổi</th>
                   <th class="py-2.5 px-3 w-24">Lớp dạy</th>
+				  <th class="py-2.5 px-3 w-24">Môn</th>
                   <th class="py-2.5 px-3 text-center w-20">Tiết TKB</th>
                   <th class="py-2.5 px-3 text-center w-20">Tiết PPCT</th>
                   <th class="py-2.5 px-3">Tên bài dạy theo kế hoạch</th>
@@ -3662,6 +3662,7 @@
           dayOfWeek: dayOfWeek,
           session: row.querySelector(".session-val").value,
           class: row.querySelector(".class-val").value.trim(),
+		  subject: row.querySelector(".subject-val").value.trim(),
           periodTKB: Number(row.querySelector(".tkb-val").value),
           periodPPCT: Number(row.querySelector(".ppct-val").value),
           lessonName: row.querySelector(".lesson-val").value.trim(),
@@ -3862,7 +3863,7 @@
         rowsHtml += `
           <tr>
             <td style="border: 1px solid black; padding: 6px; text-align: center; font-size: 11pt;">${p.session || 'Sáng'} ngày<br>${p.dayOfWeek || ''}, ${p.leaveDate || ''}</td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center; font-size: 11pt;">${ticket.subject || ''}</td>
+            <td style="border: 1px solid black; padding: 6px; text-align: center; font-size: 11pt;">${p.subject || ''}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center; font-weight: bold; font-size: 11pt;">${p.class || ''}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center; font-size: 11pt;">${p.periodTKB || ''}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center; font-size: 11pt;">${p.periodPPCT || ''}</td>
@@ -5061,7 +5062,8 @@ function createPeriodRowElement(dateVal = "", session = "Sáng", className = "",
       </select>
     </td>
     <td class="p-2"><input type="text" value="${className}" placeholder="12A4" required class="border rounded p-1 text-xs w-full class-val"></td>
-    <td class="p-2 text-center"><input type="number" min="1" max="10" value="${tkb}" required class="border rounded p-1 text-xs w-12 text-center tkb-val"></td>
+    <td class="p-2"><input type="text" value="${subject}" placeholder="Môn" required class="border rounded p-1 text-xs w-full subject-val font-semibold text-indigo-700"></td>
+	<td class="p-2 text-center"><input type="number" min="1" max="10" value="${tkb}" required class="border rounded p-1 text-xs w-12 text-center tkb-val"></td>
     <td class="p-2 text-center"><input type="number" min="1" value="${ppct}" required class="border rounded p-1 text-xs w-12 text-center ppct-val"></td>
     <td class="p-2"><input type="text" value="${lesson}" placeholder="${subject ? 'Môn: ' + subject : 'Tên bài giảng'}" required class="border rounded p-1 text-xs w-full lesson-val"></td>
     <td class="p-2 text-center"><button type="button" onclick="document.getElementById('${uniqueId}').remove()" class="text-rose-500 font-bold hover:text-rose-700">✕</button></td>
@@ -5123,7 +5125,7 @@ function setupAutoLoadTkbOnDateChange() {
           let insertAfterNode = currentRow;
           for (let i = 1; i < res.schedules.length; i++) {
             const sch = res.schedules[i];
-            const newRow = createPeriodRowElement(dateVal, sch.session, sch.class, sch.periodTKB, 1, sch.lessonName || "", sch.subject, true);
+            const newRow = createPeriodRowElement(dateVal, sch.session, sch.class, sch.subject || "", sch.periodTKB, 1, sch.lessonName || "", true);
             insertAfterNode.after(newRow);
             insertAfterNode = newRow;
           }
