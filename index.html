@@ -1416,22 +1416,22 @@
           </div>
           
           <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr class="bg-slate-100 text-[11px] font-bold text-slate-600 uppercase border-b border-slate-200">
-                  <th class="py-2.5 px-3 w-36">Ngày nghỉ</th>
-                  <th class="py-2.5 px-3 w-24">Buổi</th>
-                  <th class="py-2.5 px-3 w-24">Lớp dạy</th>
-				  <th class="py-2.5 px-3 w-24">Môn</th>
-                  <th class="py-2.5 px-3 text-center w-20">Tiết TKB</th>
-                  <th class="py-2.5 px-3 text-center w-20">Tiết PPCT</th>
-                  <th class="py-2.5 px-3">Tên bài dạy theo kế hoạch</th>
-                  <th class="py-2.5 px-2 text-center w-12">Xóa</th>
-                </tr>
-              </thead>
-              <tbody id="leave-periods-tbody" class="divide-y divide-slate-100 bg-white"></tbody>
-            </table>
-          </div>
+  <table class="w-full text-left border-collapse">
+    <thead>
+      <tr class="bg-slate-100 text-[11px] font-bold text-slate-600 uppercase border-b border-slate-200">
+        <th class="py-2.5 px-3 w-36">Ngày nghỉ</th>
+        <th class="py-2.5 px-3 w-20">Buổi</th>
+        <th class="py-2.5 px-3 text-center w-20">Tiết TKB</th> 
+        <th class="py-2.5 px-3 w-24">Lớp dạy</th>
+        <th class="py-2.5 px-3 w-24">Môn</th>
+        <th class="py-2.5 px-3 text-center w-20">Tiết PPCT</th>
+        <th class="py-2.5 px-3">Tên bài dạy theo kế hoạch</th>
+        <th class="py-2.5 px-2 text-center w-12">Xóa</th>
+      </tr>
+    </thead>
+    <tbody id="leave-periods-tbody" class="divide-y divide-slate-100 bg-white"></tbody>
+  </table>
+</div>
         </div>
 
         <div class="flex justify-end gap-2 pt-4 border-t border-slate-100">
@@ -5031,7 +5031,7 @@ let currentEligibleBulkTasks = [];
       }
     }
 	// 1. Hàm tạo phần tử dòng HTML chuẩn cho bảng tiết nghỉ
-function createPeriodRowElement(dateVal = "", session = "Sáng", className = "", tkb = 1, ppct = 1, lesson = "", subject = "", isAuto = false) {
+function createPeriodRowElement(dateVal = "", session = "Sáng", tkb = 1, className = "", subject = "", ppct = 1, lesson = "", isAuto = false) {
   const tr = document.createElement("tr");
   if (isAuto) {
     tr.className = "period-row-item auto-generated-row bg-slate-50/50";
@@ -5039,7 +5039,6 @@ function createPeriodRowElement(dateVal = "", session = "Sáng", className = "",
     tr.className = "period-row-item";
   }
   
-  // Chuẩn hóa định dạng ngày về YYYY-MM-DD để thẻ input type="date" hiển thị chính xác
   let formattedDate = dateVal;
   if (dateVal && dateVal.includes("/")) {
     const parts = dateVal.split("/");
@@ -5061,16 +5060,15 @@ function createPeriodRowElement(dateVal = "", session = "Sáng", className = "",
         <option value="Chiều" ${session === 'Chiều' ? 'selected' : ''}>Chiều</option>
       </select>
     </td>
-    <td class="p-2"><input type="text" value="${className}" placeholder="12A4" required class="border rounded p-1 text-xs w-full class-val"></td>
-    <td class="p-2"><input type="text" value="${subject}" placeholder="Môn" required class="border rounded p-1 text-xs w-full subject-val font-semibold text-indigo-700"></td>
-	<td class="p-2 text-center"><input type="number" min="1" max="10" value="${tkb}" required class="border rounded p-1 text-xs w-12 text-center tkb-val"></td>
-    <td class="p-2 text-center"><input type="number" min="1" value="${ppct}" required class="border rounded p-1 text-xs w-12 text-center ppct-val"></td>
-    <td class="p-2"><input type="text" value="${lesson}" placeholder="${subject ? 'Môn: ' + subject : 'Tên bài giảng'}" required class="border rounded p-1 text-xs w-full lesson-val"></td>
+    <td class="p-2 text-center"><input type="number" min="1" max="10" value="${tkb}" required class="border rounded p-1 text-xs w-12 text-center tkb-val"></td> <!-- 👈 Tiết TKB tự động -->
+    <td class="p-2"><input type="text" value="${className}" placeholder="12A4" required class="border rounded p-1 text-xs w-full class-val"></td> <!-- 👈 Lớp tự động -->
+    <td class="p-2"><input type="text" value="${subject}" placeholder="Môn" required class="border rounded p-1 text-xs w-full subject-val font-semibold text-indigo-700"></td> <!-- 👈 Môn tự động -->
+    <td class="p-2 text-center"><input type="number" min="1" value="${ppct}" required class="border rounded p-1 text-xs w-12 text-center ppct-val"></td> <!-- 👈 Tiết PPCT GV tự nhập -->
+    <td class="p-2"><input type="text" value="${lesson}" placeholder="Tên bài giảng" required class="border rounded p-1 text-xs w-full lesson-val"></td>
     <td class="p-2 text-center"><button type="button" onclick="document.getElementById('${uniqueId}').remove()" class="text-rose-500 font-bold hover:text-rose-700">✕</button></td>
   `;
   return tr;
 }
-
 // 2. Hàm khi bấm nút "Thêm ngày / tiết nghỉ mới"
 function addPeriodRow() {
   const tbody = document.getElementById("leave-periods-tbody");
