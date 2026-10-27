@@ -2261,7 +2261,7 @@
       document.getElementById("user-display-name").innerText = currentUser.name;
       document.getElementById("user-avatar").src = currentUser.avatar;
       const roleBadge = document.getElementById("user-role-badge");
-
+	  if (roleBadge) roleBadge.style.display = 'none';
       if (currentUser.role === "BGH") {
         roleBadge.innerText = "Ban Giám Hiệu";
         roleBadge.className = "inline-block mt-1 text-[11px] px-2 py-0.5 rounded font-medium bg-amber-100 text-amber-800 border border-amber-200";
