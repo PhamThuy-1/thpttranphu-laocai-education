@@ -2209,8 +2209,8 @@
       studentListFromSheet = [];
       ERROR_KEYS = [];
       renderViolationTypeOptions();
-      monthPlanData = [];
-      weekPlanData = [];
+      //monthPlanData = [];
+      //weekPlanData = [];
       setDataLoadStatus("Đăng nhập để tải dữ liệu trực tiếp từ Google Sheets.");
       checkSubstituteNotifications();
       updateKpiNotificationBadge();
@@ -2240,8 +2240,8 @@
       studentListFromSheet = json.students;
       ERROR_KEYS = json.violationTypes;
       renderViolationTypeOptions();
-      monthPlanData = json.monthPlans;
-      weekPlanData = json.weekPlans;
+     // monthPlanData = json.monthPlans;
+      //weekPlanData = json.weekPlans;
       if (!json.user) throw new Error("API không trả về danh tính đã xác thực.");
       processUserSession(json.user, "");
       setDataLoadStatus("Đã đồng bộ dữ liệu mới nhất từ Google Sheets.", "success");
