@@ -3740,7 +3740,7 @@
       optionsHtml += `<optgroup label="⭐ Nhóm 1: Giáo viên dạy lớp đó (Trống tiết)">`;
       g1.forEach(s => {
         const selected = cleanStr(s.name) === cleanStr(p.subTeacher) ? 'selected' : '';
-        optionsHtml += `<option value="${s.name}" ${selected}>${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)</option>`;
+        optionsHtml += `<option value="${s.name}" data-subject="${s.subject || ''}" ${selected}>${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)</option>`;
       });
       optionsHtml += `</optgroup>`;
     }
@@ -3750,7 +3750,7 @@
       optionsHtml += `<optgroup label="📌 Nhóm 2: Giáo viên cùng môn (Trống tiết)">`;
       g2.forEach(s => {
         const selected = cleanStr(s.name) === cleanStr(p.subTeacher) ? 'selected' : '';
-        optionsHtml += `<option value="${s.name}" ${selected}>${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)</option>`;
+        optionsHtml += `<option value="${s.name}" data-subject="${s.subject || ''}" ${selected}>${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)</option>`;
       });
       optionsHtml += `</optgroup>`;
     }
@@ -3769,7 +3769,7 @@
         </td>
         <td class="p-3 font-medium text-slate-800">${p.lessonName}</td>
         <td class="p-3">
-          <select class="border rounded-lg p-1.5 w-full ttcm-sub-teacher">
+          <select class="border rounded-lg p-1.5 w-full ttcm-sub-teacher" onchange="onTtcmTeacherChange(this)">
             ${optionsHtml}
           </select>
         </td>
@@ -3789,7 +3789,15 @@
     function closeTtcmModal() {
       document.getElementById("ttcm-assign-modal").classList.add("hidden");
     }
-
+function onTtcmTeacherChange(selectEl) {
+  const selectedOption = selectEl.options[selectEl.selectedIndex];
+  const subSubject = selectedOption.dataset.subject || '';
+  const row = selectEl.closest('tr');
+  const subSubjectInput = row.querySelector('.ttcm-sub-subject');
+  if (subSubjectInput && subSubject) {
+    subSubjectInput.value = subSubject;
+  }
+}
     async function saveTtcmAssignment() {
       const ticketId = document.getElementById("ttcm-current-ticket-id").value;
       const ticket = appData.leaveRequests.find(t => cleanStr(t.id) === cleanStr(ticketId));
