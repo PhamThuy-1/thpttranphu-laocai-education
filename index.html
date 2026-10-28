@@ -3797,7 +3797,8 @@ function onTtcmTeacherChange(selectEl) {
   if (subSubjectInput && subSubject) {
     subSubjectInput.value = subSubject;
   }
-	const subTeacherName = selectedOption.value;
+  
+  const subTeacherName = selectedOption.value;
   const makeupInput = row.querySelector('.ttcm-sub-makeup');
   if (subTeacherName && makeupInput) {
     const classTextSpan = row.querySelector('.font-bold.text-indigo-700');
@@ -3820,8 +3821,7 @@ function onTtcmTeacherChange(selectEl) {
       console.error("Lỗi lấy gợi ý:", e);
     });
   }
-}
-}
+} // Chỉ giữ lại MỘT dấu đóng ngoặc ở cuối hàm duy nhất này!
     async function saveTtcmAssignment() {
       const ticketId = document.getElementById("ttcm-current-ticket-id").value;
       const ticket = appData.leaveRequests.find(t => cleanStr(t.id) === cleanStr(ticketId));
