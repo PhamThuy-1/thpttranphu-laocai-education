@@ -3800,35 +3800,44 @@ function onTtcmTeacherChange(selectEl) {
   
   const subTeacherName = selectedOption.value;
   const makeupInput = row.querySelector('.ttcm-sub-makeup');
-  if (subTeacherName && makeupInput) {
-    const classTextSpan = row.querySelector('.font-bold.text-indigo-700');
-    const className = classTextSpan ? classTextSpan.innerText.replace('Lớp', '').trim() : '';
-    
-    const dateTextSpan = row.querySelector('.font-bold.text-rose-600');
-    const leaveDateFull = dateTextSpan ? dateTextSpan.innerText : '';
-    const leaveDate = leaveDateFull.split(',')[1] ? leaveDateFull.split(',')[1].trim() : leaveDateFull.trim();
+  if (!makeupInput) return;
 
-    // 👈 LẤY MÃ CỦA GIÁO VIÊN XIN NGHỈ TỪ TICKET ĐANG XỬ LÝ
-    const ticketId = document.getElementById("ttcm-current-ticket-id").value;
-    const ticket = appData.leaveRequests.find(t => cleanStr(t.id) === cleanStr(ticketId));
-    const teacherACode = ticket ? ticket.teacherCode : '';
-
-    // Gọi ngầm API lấy gợi ý đổi giờ chéo và điền vào ô
-    apiRequest("getMakeupSuggestion", {
-      teacherACode: teacherACode, // Truyền đúng mã GV xin nghỉ
-      teacherBName: subTeacherName,
-      leaveDate: leaveDate,
-      targetClass: className
-    }).then(res => {
-      if (res && res.suggestion) {
-        makeupInput.value = res.suggestion;
-      }
-    }).catch(e => {
-      console.error("Lỗi lấy gợi ý:", e);
-    });
+  if (!subTeacherName) {
+    makeupInput.value = "Chưa dạy bù";
+    return;
   }
-}
-    async function saveTtcmAssignment() {
+
+  const classTextSpan = row.querySelector('.font-bold.text-indigo-700');
+  const className = classTextSpan ? classTextSpan.innerText.replace('Lớp', '').trim() : '';
+  
+  const dateTextSpan = row.querySelector('.font-bold.text-rose-600');
+  const leaveDateFull = dateTextSpan ? dateTextSpan.innerText : '';
+  const leaveDate = leaveDateFull.split(',')[1] ? leaveDateFull.split(',')[1].trim() : leaveDateFull.trim();
+
+  const ticketId = document.getElementById("ttcm-current-ticket-id").value;
+  const ticket = appData.leaveRequests.find(t => cleanStr(t.id) === cleanStr(ticketId));
+  const teacherACode = ticket ? ticket.teacherCode : '';
+
+  // Hiển thị trạng thái đang dò lịch trên ô input
+  makeupInput.value = "Đang tìm lịch dạy bù...";
+
+  apiRequest("getMakeupSuggestion", {
+    teacherACode: teacherACode,
+    teacherBName: subTeacherName,
+    leaveDate: leaveDate,
+    targetClass: className
+  }).then(res => {
+    if (res && res.suggestion) {
+      makeupInput.value = res.suggestion;
+    } else {
+      makeupInput.value = "Chưa dạy bù";
+    }
+  }).catch(e => {
+    console.error("Lỗi lấy gợi ý:", e);
+    makeupInput.value = "Chưa dạy bù";
+  });
+} 
+	async function saveTtcmAssignment() {
       const ticketId = document.getElementById("ttcm-current-ticket-id").value;
       const ticket = appData.leaveRequests.find(t => cleanStr(t.id) === cleanStr(ticketId));
       if (!ticket) return;
