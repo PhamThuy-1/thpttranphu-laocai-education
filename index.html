@@ -2489,18 +2489,37 @@
       const taskId = document.getElementById("evidence-task-id").value;
       const link = document.getElementById("evidence-link-input").value.trim();
 
-      const reg = appData.registrations.find(r => 
-        (cleanStr(r.teacherCode) === cleanStr(currentUser.code) || cleanStr(r.teacherName).includes(cleanStr(currentUser.name))) && 
-        cleanStr(r.taskId) === cleanStr(taskId)
-      );
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const oldText = submitBtn ? submitBtn.innerText : "Xác Nhận Hoàn Thành";
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = "⏳ Đang gửi...";
+      }
 
       try {
         await apiRequest("submitEvidence", { taskId, evidence: link });
-        await fetchRemoteData();
+        
+        // CẬP NHẬT TRỰC TIẾP TRÊN TRÌNH DUYỆT (0ms)
+        const reg = appData.registrations.find(r => 
+          (cleanStr(r.teacherCode) === cleanStr(currentUser.code) || cleanStr(r.teacherName).includes(cleanStr(currentUser.name))) && 
+          cleanStr(r.taskId) === cleanStr(taskId)
+        );
+        if (reg) {
+          reg.evidence = link;
+          reg.level = "Chờ nghiệm thu";
+        }
+        
         closeEvidenceModal();
-        alert(`Đã gửi minh chứng cho nhiệm vụ [${taskId}].`);
+        renderTeacherDashboard();
+        updateKpiNotificationBadge();
+        alert(`✅ Đã gửi minh chứng cho nhiệm vụ [${taskId}].`);
       } catch (err) {
         alert(`Không thể gửi minh chứng: ${err.message}`);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerText = oldText;
+        }
       }
     }
 
@@ -2508,11 +2527,40 @@
       const task = appData.tasks.find(t => cleanStr(t.id) === cleanStr(taskId));
       if (!task) return;
 
+      const btn = (typeof event !== 'undefined' && event && event.target) ? event.target.closest('button') : null;
+      const oldText = btn ? btn.innerText : "Đăng ký ngay";
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "⏳ Đang xử lý...";
+      }
+
       try {
         await apiRequest("registerKPI", { taskId: task.id });
-        await fetchRemoteData();
-        alert(`Đã đăng ký nhiệm vụ [${task.id}] và cập nhật từ Google Sheets.`);
+        
+        // CẬP NHẬT NGAY VÀO APPDATA MÀ KHÔNG TẢI LẠI TỪ SHEET
+        appData.registrations.push({
+          taskId: task.id,
+          teacherCode: currentUser.code,
+          teacherName: currentUser.name,
+          level: "Đang thực hiện",
+          baseScore: Number(task.score) || 0,
+          finalScore: null,
+          evidence: ""
+        });
+
+        const regCount = appData.registrations.filter(r => cleanStr(r.taskId) === cleanStr(task.id)).length;
+        if (Number(task.quota) > 0 && regCount >= Number(task.quota)) {
+          task.status = "Hết việc";
+        }
+
+        renderTeacherDashboard();
+        updateKpiNotificationBadge();
+        alert(`✅ Đã đăng ký thành công nhiệm vụ [${task.id}]!`);
       } catch (e) {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = oldText;
+        }
         alert(`Không thể đăng ký nhiệm vụ: ${e.message}`);
       }
     }
@@ -2637,7 +2685,7 @@
       });
     }
 
-    async function saveBghScore(idx) {
+   async function saveBghScore(idx) {
       const reg = appData.registrations[idx];
       const val = document.getElementById(`bgh-score-${idx}`).value;
       if (val === "" || isNaN(Number(val))) {
@@ -2645,11 +2693,33 @@
         return;
       }
       const score = Number(val);
+      if (score > Number(reg.baseScore) || score < 0) {
+        alert(`Điểm chấm phải từ 0 đến ${reg.baseScore}!`);
+        return;
+      }
+
+      const btn = (typeof event !== 'undefined' && event && event.target) ? event.target.closest('button') : null;
+      const oldText = btn ? btn.innerText : "Lưu điểm";
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "⏳ Đang lưu...";
+      }
+
       try {
         await apiRequest("gradeTask", { taskId: reg.taskId, teacherCode: reg.teacherCode, score });
-        await fetchRemoteData();
-        alert(`Đã lưu điểm ${score} cho giáo viên ${reg.teacherName}.`);
+        
+        // CẬP NHẬT TRỰC TIẾP TRONG RAM
+        reg.finalScore = score;
+        reg.level = "Đã xong";
+        
+        renderBGHGradingTable();
+        updateKpiNotificationBadge();
+        alert(`✅ Đã lưu điểm ${score} cho giáo viên ${reg.teacherName}.`);
       } catch (err) {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = oldText;
+        }
         alert(`Không thể lưu điểm KPI: ${err.message}`);
       }
     }
@@ -2735,7 +2805,7 @@
       });
     }
 
-    async function assignTaskToTeacher(teacherCode, teacherName) {
+   async function assignTaskToTeacher(teacherCode, teacherName) {
       const select = document.getElementById(`select-task-for-${teacherCode}`);
       const taskId = select.value;
       if (!taskId) {
@@ -2755,15 +2825,42 @@
         return;
       }
 
+      const btn = (typeof event !== 'undefined' && event && event.target) ? event.target.closest('button') : null;
+      const oldText = btn ? btn.innerText : "Giao việc";
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "⏳ Đang giao...";
+      }
+
       try {
         await apiRequest("assignTask", { taskId: task.id, teacherCode });
-        await fetchRemoteData();
-        alert(`Đã giao nhiệm vụ [${task.id}] cho GV ${teacherName}.`);
+        
+        // CẬP NHẬT TRỰC TIẾP VÀO APPDATA
+        appData.registrations.push({
+          taskId: task.id,
+          teacherCode: teacherCode,
+          teacherName: teacherName,
+          level: "Đang thực hiện",
+          baseScore: Number(task.score) || 0,
+          finalScore: null,
+          evidence: ""
+        });
+
+        const regCount = appData.registrations.filter(r => cleanStr(r.taskId) === cleanStr(task.id)).length;
+        if (Number(task.quota) > 0 && regCount >= Number(task.quota)) {
+          task.status = "Hết việc";
+        }
+
+        renderBghAssignTable();
+        alert(`✅ Đã giao nhiệm vụ [${task.id}] cho GV ${teacherName}.`);
       } catch (err) {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = oldText;
+        }
         alert(`Không thể giao nhiệm vụ: ${err.message}`);
       }
     }
-
     function renderBghStatsDashboard() {
       const now = new Date();
 
@@ -3014,24 +3111,50 @@
 
     async function handleCreateTask(e) {
       e.preventDefault();
-      const taskId = document.getElementById("modal-task-id").value.trim();
+      const taskId = document.getElementById("modal-task-id").value.trim().toUpperCase();
       const title = document.getElementById("modal-task-title").value.trim();
       const desc = document.getElementById("modal-task-desc").value.trim();
       const score = Number(document.getElementById("modal-task-score").value);
       const deadline = document.getElementById("modal-task-deadline").value;
       const quota = Number(document.getElementById("modal-task-quota").value);
 
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const oldText = submitBtn ? submitBtn.innerText : "Lưu & Xuất Bản";
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = "⏳ Đang tạo...";
+      }
+
       try {
         await apiRequest("createTask", { taskId, title, desc, score, deadline, quota });
-        await fetchRemoteData();
+        
+        // Đổi ngày yyyy-mm-dd sang dd/mm/yyyy để hiển thị đồng bộ
+        const p = deadline.split("-");
+        const formattedDl = p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : deadline;
+
+        appData.tasks.push({
+          id: taskId,
+          title: title,
+          desc: desc,
+          score: score,
+          deadline: formattedDl,
+          quota: quota,
+          status: "Còn việc"
+        });
+
         closeCreateTaskModal();
         document.getElementById("new-task-form").reset();
-        alert(`Đã tạo nhiệm vụ [${taskId}] trong Kho KPI trên Google Sheets.`);
+        switchBghTab(bghActiveTab);
+        alert(`✅ Đã tạo nhiệm vụ [${taskId}] trong Kho KPI.`);
       } catch (err) {
         alert(`Không thể tạo nhiệm vụ: ${err.message}`);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerText = oldText;
+        }
       }
     }
-
     // ==========================================
     // CÁC HÀM XỬ LÝ PHÂN HỆ QUẢN LÝ HỌC SINH
     // ==========================================
@@ -3649,143 +3772,155 @@
       const distinctDates = new Set();
 
       periodRows.forEach(row => {
-  const rawDate = row.querySelector(".row-date-val").value;
-  const d = new Date(rawDate);
-  const dayOfWeek = daysOfWeekList[d.getDay()];
-  const dateFormatted = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
-  
-  distinctDates.add(`${dayOfWeek} (${dateFormatted})`);
+        const rawDate = row.querySelector(".row-date-val").value;
+        const d = new Date(rawDate);
+        const dayOfWeek = daysOfWeekList[d.getDay()];
+        const dateFormatted = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+        
+        distinctDates.add(dateFormatted);
 
-  periods.push({
-    rawDate: rawDate,
-    leaveDate: dateFormatted,
-    dayOfWeek: dayOfWeek,
-    session: row.querySelector(".session-val").value,
-    class: row.querySelector(".class-val").value.trim(),
-    subject: row.querySelector(".subject-val").value.trim(), // 👈 Lấy giá trị cột Môn lưu vào sheet LichNghi
-    periodTKB: Number(row.querySelector(".tkb-val").value),
-    periodPPCT: Number(row.querySelector(".ppct-val").value), // 👈 Lấy giá trị Tiết PPCT do GV tự nhập
-    lessonName: row.querySelector(".lesson-val").value.trim(),
-    subTeacher: "",
-    subSubject: "",
-    makeupSchedule: "Chưa dạy bù"
-  });
-});
+        periods.push({
+          rawDate: rawDate,
+          leaveDate: dateFormatted,
+          dayOfWeek: dayOfWeek,
+          session: row.querySelector(".session-val").value,
+          class: row.querySelector(".class-val").value.trim(),
+          subject: row.querySelector(".subject-val").value.trim(),
+          periodTKB: Number(row.querySelector(".tkb-val").value),
+          periodPPCT: Number(row.querySelector(".ppct-val").value),
+          lessonName: row.querySelector(".lesson-val").value.trim(),
+          subTeacher: "",
+          subSubject: "",
+          makeupSchedule: "Chưa dạy bù"
+        });
+      });
 
       const timeDisplay = Array.from(distinctDates).join("; ");
       const sessionCount = countDistinctSessions(periods);
 
       const btn = document.getElementById("btn-submit-leave");
-      if (btn) btn.innerText = "Đang lưu vào Sheet LichNghi...";
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "⏳ Đang lưu vào Sheet LichNghi...";
+      }
 
       try {
         const result = await apiRequest("createLeaveRequest", {
           ticket: { reasonCategory, reason: reasonDetail, periods }
         });
-        await fetchRemoteData();
+
+        // CẬP NHẬT TRỰC TIẾP VÀO APPDATA
+        appData.leaveRequests.unshift({
+          id: result.id,
+          teacherCode: currentUser.code,
+          teacherName: currentUser.name,
+          subject: currentUser.subject,
+          department: currentUser.department,
+          reasonCategory: reasonCategory,
+          reason: reasonDetail,
+          status: "PENDING_TTCM",
+          timeDisplay: timeDisplay,
+          classesTeaching: [...new Set(periods.map(p => p.class).filter(Boolean))].join(", "),
+          periods: periods
+        });
+
         closeCreateLeaveModal();
         renderLeaveModule();
-        alert(`Đã gửi đơn ${result.id}, gồm ${sessionCount} buổi nghỉ.`);
+        alert(`✅ Đã gửi đơn ${result.id}, gồm ${sessionCount} buổi nghỉ.`);
       } catch (error) {
         alert(`Không thể gửi đơn nghỉ: ${error.message}`);
       } finally {
-        if (btn) btn.innerText = "Gửi Đơn Lên Tổ Trưởng Chuyên Môn ➔";
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = "Gửi Đơn Lên Tổ Trưởng Chuyên Môn ➔";
+        }
       }
-    }
+    }  
+	  async function openTtcmAssignModal(ticketId) {
+      const ticket = appData.leaveRequests.find(t => cleanStr(t.id) === cleanStr(ticketId));
+      if (!ticket) return;
 
-  async function openTtcmAssignModal(ticketId) {
-  const ticket = appData.leaveRequests.find(t => cleanStr(t.id) === cleanStr(ticketId));
-  if (!ticket) return;
+      document.getElementById("ttcm-current-ticket-id").value = ticketId;
+      document.getElementById("ttcm-modal-subtitle").innerText = `Phân công dạy thay cho GV ${ticket.teacherName} (${ticket.timeDisplay})`;
 
-  document.getElementById("ttcm-current-ticket-id").value = ticketId;
-  document.getElementById("ttcm-modal-subtitle").innerText = `Phân công dạy thay cho GV ${ticket.teacherName} (${ticket.timeDisplay})`;
+      const tbody = document.getElementById("ttcm-assign-tbody");
+      tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-indigo-600 font-semibold">⏳ Đang quét TKB tìm giáo viên trống tiết...</td></tr>`;
+      document.getElementById("ttcm-assign-modal").classList.remove("hidden");
 
-  const tbody = document.getElementById("ttcm-assign-tbody");
-  tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-500">Đang tải gợi ý giáo viên trống tiết thông minh từ TKB...</td></tr>`;
+      const promises = (ticket.periods || []).map(p =>
+        apiRequest("getSubstituteSuggestions", {
+          leaveDate: p.leaveDate,
+          periodTKB: p.periodTKB,
+          session: p.session,
+          class: p.class,
+          subject: p.subject || ticket.subject
+        }).then(res => ({
+          group1: (res && res.group1) ? res.group1 : [],
+          group2: (res && res.group2) ? res.group2 : []
+        })).catch(e => {
+          console.error("Lỗi lấy gợi ý tiết:", e);
+          return { group1: [], group2: [] };
+        })
+      );
 
-  let suggestionsByPeriod = [];
-  for (let i = 0; i < (ticket.periods || []).length; i++) {
-    const p = ticket.periods[i];
-    try {
-      // Hàm apiRequest tự động trả về phần thân JSON đã bóc tách (result)
-      const res = await apiRequest("getSubstituteSuggestions", {
-        leaveDate: p.leaveDate,
-        periodTKB: p.periodTKB,
-        session: p.session,
-        class: p.class,
-        subject: ticket.subject
+      const suggestionsByPeriod = await Promise.all(promises);
+
+      let rowsHtml = "";
+      (ticket.periods || []).forEach((p, idx) => {
+        const groups = suggestionsByPeriod[idx] || { group1: [], group2: [] };
+        const g1 = groups.group1;
+        const g2 = groups.group2;
+
+        let optionsHtml = `<option value="">-- Chọn GV dạy thay (Ưu tiên Nhóm 1, sau đó Nhóm 2) --</option>`;
+
+        if (g1.length > 0) {
+          optionsHtml += `<optgroup label="⭐ Nhóm 1: Giáo viên dạy lớp đó (Trống tiết)">`;
+          g1.forEach(s => {
+            const selected = cleanStr(s.name) === cleanStr(p.subTeacher) ? 'selected' : '';
+            optionsHtml += `<option value="${s.name}" data-subject="${s.subject || ''}" ${selected}>${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)</option>`;
+          });
+          optionsHtml += `</optgroup>`;
+        }
+
+        if (g2.length > 0) {
+          optionsHtml += `<optgroup label="📌 Nhóm 2: Giáo viên cùng môn (Trống tiết)">`;
+          g2.forEach(s => {
+            const selected = cleanStr(s.name) === cleanStr(p.subTeacher) ? 'selected' : '';
+            optionsHtml += `<option value="${s.name}" data-subject="${s.subject || ''}" ${selected}>${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)</option>`;
+          });
+          optionsHtml += `</optgroup>`;
+        }
+
+        if (g1.length === 0 && g2.length === 0) {
+          optionsHtml += `<option value="" disabled>Không tìm thấy giáo viên trống tiết phù hợp</option>`;
+        }
+
+        const makeupVal = (p.makeupSchedule && p.makeupSchedule !== "Theo thỏa thuận") ? p.makeupSchedule : "Chưa dạy bù";
+
+        rowsHtml += `
+          <tr id="ttcm-row-${idx}">
+            <td class="p-3">
+              <span class="font-bold text-rose-600">${p.dayOfWeek || ''}, ${p.leaveDate}</span><br>
+              <span class="font-bold text-indigo-700">Lớp ${p.class}</span> (${p.session} - Tiết ${p.periodTKB})
+            </td>
+            <td class="p-3 font-medium text-slate-800">${p.lessonName}</td>
+            <td class="p-3">
+              <select class="border rounded-lg p-1.5 w-full ttcm-sub-teacher" onchange="onTtcmTeacherChange(this)">
+                ${optionsHtml}
+              </select>
+            </td>
+            <td class="p-3">
+              <input type="text" placeholder="Môn thay" value="${p.subSubject || p.subject || ticket.subject}" class="border rounded-lg p-1.5 w-full ttcm-sub-subject">
+            </td>
+            <td class="p-3">
+              <input type="text" placeholder="Chưa dạy bù" value="${makeupVal}" class="border rounded-lg p-1.5 w-full ttcm-sub-makeup">
+            </td>
+          </tr>
+        `;
       });
-      
-      // Đảm bảo lấy đúng mảng group1 và group2 trả về từ Apps Script
-      suggestionsByPeriod.push({
-        group1: (res && res.group1) ? res.group1 : [],
-        group2: (res && res.group2) ? res.group2 : []
-      });
-    } catch (e) {
-      console.error("Lỗi lấy gợi ý tiết:", e);
-      suggestionsByPeriod.push({ group1: [], group2: [] });
+
+      tbody.innerHTML = rowsHtml;
     }
-  }
-
-  tbody.innerHTML = "";
-  (ticket.periods || []).forEach((p, idx) => {
-    const groups = suggestionsByPeriod[idx] || { group1: [], group2: [] };
-    const g1 = groups.group1;
-    const g2 = groups.group2;
-
-    let optionsHtml = `<option value="">-- Chọn GV dạy thay (Ưu tiên Nhóm 1, sau đó Nhóm 2) --</option>`;
-
-    // Render Nhóm 1: Giáo viên dạy lớp đó (Trống tiết)
-    if (g1.length > 0) {
-      optionsHtml += `<optgroup label="⭐ Nhóm 1: Giáo viên dạy lớp đó (Trống tiết)">`;
-      g1.forEach(s => {
-        const selected = cleanStr(s.name) === cleanStr(p.subTeacher) ? 'selected' : '';
-        optionsHtml += `<option value="${s.name}" data-subject="${s.subject || ''}" ${selected}>${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)</option>`;
-      });
-      optionsHtml += `</optgroup>`;
-    }
-
-    // Render Nhóm 2: Giáo viên cùng môn (Trống tiết)
-    if (g2.length > 0) {
-      optionsHtml += `<optgroup label="📌 Nhóm 2: Giáo viên cùng môn (Trống tiết)">`;
-      g2.forEach(s => {
-        const selected = cleanStr(s.name) === cleanStr(p.subTeacher) ? 'selected' : '';
-        optionsHtml += `<option value="${s.name}" data-subject="${s.subject || ''}" ${selected}>${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)</option>`;
-      });
-      optionsHtml += `</optgroup>`;
-    }
-
-    if (g1.length === 0 && g2.length === 0) {
-      optionsHtml += `<option value="" disabled>Không tìm thấy giáo viên trống tiết phù hợp</option>`;
-    }
-
-    const makeupVal = (p.makeupSchedule && p.makeupSchedule !== "Theo thỏa thuận") ? p.makeupSchedule : "Chưa dạy bù";
-
-    tbody.innerHTML += `
-      <tr id="ttcm-row-${idx}">
-        <td class="p-3">
-          <span class="font-bold text-rose-600">${p.dayOfWeek || ''}, ${p.leaveDate}</span><br>
-          <span class="font-bold text-indigo-700">Lớp ${p.class}</span> (${p.session} - Tiết ${p.periodTKB})
-        </td>
-        <td class="p-3 font-medium text-slate-800">${p.lessonName}</td>
-        <td class="p-3">
-          <select class="border rounded-lg p-1.5 w-full ttcm-sub-teacher" onchange="onTtcmTeacherChange(this)">
-            ${optionsHtml}
-          </select>
-        </td>
-        <td class="p-3">
-          <input type="text" placeholder="Môn thay" value="${p.subSubject || ticket.subject}" class="border rounded-lg p-1.5 w-full ttcm-sub-subject">
-        </td>
-        <td class="p-3">
-          <input type="text" placeholder="Chưa dạy bù" value="${makeupVal}" class="border rounded-lg p-1.5 w-full ttcm-sub-makeup">
-        </td>
-      </tr>
-    `;
-  });
-
-  document.getElementById("ttcm-assign-modal").classList.remove("hidden");
-}
-
     function closeTtcmModal() {
       document.getElementById("ttcm-assign-modal").classList.add("hidden");
     }
@@ -3845,36 +3980,48 @@ function onTtcmTeacherChange(selectEl) {
       const rows = document.querySelectorAll("#ttcm-assign-tbody tr");
       for (let i = 0; i < rows.length; i++) {
         const subT = rows[i].querySelector(".ttcm-sub-teacher").value;
-        const subS = rows[i].querySelector(".ttcm-sub-subject").value;
-        const subM = rows[i].querySelector(".ttcm-sub-makeup").value.trim();
-
         if (!subT) {
           alert(`Vui lòng chọn người dạy thay cho tiết thứ ${i + 1}!`);
           return;
         }
+      }
 
+      const btn = document.getElementById("btn-save-ttcm");
+      const oldText = btn ? btn.innerText : "✓ Hoàn Tất & Chuyển BGH Phê Duyệt";
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "⏳ Đang lưu phân công...";
       }
 
       try {
-        const periods = Array.from(rows).map((row, index) => ({
+        const updatedPeriods = Array.from(rows).map((row, index) => ({
           ...ticket.periods[index],
           subTeacher: row.querySelector(".ttcm-sub-teacher").value,
           subSubject: row.querySelector(".ttcm-sub-subject").value || ticket.subject,
           makeupSchedule: row.querySelector(".ttcm-sub-makeup").value.trim() || "Chưa dạy bù"
         }));
+
         await apiRequest("updateLeaveStatus", {
-          ticketId: ticket.id, status: "PENDING_BGH", periods
+          ticketId: ticket.id, status: "PENDING_BGH", periods: updatedPeriods
         });
-        await fetchRemoteData();
+
+        // CẬP NHẬT TRỰC TIẾP TRONG RAM
+        ticket.status = "PENDING_BGH";
+        ticket.periods = updatedPeriods;
+
         closeTtcmModal();
         renderLeaveModule();
-        alert("Đã lưu phân công dạy thay và chuyển đơn lên BGH.");
+        alert("✅ Đã lưu phân công dạy thay và chuyển đơn lên BGH.");
       } catch (error) {
         alert(`Không thể lưu phân công dạy thay: ${error.message}`);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = oldText;
+        }
       }
     }
-
-    async function approveTicketByBGH(ticketId) {
+   async function approveTicketByBGH(ticketId) {
       if (!currentUser || currentUser.role !== "BGH") {
         alert("⛔ BẠN KHÔNG CÓ QUYỀN!\n\nChức năng phê duyệt đơn nghỉ chỉ dành riêng cho Ban Giám Hiệu.");
         return;
@@ -3883,21 +4030,36 @@ function onTtcmTeacherChange(selectEl) {
       const ticket = appData.leaveRequests.find(t => cleanStr(t.id) === cleanStr(ticketId));
       if (!ticket) return;
 
-      if (confirm(`Xác nhận phê duyệt đơn nghỉ & kế hoạch dạy thay cho giáo viên ${ticket.teacherName}?`)) {
-        try {
-          await apiRequest("updateLeaveStatus", {
-            ticketId: ticket.id, status: "APPROVED_BGH", periods: ticket.periods
-          });
-          await fetchRemoteData();
-          checkSubstituteNotifications();
-          alert("BGH đã phê duyệt đơn nghỉ trên Google Sheets.");
-        } catch (error) {
-          alert(`Không thể duyệt đơn nghỉ: ${error.message}`);
-        }
+      if (!confirm(`Xác nhận phê duyệt đơn nghỉ & kế hoạch dạy thay cho giáo viên ${ticket.teacherName}?`)) {
+        return;
       }
-    }
 
-    function downloadLeaveDoc(ticketId) {
+      const btn = (typeof event !== 'undefined' && event && event.target) ? event.target.closest('button') : null;
+      const oldText = btn ? btn.innerText : "✓ Phê duyệt đơn";
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "⏳ Đang duyệt...";
+      }
+
+      try {
+        await apiRequest("updateLeaveStatus", {
+          ticketId: ticket.id, status: "APPROVED_BGH", periods: ticket.periods
+        });
+
+        // CẬP NHẬT TRỰC TIẾP TRONG RAM
+        ticket.status = "APPROVED_BGH";
+        
+        renderLeaveModule();
+        checkSubstituteNotifications();
+        alert("✅ BGH đã phê duyệt đơn nghỉ thành công!");
+      } catch (error) {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = oldText;
+        }
+        alert(`Không thể duyệt đơn nghỉ: ${error.message}`);
+      }
+    }    function downloadLeaveDoc(ticketId) {
       const ticket = appData.leaveRequests.find(t => cleanStr(t.id) === cleanStr(ticketId));
       if (!ticket) {
         alert("Không tìm thấy dữ liệu đơn nghỉ này!");
@@ -5038,7 +5200,7 @@ let currentEligibleBulkTasks = [];
       checkboxes.forEach(chk => chk.checked = status);
     }
 
-    async function confirmBulkAssign() {
+   async function confirmBulkAssign() {
       const taskId = document.getElementById("bulk-select-task").value;
       if (!taskId) {
         alert("⚠️ Vui lòng chọn một nhiệm vụ hợp lệ!");
@@ -5054,7 +5216,6 @@ let currentEligibleBulkTasks = [];
         return;
       }
 
-      // KIỂM TRA HẠN MỨC CHỈ TIÊU (QUOTA VALIDATION)
       if (task && selectedCount > task.remainingQuota) {
         alert(`❌ CẢNH BÁO: Số lượng giáo viên bạn chọn (${selectedCount} người) đã vượt quá chỉ tiêu còn lại (${task.remainingQuota} người) của nhiệm vụ [${taskId}]!\n\nVui lòng bỏ bớt giáo viên và làm lại.`);
         return;
@@ -5066,15 +5227,44 @@ let currentEligibleBulkTasks = [];
         return;
       }
 
+      const btn = (typeof event !== 'undefined' && event && event.target) ? event.target.closest('button') : null;
+      const oldText = btn ? btn.innerText : "✓ Xác Nhận Giao Việc";
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "⏳ Đang giao hàng loạt...";
+      }
+
       try {
-        for (const code of teacherCodes) {
-          await apiRequest("assignTask", { taskId, teacherCode: code });
+        const res = await apiRequest("bulkAssignTask", { taskId, teacherCodes });
+        
+        // CẬP NHẬT NGAY VÀO APPDATA
+        (res.assignedList || []).forEach(item => {
+          appData.registrations.push({
+            taskId: taskId,
+            teacherCode: item.teacherCode,
+            teacherName: item.teacherName,
+            level: "Đang thực hiện",
+            baseScore: item.baseScore,
+            finalScore: null,
+            evidence: ""
+          });
+        });
+
+        if (res.isNowFull) {
+          const targetTask = appData.tasks.find(t => cleanStr(t.id) === cleanStr(taskId));
+          if (targetTask) targetTask.status = "Hết việc";
         }
-        await fetchRemoteData();
+
         closeBulkAssignModal();
+        renderBghAssignTable();
         alert(`✅ Đã giao thành công nhiệm vụ [${taskId}] cho ${teacherCodes.length} giáo viên.`);
       } catch (err) {
         alert(`❌ Không thể thực hiện giao việc hàng loạt: ${err.message}`);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = oldText;
+        }
       }
     }
 	// 1. Hàm tạo phần tử dòng HTML chuẩn cho bảng tiết nghỉ
