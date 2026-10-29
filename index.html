@@ -4419,27 +4419,71 @@ function onTtcmTeacherChange(selectEl) {
 
     async function handleSaveEquipment(e) {
       e.preventDefault();
-      const payload = {
-        item: document.getElementById("modal-equip-name").value,
-        period: document.getElementById("modal-equip-period").value.trim(),
-        date: document.getElementById("modal-equip-date").value
-      };
+      const itemVal = document.getElementById("modal-equip-name").value.trim();
+      const periodVal = document.getElementById("modal-equip-period").value.trim();
+      const dateVal = document.getElementById("modal-equip-date").value;
+
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const oldText = submitBtn ? submitBtn.innerText : "Xác Nhận Mượn";
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = "⏳ Đang lưu...";
+      }
+
       try {
-        const result = await apiRequest("createEquipmentBorrow", payload);
-        await fetchRemoteData();
+        const result = await apiRequest("createEquipmentBorrow", {
+          item: itemVal,
+          period: periodVal,
+          date: dateVal
+        });
+
+        const p = dateVal.split("-");
+        const formattedDate = p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : dateVal;
+
+        appData.equipmentBorrows.unshift({
+          id: result.id,
+          teacherCode: currentUser.code,
+          teacherName: currentUser.name,
+          item: itemVal,
+          period: periodVal,
+          date: formattedDate,
+          status: "Đang mượn"
+        });
+
         closeEquipmentModal();
-        alert(`Đã đăng ký mượn thiết bị. Mã mượn: ${result.id}`);
+        renderEquipmentSection();
+        alert(`✅ Đã đăng ký mượn thiết bị. Mã mượn: ${result.id}`);
       } catch (error) {
         alert(`Không thể lưu lượt mượn thiết bị: ${error.message}`);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerText = oldText;
+        }
       }
     }
 
     async function returnEquipment(id) {
+      const btn = (typeof event !== 'undefined' && event && event.target) ? event.target.closest('button') : null;
+      const oldText = btn ? btn.innerText : "Xác nhận trả";
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "⏳ Đang xử lý...";
+      }
+
       try {
         await apiRequest("returnEquipment", { id });
-        await fetchRemoteData();
-        alert("Đã cập nhật trạng thái trả thiết bị trong Google Sheets.");
+        
+        const borrowItem = appData.equipmentBorrows.find(b => b.id === id);
+        if (borrowItem) borrowItem.status = "Đã trả";
+
+        renderEquipmentSection();
+        alert("✅ Đã cập nhật trạng thái trả thiết bị!");
       } catch (error) {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = oldText;
+        }
         alert(`Không thể cập nhật lượt mượn: ${error.message}`);
       }
     }
