@@ -510,7 +510,7 @@
                   <th class="py-3.5 px-3 w-[12%]">NGƯỜI GIAO</th>
                   <th class="py-3.5 px-2 text-center w-[9%]">HẠN CHÓT</th>
                   <th class="py-3.5 px-2 text-center w-[7%]">ĐỊNH MỨC</th>
-                  <th class="py-3.5 px-3 text-center w-[15%]">TÌNH TRẠNG & GV NHẬN</th>
+                  <th class="py-3.5 px-3 text-center w-[15%]">TÌNH TRẠNG (HT/TỔNG)</th>
                   <th class="py-3.5 px-3 text-center w-[9%]">THAO TÁC</th>
                 </tr>
               </thead>
@@ -2653,7 +2653,7 @@
       renderBghCatalogTable();
     }
 
-    function renderBghCatalogTable() {
+   function renderBghCatalogTable() {
       const tbody = document.getElementById("bgh-catalog-table");
       if (!tbody) return;
       tbody.innerHTML = "";
@@ -2682,7 +2682,6 @@
         return {
           ...task,
           originalIndex: idx,
-          taskRegs,
           completedCount,
           totalTarget,
           isFullyCompleted
@@ -2712,26 +2711,12 @@
 
       pageItems.forEach(t => {
         const statusBadge = t.isFullyCompleted
-          ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+          ? `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">
                ✓ ${t.completedCount}/${t.totalTarget} Hoàn thành
              </span>`
-          : `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300">
+          : `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300 whitespace-nowrap">
                ⏳ ${t.completedCount}/${t.totalTarget} Hoàn thành
              </span>`;
-
-        // Danh sách tên GV đã nhận hiển thị ngay bên dưới số lượng
-        let assigneesHtml = "";
-        if (t.taskRegs.length === 0) {
-          assigneesHtml = `<div class="text-[11px] text-slate-400 italic mt-1">Chưa có GV nhận</div>`;
-        } else {
-          const tags = t.taskRegs.map(r => {
-            const done = (r.finalScore !== null && r.finalScore !== "" && !isNaN(Number(r.finalScore))) || cleanStr(r.level).includes("đã xong");
-            return `<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${done ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-700 border border-slate-200'}" title="${done ? 'Đã hoàn thành' : 'Đang thực hiện'}">
-              ${done ? '✓' : '•'} ${r.teacherName}
-            </span>`;
-          }).join(" ");
-          assigneesHtml = `<div class="flex flex-wrap justify-center gap-1 mt-1.5">${tags}</div>`;
-        }
 
         tbody.innerHTML += `
           <tr class="hover:bg-slate-50/80 transition border-b border-slate-100">
@@ -2741,9 +2726,8 @@
             <td class="py-3.5 px-3 text-xs font-semibold text-slate-700">👤 ${t.creatorName || 'Ban Giám Hiệu'}</td>
             <td class="py-3.5 px-2 text-center text-xs font-medium text-slate-600">${t.deadline || '--'}</td>
             <td class="py-3.5 px-2 text-center font-extrabold text-indigo-600">${t.score}</td>
-            <td class="py-3.5 px-3 text-center">
+            <td class="py-3.5 px-3 text-center whitespace-nowrap">
               ${statusBadge}
-              ${assigneesHtml}
             </td>
             <td class="py-3.5 px-3 text-center whitespace-nowrap">
               <div class="inline-flex items-center gap-1">
