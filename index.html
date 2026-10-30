@@ -2677,8 +2677,8 @@
             <td class="py-3 px-4 text-center">${evidenceBtn}</td>
             <td class="py-3 px-4 text-center">${item.statusBadge}</td>
             <td class="py-3 px-4 text-center">
-              <input type="number" id="bgh-score-${idx}" value="${r.finalScore !== null ? r.finalScore : ''}" placeholder="${r.baseScore}" max="${r.baseScore}" min="0" class="w-16 border border-slate-300 rounded px-2 py-1 text-center font-bold text-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-            </td>
+  <input type="number" id="bgh-score-${idx}" value="${(r.finalScore !== null && r.finalScore !== '') ? r.finalScore : r.baseScore}" placeholder="${r.baseScore}" max="${r.baseScore}" min="0" class="w-16 border border-slate-300 rounded px-2 py-1 text-center font-bold text-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+</td>
             <td class="py-3 px-4 text-center">
               <button onclick="saveBghScore(${idx})" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm transition">
                 Lưu điểm
