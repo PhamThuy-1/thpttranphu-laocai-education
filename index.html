@@ -2456,9 +2456,10 @@
             <tr class="hover:bg-slate-50/80 transition border-b border-slate-100">
               <td class="py-3 px-4 font-bold text-slate-800">${task.id}</td>
               <td class="py-3 px-4">
-                <div class="font-semibold text-slate-900">${task.title}</div>
-                <div class="text-xs text-slate-500 mt-0.5">${task.desc || ""}</div>
-              </td>
+  <div class="font-semibold text-slate-900">${task.title}</div>
+  <div class="text-xs text-slate-500 mt-0.5">${task.desc || ""}</div>
+  <div class="text-[11px] text-indigo-600 font-medium mt-1">👤 Người giao: ${task.creatorName || "Ban Giám Hiệu"}</div>
+</td>
               <td class="py-3 px-4 text-center font-bold text-indigo-600">${task.score}</td>
               <td class="py-3 px-4 text-center text-slate-600 text-xs">${task.deadline}</td>
               <td class="py-3 px-4 text-center text-xs text-slate-500">${task.quota} người</td>
@@ -3151,6 +3152,9 @@ function openCreateTaskModal() {
       const score = Number(document.getElementById("modal-task-score").value);
       const deadline = document.getElementById("modal-task-deadline").value;
       const quota = Number(document.getElementById("modal-task-quota").value);
+      
+      // 👉 Lấy trực tiếp tên từ biến currentUser trong bộ nhớ (0ms, không cần đọc lại Sheet)
+      const creatorName = (currentUser && currentUser.name) ? currentUser.name : "Ban Giám Hiệu";
 
       const submitBtn = e.target.querySelector('button[type="submit"]');
       const oldText = submitBtn ? submitBtn.innerText : "Lưu & Xuất Bản";
@@ -3160,12 +3164,14 @@ function openCreateTaskModal() {
       }
 
       try {
-        await apiRequest("createTask", { taskId, title, desc, score, deadline, quota });
+        // 👉 Gửi kèm creatorName trong cùng 1 request duy nhất
+        await apiRequest("createTask", { taskId, title, desc, score, deadline, quota, creatorName });
         
         // Đổi ngày yyyy-mm-dd sang dd/mm/yyyy để hiển thị đồng bộ
         const p = deadline.split("-");
         const formattedDl = p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : deadline;
 
+        // 👉 Đẩy thẳng vào RAM để giao diện cập nhật ngay mà không cần tải lại dữ liệu
         appData.tasks.push({
           id: taskId,
           title: title,
@@ -3173,7 +3179,8 @@ function openCreateTaskModal() {
           score: score,
           deadline: formattedDl,
           quota: quota,
-          status: "Còn việc"
+          status: "Còn việc",
+          creatorName: creatorName
         });
 
         closeCreateTaskModal();
