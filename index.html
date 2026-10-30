@@ -2624,7 +2624,7 @@
         const isOverdue = !isDone && !isWaiting && deadlineDate && (deadlineDate < now);
 
         let priority = 3;
-        let statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">Chưa đến hạn</span>`;
+        let statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 whitespace-nowrap">Chưa đến hạn</span>`;
 
         if (isDone) {
           priority = 4;
