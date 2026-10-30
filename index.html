@@ -3109,7 +3109,38 @@
       XLSX.writeFile(wb, fileName);
     }
 
-    function openCreateTaskModal() { document.getElementById("task-modal").classList.remove("hidden"); }
+    function generateNextTaskId() {
+  const tasks = appData.tasks || [];
+  if (tasks.length === 0) return "A1";
+
+  let maxNum = 0;
+  let prefix = "A"; // Tiền tố mặc định nếu chưa tìm thấy chữ cái
+
+  tasks.forEach(t => {
+    const idStr = String(t.id || "").trim().toUpperCase();
+    // Tách phần chữ cái đầu (VD: A, NV, KPI) và phần số phía sau (VD: 1, 05, 12)
+    const match = idStr.match(/^([A-Z]+)(\d+)$/);
+    if (match) {
+      const currentPrefix = match[1];
+      const currentNum = parseInt(match[2], 10);
+      if (currentNum >= maxNum) {
+        maxNum = currentNum;
+        prefix = currentPrefix;
+      }
+    }
+  });
+
+  return `${prefix}${maxNum + 1}`;
+}
+
+function openCreateTaskModal() {
+  // Tự động điền mã việc tiếp theo vào ô input
+  const taskIdInput = document.getElementById("modal-task-id");
+  if (taskIdInput) {
+    taskIdInput.value = generateNextTaskId();
+  }
+  document.getElementById("task-modal").classList.remove("hidden");
+}
     function closeCreateTaskModal() { document.getElementById("task-modal").classList.add("hidden"); }
 
     async function handleCreateTask(e) {
