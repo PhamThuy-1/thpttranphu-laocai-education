@@ -415,36 +415,23 @@
     </section>
 
     <!-- VIEW 3: BGH MANAGEMENT DASHBOARD -->
-    <section id="bgh-section" class="hidden space-y-6">
-      <div class="flex items-center justify-between">
-        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-          Phân hệ: Ban Giám Hiệu
-        </span>
-      </div>
-
-      <div class="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Bảng Điều Hành Ban Giám Hiệu</h2>
-          <p class="text-xs sm:text-sm text-slate-500 mt-1">Phân công nhiệm vụ, chấm điểm KPI, quản lý minh chứng và phân tích số liệu thi đua.</p>
-        </div>
-        <button onclick="openCreateTaskModal()" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow transition">
-          <span class="text-base font-bold">+</span> Thêm Nhiệm Vụ Mới
-        </button>
-      </div>
-
-      <!-- 3 TABS ĐIỀU HƯỚNG BGH -->
-      <div class="flex items-center gap-2 border-b border-slate-200 text-sm font-semibold pt-2 overflow-x-auto no-print">
-        <button id="bgh-tab-grading-btn" onclick="switchBghTab('grading')" class="px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-2 whitespace-nowrap transition font-bold">
+    <!-- VIEW 3: BGH MANAGEMENT DASHBOARD -->
+    <section id="bgh-section" class="hidden space-y-3 -mt-2">
+      <!-- 4 TABS ĐIỀU HƯỚNG BGH (Đẩy sát mép trên) -->
+      <div class="bg-white px-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-2 text-sm font-semibold overflow-x-auto no-print">
+        <button id="bgh-tab-grading-btn" onclick="switchBghTab('grading')" class="px-4 py-3 border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-2 whitespace-nowrap transition font-bold">
           📝 Chấm Điểm KPI
         </button>
-        <button id="bgh-tab-assign-btn" onclick="switchBghTab('assign')" class="px-5 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap transition">
+        <button id="bgh-tab-catalog-btn" onclick="switchBghTab('catalog')" class="px-4 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap transition">
+          📋 Danh Mục KPI
+        </button>
+        <button id="bgh-tab-assign-btn" onclick="switchBghTab('assign')" class="px-4 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap transition">
           🎯 Giao Việc Cho Giáo Viên
         </button>
-        <button id="bgh-tab-stats-btn" onclick="switchBghTab('stats')" class="px-5 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap transition">
+        <button id="bgh-tab-stats-btn" onclick="switchBghTab('stats')" class="px-4 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap transition">
           📊 Thống Kê Tiến Độ & KPI
         </button>
       </div>
-
       <!-- TAB 1: CHẤM ĐIỂM KPI -->
       <div id="bgh-tab-content-grading" class="space-y-4">
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
@@ -500,7 +487,61 @@
           </div>
         </div>
       </div>
+<!-- TAB MỚI: DANH MỤC KPI -->
+      <div id="bgh-tab-content-catalog" class="hidden space-y-4">
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="p-4 sm:p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="font-bold text-slate-900 text-base">Danh Sách Các Nhiệm Vụ Đã Giao</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Ưu tiên hiển thị: Nhiệm vụ chưa hoàn thành & nhiệm vụ mới giao gần nhất.</p>
+            </div>
+            <button onclick="openCreateTaskModal()" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-xl shadow-sm transition">
+              <span class="text-base font-bold leading-none">+</span> Thêm mới nhiệm vụ
+            </button>
+          </div>
 
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  <th class="py-3.5 px-3 w-[8%]">MÃ NV</th>
+                  <th class="py-3.5 px-3 w-[18%]">TÊN NHIỆM VỤ</th>
+                  <th class="py-3.5 px-3 w-[22%]">CHI TIẾT NHIỆM VỤ</th>
+                  <th class="py-3.5 px-3 w-[12%]">NGƯỜI GIAO</th>
+                  <th class="py-3.5 px-2 text-center w-[9%]">HẠN CHÓT</th>
+                  <th class="py-3.5 px-2 text-center w-[7%]">ĐỊNH MỨC</th>
+                  <th class="py-3.5 px-3 text-center w-[15%]">TÌNH TRẠNG & GV NHẬN</th>
+                  <th class="py-3.5 px-3 text-center w-[9%]">THAO TÁC</th>
+                </tr>
+              </thead>
+              <tbody id="bgh-catalog-table" class="divide-y divide-slate-100 text-sm"></tbody>
+            </table>
+          </div>
+
+          <div class="p-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
+            <div class="flex items-center gap-2">
+              <span>Hiển thị mỗi trang:</span>
+              <select id="bgh-catalog-page-size" onchange="changeBghCatalogPageSize(this.value)" class="border border-slate-300 rounded px-2.5 py-1 bg-white focus:outline-none">
+                <option value="5">5 việc</option>
+                <option value="10" selected>10 việc</option>
+                <option value="20">20 việc</option>
+                <option value="999">Tất cả</option>
+              </select>
+            </div>
+            <div class="flex items-center gap-3">
+              <span id="bgh-catalog-pagination-info">Trang 1 / 1 (0 việc)</span>
+              <div class="flex gap-1.5">
+                <button id="bgh-catalog-btn-prev" onclick="prevBghCatalogPage()" class="px-3 py-1 rounded border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed font-medium">
+                  ◀ Trước
+                </button>
+                <button id="bgh-catalog-btn-next" onclick="nextBghCatalogPage()" class="px-3 py-1 rounded border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed font-medium">
+                  Sau ▶
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- TAB 2: GIAO VIỆC CHO GIÁO VIÊN -->
       <div id="bgh-tab-content-assign" class="hidden space-y-4">
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
@@ -1299,11 +1340,10 @@
       </form>
     </div>
   </div>
-
-  <!-- MODAL: GIAO NHIỆM VỤ MỚI VÀO KHO KPI (BGH) -->
+   <!-- MODAL: GIAO NHIỆM VỤ MỚI VÀO KHO KPI (BGH) -->
   <div id="task-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl">
-      <h3 class="text-lg font-bold text-slate-900 mb-4">Thêm Nhiệm Vụ Mới Vào Kho KPI</h3>
+      <h3 id="task-modal-heading" class="text-lg font-bold text-slate-900 mb-4">Thêm Nhiệm Vụ Mới Vào Kho KPI</h3>
       <form id="new-task-form" onsubmit="handleCreateTask(event)" class="space-y-4 text-sm">
         <div>
           <label class="block font-medium text-slate-700 mb-1">Mã việc (Ví dụ: A6)</label>
@@ -2569,27 +2609,156 @@
     // ==========================================
     // CÁC HÀM XỬ LÝ MÀN HÌNH BGH (3 TABS)
     // ==========================================
+    // Biến quản lý phân trang cho thẻ Danh mục KPI
+    let bghCatalogPage = 1;
+    let bghCatalogItemsPerPage = 10;
+
     function switchBghTab(tab) {
       bghActiveTab = tab;
-      const tabs = ["grading", "assign", "stats"];
+      const tabs = ["grading", "catalog", "assign", "stats"];
       tabs.forEach(t => {
         const btn = document.getElementById(`bgh-tab-${t}-btn`);
         const content = document.getElementById(`bgh-tab-content-${t}`);
         if (!btn || !content) return;
         if (t === tab) {
-          btn.className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-2 whitespace-nowrap transition font-bold";
+          btn.className = "px-4 py-3 border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-2 whitespace-nowrap transition font-bold";
           content.classList.remove("hidden");
         } else {
-          btn.className = "px-5 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap transition";
+          btn.className = "px-4 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap transition";
           content.classList.add("hidden");
         }
       });
 
       if (tab === "grading") renderBGHGradingTable();
+      if (tab === "catalog") renderBghCatalogTable();
       if (tab === "assign") renderBghAssignTable();
       if (tab === "stats") renderBghStatsDashboard();
     }
 
+    function changeBghCatalogPageSize(val) {
+      bghCatalogItemsPerPage = Number(val);
+      bghCatalogPage = 1;
+      renderBghCatalogTable();
+    }
+
+    function prevBghCatalogPage() {
+      if (bghCatalogPage > 1) {
+        bghCatalogPage--;
+        renderBghCatalogTable();
+      }
+    }
+
+    function nextBghCatalogPage() {
+      bghCatalogPage++;
+      renderBghCatalogTable();
+    }
+
+    function renderBghCatalogTable() {
+      const tbody = document.getElementById("bgh-catalog-table");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      const tasks = (appData.tasks || []).filter(t => t && t.id);
+      if (tasks.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-400">Chưa có nhiệm vụ nào trong danh mục KPI.</td></tr>`;
+        const pInfo = document.getElementById("bgh-catalog-pagination-info");
+        if (pInfo) pInfo.innerText = "Trang 1 / 1 (0 việc)";
+        return;
+      }
+
+      const processedTasks = tasks.map((task, idx) => {
+        const taskRegs = (appData.registrations || []).filter(r => cleanStr(r.taskId) === cleanStr(task.id));
+        const totalQuota = Number(task.quota) || 1;
+        const totalTarget = Math.max(totalQuota, taskRegs.length);
+
+        const completedCount = taskRegs.filter(r => {
+          const hasScore = (r.finalScore !== null && r.finalScore !== "" && !isNaN(Number(r.finalScore)));
+          const statusStr = cleanStr(r.level);
+          return hasScore || statusStr.includes("đã xong") || statusStr.includes("đã nghiệm thu");
+        }).length;
+
+        const isFullyCompleted = (completedCount >= totalTarget && totalTarget > 0);
+
+        return {
+          ...task,
+          originalIndex: idx,
+          taskRegs,
+          completedCount,
+          totalTarget,
+          isFullyCompleted
+        };
+      });
+
+      // Sắp xếp: Chưa hoàn thành lên trước -> Việc giao sau (mới hơn) lên trước
+      processedTasks.sort((a, b) => {
+        if (a.isFullyCompleted !== b.isFullyCompleted) {
+          return a.isFullyCompleted ? 1 : -1;
+        }
+        return b.originalIndex - a.originalIndex;
+      });
+
+      const totalPages = Math.ceil(processedTasks.length / bghCatalogItemsPerPage) || 1;
+      if (bghCatalogPage > totalPages) bghCatalogPage = totalPages;
+      const start = (bghCatalogPage - 1) * bghCatalogItemsPerPage;
+      const pageItems = processedTasks.slice(start, start + bghCatalogItemsPerPage);
+
+      const pInfo = document.getElementById("bgh-catalog-pagination-info");
+      const btnP = document.getElementById("bgh-catalog-btn-prev");
+      const btnN = document.getElementById("bgh-catalog-btn-next");
+
+      if (pInfo) pInfo.innerText = `Trang ${bghCatalogPage} / ${totalPages} (${processedTasks.length} việc)`;
+      if (btnP) btnP.disabled = (bghCatalogPage === 1);
+      if (btnN) btnN.disabled = (bghCatalogPage >= totalPages);
+
+      pageItems.forEach(t => {
+        const statusBadge = t.isFullyCompleted
+          ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+               ✓ ${t.completedCount}/${t.totalTarget} Hoàn thành
+             </span>`
+          : `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300">
+               ⏳ ${t.completedCount}/${t.totalTarget} Hoàn thành
+             </span>`;
+
+        // Danh sách tên GV đã nhận hiển thị ngay bên dưới số lượng
+        let assigneesHtml = "";
+        if (t.taskRegs.length === 0) {
+          assigneesHtml = `<div class="text-[11px] text-slate-400 italic mt-1">Chưa có GV nhận</div>`;
+        } else {
+          const tags = t.taskRegs.map(r => {
+            const done = (r.finalScore !== null && r.finalScore !== "" && !isNaN(Number(r.finalScore))) || cleanStr(r.level).includes("đã xong");
+            return `<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${done ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-700 border border-slate-200'}" title="${done ? 'Đã hoàn thành' : 'Đang thực hiện'}">
+              ${done ? '✓' : '•'} ${r.teacherName}
+            </span>`;
+          }).join(" ");
+          assigneesHtml = `<div class="flex flex-wrap justify-center gap-1 mt-1.5">${tags}</div>`;
+        }
+
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-50/80 transition border-b border-slate-100">
+            <td class="py-3.5 px-3 font-extrabold text-indigo-600">${t.id}</td>
+            <td class="py-3.5 px-3 font-bold text-slate-900">${t.title || '--'}</td>
+            <td class="py-3.5 px-3 text-xs text-slate-600 leading-relaxed">${t.desc || '<span class="italic text-slate-400">Không có chi tiết</span>'}</td>
+            <td class="py-3.5 px-3 text-xs font-semibold text-slate-700">👤 ${t.creatorName || 'Ban Giám Hiệu'}</td>
+            <td class="py-3.5 px-2 text-center text-xs font-medium text-slate-600">${t.deadline || '--'}</td>
+            <td class="py-3.5 px-2 text-center font-extrabold text-indigo-600">${t.score}</td>
+            <td class="py-3.5 px-3 text-center">
+              ${statusBadge}
+              ${assigneesHtml}
+            </td>
+            <td class="py-3.5 px-3 text-center whitespace-nowrap">
+              <div class="inline-flex items-center gap-1">
+                <button onclick="openEditTaskModal('${t.id}')" class="p-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border border-indigo-200 transition text-xs font-semibold" title="Sửa nhiệm vụ">
+                  ✏️ Sửa
+                </button>
+                <button onclick="handleDeleteTask('${t.id}')" class="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition text-xs font-semibold" title="Xóa nhiệm vụ">
+                  🗑️ Xóa
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+    }
     function changeBghPageSize(val) {
       bghItemsPerPage = Number(val);
       bghPage = 1;
@@ -3134,15 +3303,56 @@
   return `${prefix}${maxNum + 1}`;
 }
 
-function openCreateTaskModal() {
-  // Tự động điền mã việc tiếp theo vào ô input
-  const taskIdInput = document.getElementById("modal-task-id");
-  if (taskIdInput) {
-    taskIdInput.value = generateNextTaskId();
-  }
-  document.getElementById("task-modal").classList.remove("hidden");
-}
-    function closeCreateTaskModal() { document.getElementById("task-modal").classList.add("hidden"); }
+let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa mã việc đó
+
+    function openCreateTaskModal() {
+      editingTaskId = null;
+      const heading = document.getElementById("task-modal-heading");
+      if (heading) heading.innerText = "Thêm Nhiệm Vụ Mới Vào Kho KPI";
+
+      document.getElementById("new-task-form").reset();
+      const taskIdInput = document.getElementById("modal-task-id");
+      if (taskIdInput) {
+        taskIdInput.value = generateNextTaskId();
+        taskIdInput.readOnly = false;
+        taskIdInput.classList.remove("bg-slate-100", "text-slate-500");
+      }
+      document.getElementById("task-modal").classList.remove("hidden");
+    }
+
+    function openEditTaskModal(taskId) {
+      const task = (appData.tasks || []).find(t => cleanStr(t.id) === cleanStr(taskId));
+      if (!task) return;
+
+      editingTaskId = task.id;
+      const heading = document.getElementById("task-modal-heading");
+      if (heading) heading.innerText = `Cập Nhật Nhiệm Vụ [${task.id}]`;
+
+      const taskIdInput = document.getElementById("modal-task-id");
+      taskIdInput.value = task.id;
+      taskIdInput.readOnly = true; // Khóa mã việc khi sửa để không lệch khóa ngoại
+      taskIdInput.classList.add("bg-slate-100", "text-slate-500");
+
+      document.getElementById("modal-task-title").value = task.title || "";
+      document.getElementById("modal-task-desc").value = task.desc || "";
+      document.getElementById("modal-task-score").value = task.score || 1;
+      document.getElementById("modal-task-quota").value = task.quota || 1;
+
+      // Chuyển hạn chót từ dd/mm/yyyy về yyyy-mm-dd cho thẻ input[type="date"]
+      let dlVal = task.deadline || "";
+      if (dlVal.includes("/")) {
+        const p = dlVal.split("/");
+        if (p.length === 3) dlVal = `${p[2]}-${p[1].padStart(2, '0')}-${p[0].padStart(2, '0')}`;
+      }
+      document.getElementById("modal-task-deadline").value = dlVal;
+
+      document.getElementById("task-modal").classList.remove("hidden");
+    }
+
+    function closeCreateTaskModal() {
+      editingTaskId = null;
+      document.getElementById("task-modal").classList.add("hidden");
+    }
 
     async function handleCreateTask(e) {
       e.preventDefault();
@@ -3152,43 +3362,58 @@ function openCreateTaskModal() {
       const score = Number(document.getElementById("modal-task-score").value);
       const deadline = document.getElementById("modal-task-deadline").value;
       const quota = Number(document.getElementById("modal-task-quota").value);
-      
-      // 👉 Lấy trực tiếp tên từ biến currentUser trong bộ nhớ (0ms, không cần đọc lại Sheet)
       const creatorName = (currentUser && currentUser.name) ? currentUser.name : "Ban Giám Hiệu";
+
+      const p = deadline.split("-");
+      const formattedDl = p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : deadline;
 
       const submitBtn = e.target.querySelector('button[type="submit"]');
       const oldText = submitBtn ? submitBtn.innerText : "Lưu & Xuất Bản";
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.innerText = "⏳ Đang tạo...";
+        submitBtn.innerText = editingTaskId ? "⏳ Đang cập nhật..." : "⏳ Đang tạo...";
       }
 
       try {
-        // 👉 Gửi kèm creatorName trong cùng 1 request duy nhất
-        await apiRequest("createTask", { taskId, title, desc, score, deadline, quota, creatorName });
-        
-        // Đổi ngày yyyy-mm-dd sang dd/mm/yyyy để hiển thị đồng bộ
-        const p = deadline.split("-");
-        const formattedDl = p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : deadline;
-
-        // 👉 Đẩy thẳng vào RAM để giao diện cập nhật ngay mà không cần tải lại dữ liệu
-        appData.tasks.push({
-          id: taskId,
-          title: title,
-          desc: desc,
-          score: score,
-          deadline: formattedDl,
-          quota: quota,
-          status: "Còn việc",
-          creatorName: creatorName
-        });
+        if (editingTaskId) {
+          // TRƯỜNG HỢP SỬA NHIỆM VỤ
+          await apiRequest("updateTask", { taskId, title, desc, score, deadline, quota });
+          const target = appData.tasks.find(t => cleanStr(t.id) === cleanStr(editingTaskId));
+          if (target) {
+            target.title = title;
+            target.desc = desc;
+            target.score = score;
+            target.deadline = formattedDl;
+            target.quota = quota;
+            const regCount = (appData.registrations || []).filter(r => cleanStr(r.taskId) === cleanStr(taskId)).length;
+            target.status = regCount >= quota ? "Hết việc" : "Còn việc";
+          }
+          // Đồng bộ lại điểm định mức cho các lượt đã đăng ký
+          (appData.registrations || []).forEach(r => {
+            if (cleanStr(r.taskId) === cleanStr(editingTaskId)) r.baseScore = score;
+          });
+          alert(`✅ Đã cập nhật nhiệm vụ [${taskId}] thành công!`);
+        } else {
+          // TRƯỜNG HỢP THÊM MỚI NHIỆM VỤ
+          await apiRequest("createTask", { taskId, title, desc, score, deadline, quota, creatorName });
+          appData.tasks.push({
+            id: taskId,
+            title: title,
+            desc: desc,
+            score: score,
+            deadline: formattedDl,
+            quota: quota,
+            status: "Còn việc",
+            creatorName: creatorName
+          });
+          alert(`✅ Đã tạo nhiệm vụ [${taskId}] trong Danh mục KPI.`);
+        }
 
         closeCreateTaskModal();
         document.getElementById("new-task-form").reset();
         switchBghTab(bghActiveTab);
-        alert(`✅ Đã tạo nhiệm vụ [${taskId}] trong Kho KPI.`);
       } catch (err) {
-        alert(`Không thể tạo nhiệm vụ: ${err.message}`);
+        alert(`Không thể lưu nhiệm vụ: ${err.message}`);
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
@@ -3196,7 +3421,26 @@ function openCreateTaskModal() {
         }
       }
     }
-    // ==========================================
+
+    async function handleDeleteTask(taskId) {
+      const regCount = (appData.registrations || []).filter(r => cleanStr(r.taskId) === cleanStr(taskId)).length;
+      const warnMsg = regCount > 0
+        ? `⚠️ Nhiệm vụ [${taskId}] hiện đã có ${regCount} giáo viên nhận việc.\nBạn có chắc chắn muốn xóa nhiệm vụ này và toàn bộ lượt giao việc liên quan không?`
+        : `Xác nhận xóa nhiệm vụ [${taskId}] khỏi Danh mục KPI?`;
+
+      if (!confirm(warnMsg)) return;
+
+      try {
+        await apiRequest("deleteTask", { taskId });
+        appData.tasks = (appData.tasks || []).filter(t => cleanStr(t.id) !== cleanStr(taskId));
+        appData.registrations = (appData.registrations || []).filter(r => cleanStr(r.taskId) !== cleanStr(taskId));
+        renderBghCatalogTable();
+        updateKpiNotificationBadge();
+        alert(`🗑️ Đã xóa nhiệm vụ [${taskId}] thành công.`);
+      } catch (err) {
+        alert(`Không thể xóa nhiệm vụ: ${err.message}`);
+      }
+    }    // ==========================================
     // CÁC HÀM XỬ LÝ PHÂN HỆ QUẢN LÝ HỌC SINH
     // ==========================================
     function renderStudentsSection() {
