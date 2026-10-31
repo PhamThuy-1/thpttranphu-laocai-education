@@ -1896,7 +1896,7 @@
       document.getElementById('upload-doc-modal').classList.add('hidden');
     }
 
-    async function confirmUploadDocFile() {
+   async function confirmUploadDocFile() {
   const fileInput = document.getElementById('upload-file-input');
   if (!fileInput.files || fileInput.files.length === 0) {
     alert("Vui lòng chọn tệp định dạng .pdf từ máy tính của bạn!");
@@ -1931,8 +1931,19 @@
       // 2. Lưu cache vào IndexedDB cho máy BGH load nhanh
       savePdfToDB(currentUploadTarget.id, base64Data, function() {
         alert(`✅ Đã tải lên và đồng bộ thành công tệp: ${file.name}`);
+        
+        // 3. Cập nhật trực tiếp dữ liệu đang hiển thị (RAM) để không phải tải lại toàn bộ trang
+        const targetArray = currentUploadTarget.type === 'month' ? monthPlanData : weekPlanData;
+        const targetItem = targetArray.find(item => item.id === currentUploadTarget.id);
+        if (targetItem) {
+            targetItem.hasFile = true;
+            targetItem.fileName = file.name;
+            const now = new Date();
+            targetItem.updatedAt = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        }
+        
         closeUploadDocModal();
-        fetchRemoteData(); // Đồng bộ lại dữ liệu mới nhất từ server
+        renderActionPlanModule(); // Tải lại bảng Kế hoạch
       });
       
     } catch (err) {
@@ -1944,7 +1955,6 @@
   };
   reader.readAsDataURL(file);
 }
-
     function viewDocPlan(type, id) {
       let item = (type === 'month') 
         ? monthPlanData.find(m => m.id === id) 
