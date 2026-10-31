@@ -1896,64 +1896,54 @@
       document.getElementById('upload-doc-modal').classList.add('hidden');
     }
 
-    function confirmUploadDocFile() {
-      const fileInput = document.getElementById('upload-file-input');
-      if (!fileInput.files || fileInput.files.length === 0) {
-        alert("Vui lòng chọn tệp định dạng .pdf từ máy tính của bạn!");
-        return;
-      }
+    async function confirmUploadDocFile() {
+  const fileInput = document.getElementById('upload-file-input');
+  if (!fileInput.files || fileInput.files.length === 0) {
+    alert("Vui lòng chọn tệp định dạng .pdf từ máy tính của bạn!");
+    return;
+  }
 
-      const file = fileInput.files[0];
-      if (!file.name.toLowerCase().endsWith('.pdf')) {
-        alert("Vui lòng chỉ chọn tệp văn bản có phần mở rộng .pdf!");
-        return;
-      }
+  const file = fileInput.files[0];
+  if (!file.name.toLowerCase().endsWith('.pdf')) {
+    alert("Vui lòng chỉ chọn tệp văn bản có phần mở rộng .pdf!");
+    return;
+  }
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const base64Data = e.target.result;
-        const now = new Date();
-        const timeStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  // Đổi nút thành trạng thái đang tải
+  const btnSave = document.querySelector('#upload-doc-modal button.bg-amber-600');
+  const oldText = btnSave.innerText;
+  btnSave.disabled = true;
+  btnSave.innerText = "⏳ Đang tải lên Server...";
 
-        const targetId = currentUploadTarget.id;
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    const base64Data = e.target.result;
+    
+    try {
+      // 1. Gọi API gửi file lên Google Drive và lưu thông tin vào Sheet
+      await apiRequest("uploadActionPlan", {
+        type: currentUploadTarget.type,
+        id: currentUploadTarget.id,
+        fileName: file.name,
+        fileData: base64Data
+      });
 
-        // Lưu file nặng vào IndexedDB (không làm phình dung lượng)
-        savePdfToDB(targetId, base64Data, function() {
-          if (currentUploadTarget.type === 'month') {
-            const item = monthPlanData.find(m => m.id === targetId);
-            if (item) {
-              item.fileName = file.name;
-              item.hasFile = true;
-              item.updatedAt = timeStr;
-              item.fileData = "";
-              try {
-                localStorage.setItem('PLAN_MONTH_DATA_2026_2027', JSON.stringify(monthPlanData));
-              } catch(err) {
-                console.warn("Lỗi ghi localStorage:", err);
-              }
-            }
-          } else if (currentUploadTarget.type === 'week') {
-            const item = weekPlanData.find(w => w.id === targetId);
-            if (item) {
-              item.fileName = file.name;
-              item.hasFile = true;
-              item.updatedAt = timeStr;
-              item.fileData = "";
-              try {
-                localStorage.setItem('PLAN_WEEK_DATA_2026_2027', JSON.stringify(weekPlanData));
-              } catch(err) {
-                console.warn("Lỗi ghi localStorage:", err);
-              }
-            }
-          }
-
-          closeUploadDocModal();
-          renderActionPlanModule();
-          alert(`✅ Đã tải lên và lưu thành công tệp: ${file.name}`);
-        });
-      };
-      reader.readAsDataURL(file);
+      // 2. Lưu cache vào IndexedDB cho máy BGH load nhanh
+      savePdfToDB(currentUploadTarget.id, base64Data, function() {
+        alert(`✅ Đã tải lên và đồng bộ thành công tệp: ${file.name}`);
+        closeUploadDocModal();
+        fetchRemoteData(); // Đồng bộ lại dữ liệu mới nhất từ server
+      });
+      
+    } catch (err) {
+      alert(`Lỗi khi tải tệp lên server: ${err.message}`);
+    } finally {
+      btnSave.disabled = false;
+      btnSave.innerText = oldText;
     }
+  };
+  reader.readAsDataURL(file);
+}
 
     function viewDocPlan(type, id) {
       let item = (type === 'month') 
@@ -1973,15 +1963,27 @@
       iframe.src = "about:blank";
 
       // Lấy file từ IndexedDB ra để hiển thị trên iframe
-      getPdfFromDB(id, function(fileData) {
-        const dataToShow = fileData || item.fileData;
-        if (dataToShow) {
-          iframe.src = dataToShow;
-        } else {
-          alert("Tệp chưa có dữ liệu tải lên thực tế.");
-        }
-      });
-
+      // Thay thế trong hàm viewDocPlan(type, id)
+getPdfFromDB(id, async function(fileData) {
+  const dataToShow = fileData || item.fileData;
+  if (dataToShow && dataToShow.length > 100) { // Đã có local cache
+    iframe.src = dataToShow;
+  } else {
+    // Gọi API kéo file từ server về nếu không có sẵn ở máy
+    try {
+      iframe.src = "about:blank"; // Chờ tải
+      const res = await apiRequest("getActionPlanFile", { type: type, id: id });
+      if (res && res.fileData) {
+        const base64PDF = "data:application/pdf;base64," + res.fileData;
+        iframe.src = base64PDF;
+        // Lưu lại cache cho lần sau xem nhanh hơn
+        savePdfToDB(id, base64PDF); 
+      }
+    } catch (err) {
+      alert(`Không thể tải tệp từ Server: ${err.message}`);
+    }
+  }
+});
       document.getElementById('btn-modal-download').onclick = function() {
         downloadDocPlan(type, id);
       };
@@ -2005,20 +2007,34 @@
         return;
       }
 
-      getPdfFromDB(id, function(fileData) {
-        const dataToDownload = fileData || item.fileData;
-        if (dataToDownload) {
-          const link = document.createElement('a');
-          link.href = dataToDownload;
-          link.download = item.fileName || `${item.title}.pdf`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        } else {
-          alert("Tệp này chưa có dữ liệu tải lên thực tế.");
-        }
-      });
+      // Thay thế trong hàm downloadDocPlan(type, id)
+getPdfFromDB(id, async function(fileData) {
+  const dataToDownload = fileData || item.fileData;
+  if (dataToDownload && dataToDownload.length > 100) {
+    executeDownload(dataToDownload, item.fileName || `${item.title}.pdf`);
+  } else {
+    try {
+      const res = await apiRequest("getActionPlanFile", { type: type, id: id });
+      if (res && res.fileData) {
+        const base64PDF = "data:application/pdf;base64," + res.fileData;
+        executeDownload(base64PDF, item.fileName || `${item.title}.pdf`);
+        savePdfToDB(id, base64PDF);
+      }
+    } catch (err) {
+      alert(`Không thể tải tệp từ Server: ${err.message}`);
     }
+  }
+});
+
+// Hàm hỗ trợ tải file
+function executeDownload(dataUri, fileName) {
+  const link = document.createElement('a');
+  link.href = dataUri;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
     // --- CẬP NHẬT THÔNG BÁO SỐ NHIỆM VỤ KPI CẦN HOÀN THÀNH ---
     function updateKpiNotificationBadge() {
       const badge = document.getElementById("kpi-badge-tile");
@@ -2249,8 +2265,8 @@
       studentListFromSheet = [];
       ERROR_KEYS = [];
       renderViolationTypeOptions();
-      //monthPlanData = [];
-      //weekPlanData = [];
+      monthPlanData = json.monthPlans || monthPlanData;
+      weekPlanData = json.weekPlans || weekPlanData;
       setDataLoadStatus("Đăng nhập để tải dữ liệu trực tiếp từ Google Sheets.");
       checkSubstituteNotifications();
       updateKpiNotificationBadge();
@@ -2280,8 +2296,8 @@
       studentListFromSheet = json.students;
       ERROR_KEYS = json.violationTypes;
       renderViolationTypeOptions();
-     // monthPlanData = json.monthPlans;
-      //weekPlanData = json.weekPlans;
+      monthPlanData = json.monthPlans || monthPlanData;
+      weekPlanData = json.weekPlans || weekPlanData;
       if (!json.user) throw new Error("API không trả về danh tính đã xác thực.");
       processUserSession(json.user, "");
       setDataLoadStatus("Đã đồng bộ dữ liệu mới nhất từ Google Sheets.", "success");
