@@ -1909,9 +1909,15 @@
     return;
   }
 
+  // THÊM MỚI: Chặn tệp quá 5MB để không vượt quá giới hạn POST của Google
+  if (file.size > 5 * 1024 * 1024) {
+    alert("Dung lượng tệp vượt quá 5MB. Vui lòng nén file PDF lại trước khi tải lên!");
+    return;
+  }
+
   // Đổi nút thành trạng thái đang tải
   const btnSave = document.querySelector('#upload-doc-modal button.bg-amber-600');
-  const oldText = btnSave.innerText;
+   const oldText = btnSave.innerText;
   btnSave.disabled = true;
   btnSave.innerText = "⏳ Đang tải lên Server...";
 
