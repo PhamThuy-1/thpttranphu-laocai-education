@@ -1998,43 +1998,43 @@ getPdfFromDB(id, async function(fileData) {
     }
 
     function downloadDocPlan(type, id) {
-      let item = (type === 'month') 
-        ? monthPlanData.find(m => m.id === id) 
-        : weekPlanData.find(w => w.id === id);
+  let item = (type === 'month') 
+    ? monthPlanData.find(m => m.id === id) 
+    : weekPlanData.find(w => w.id === id);
 
-      if (!item || !item.hasFile) {
-        alert("Mục này chưa có tệp để tải xuống!");
-        return;
-      }
-
-      // Thay thế trong hàm downloadDocPlan(type, id)
-getPdfFromDB(id, async function(fileData) {
-  const dataToDownload = fileData || item.fileData;
-  if (dataToDownload && dataToDownload.length > 100) {
-    executeDownload(dataToDownload, item.fileName || `${item.title}.pdf`);
-  } else {
-    try {
-      const res = await apiRequest("getActionPlanFile", { type: type, id: id });
-      if (res && res.fileData) {
-        const base64PDF = "data:application/pdf;base64," + res.fileData;
-        executeDownload(base64PDF, item.fileName || `${item.title}.pdf`);
-        savePdfToDB(id, base64PDF);
-      }
-    } catch (err) {
-      alert(`Không thể tải tệp từ Server: ${err.message}`);
-    }
+  if (!item || !item.hasFile) {
+    alert("Mục này chưa có tệp để tải xuống!");
+    return;
   }
-});
 
-// Hàm hỗ trợ tải file
-function executeDownload(dataUri, fileName) {
-  const link = document.createElement('a');
-  link.href = dataUri;
-  link.download = fileName;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
+  getPdfFromDB(id, async function(fileData) {
+    const dataToDownload = fileData || item.fileData;
+    if (dataToDownload && dataToDownload.length > 100) {
+      executeDownload(dataToDownload, item.fileName || `${item.title}.pdf`);
+    } else {
+      try {
+        const res = await apiRequest("getActionPlanFile", { type: type, id: id });
+        if (res && res.fileData) {
+          const base64PDF = "data:application/pdf;base64," + res.fileData;
+          executeDownload(base64PDF, item.fileName || `${item.title}.pdf`);
+          savePdfToDB(id, base64PDF);
+        }
+      } catch (err) {
+        alert(`Không thể tải tệp từ Server: ${err.message}`);
+      }
+    }
+  });
+
+  // Hàm hỗ trợ tải file
+  function executeDownload(dataUri, fileName) {
+    const link = document.createElement('a');
+    link.href = dataUri;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+} 
     // --- CẬP NHẬT THÔNG BÁO SỐ NHIỆM VỤ KPI CẦN HOÀN THÀNH ---
     function updateKpiNotificationBadge() {
       const badge = document.getElementById("kpi-badge-tile");
@@ -2265,8 +2265,8 @@ function executeDownload(dataUri, fileName) {
       studentListFromSheet = [];
       ERROR_KEYS = [];
       renderViolationTypeOptions();
-      monthPlanData = json.monthPlans || monthPlanData;
-      weekPlanData = json.weekPlans || weekPlanData;
+      monthPlanData = []; 
+  weekPlanData = [];
       setDataLoadStatus("Đăng nhập để tải dữ liệu trực tiếp từ Google Sheets.");
       checkSubstituteNotifications();
       updateKpiNotificationBadge();
