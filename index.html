@@ -2923,9 +2923,7 @@ getPdfFromDB(id, async function(fileData) {
       listToShow.forEach(item => {
         const r = item.reg;
         const idx = item.originalIndex;
-        const evidenceBtn = r.evidence && String(r.evidence).trim() !== ""
-          ? `<a href="${r.evidence}" target="_blank" class="inline-flex items-center gap-1 text-xs text-indigo-600 bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-md font-semibold hover:bg-indigo-100">🔗 Drive</a>`
-          : `<span class="text-xs text-slate-400 italic">Chưa có</span>`;
+        const evidenceBtn = renderEvidenceButtonHtml(r.evidence);
 
         tbody.innerHTML += `
           <tr class="hover:bg-slate-50/80 transition border-b border-slate-100">
