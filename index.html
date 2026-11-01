@@ -4145,11 +4145,12 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
       document.getElementById("ttcm-modal-subtitle").innerText = `Phân công dạy thay cho GV ${ticket.teacherName} (${ticket.timeDisplay})`;
 
       const tbody = document.getElementById("ttcm-assign-tbody");
-      tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-indigo-600 font-semibold">⏳ Đang quét TKB tìm giáo viên trống tiết...</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-indigo-600 font-semibold">⏳ Đang quét TKB và đối chiếu lịch dạy thay trên Sheet LichNghi...</td></tr>`;
       document.getElementById("ttcm-assign-modal").classList.remove("hidden");
 
       const promises = (ticket.periods || []).map(p =>
         apiRequest("getSubstituteSuggestions", {
+          ticketId: ticket.id, // 👈 Gửi kèm mã đơn hiện tại
           leaveDate: p.leaveDate,
           periodTKB: p.periodTKB,
           session: p.session,
@@ -4157,10 +4158,11 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
           subject: p.subject || ticket.subject
         }).then(res => ({
           group1: (res && res.group1) ? res.group1 : [],
-          group2: (res && res.group2) ? res.group2 : []
+          group2: (res && res.group2) ? res.group2 : [],
+          busySubList: (res && res.busySubList) ? res.busySubList : []
         })).catch(e => {
           console.error("Lỗi lấy gợi ý tiết:", e);
-          return { group1: [], group2: [] };
+          return { group1: [], group2: [], busySubList: [] };
         })
       );
 
@@ -4168,38 +4170,48 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
 
       let rowsHtml = "";
       (ticket.periods || []).forEach((p, idx) => {
-        const groups = suggestionsByPeriod[idx] || { group1: [], group2: [] };
+        const groups = suggestionsByPeriod[idx] || { group1: [], group2: [], busySubList: [] };
         const g1 = groups.group1;
         const g2 = groups.group2;
+        const busyList = groups.busySubList;
 
         let optionsHtml = `<option value="">-- Chọn GV dạy thay (Ưu tiên Nhóm 1, sau đó Nhóm 2) --</option>`;
 
         if (g1.length > 0) {
-          optionsHtml += `<optgroup label="⭐ Nhóm 1: Giáo viên dạy lớp đó (Trống tiết)">`;
+          optionsHtml += `<optgroup label="🟢 Nhóm 1: GV dạy lớp ${p.class} (Còn rảnh)">`;
           g1.forEach(s => {
             const selected = cleanStr(s.name) === cleanStr(p.subTeacher) ? 'selected' : '';
-            optionsHtml += `<option value="${s.name}" data-subject="${s.subject || ''}" ${selected}>${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)</option>`;
+            optionsHtml += `<option value="${s.name}" data-subject="${s.subject || ''}" ${selected}>✅ ${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)</option>`;
           });
           optionsHtml += `</optgroup>`;
         }
 
         if (g2.length > 0) {
-          optionsHtml += `<optgroup label="📌 Nhóm 2: Giáo viên cùng môn (Trống tiết)">`;
+          optionsHtml += `<optgroup label="🔵 Nhóm 2: GV cùng môn (Còn rảnh)">`;
           g2.forEach(s => {
             const selected = cleanStr(s.name) === cleanStr(p.subTeacher) ? 'selected' : '';
-            optionsHtml += `<option value="${s.name}" data-subject="${s.subject || ''}" ${selected}>${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)</option>`;
+            optionsHtml += `<option value="${s.name}" data-subject="${s.subject || ''}" ${selected}>✅ ${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)</option>`;
+          });
+          optionsHtml += `</optgroup>`;
+        }
+
+        // Hiển thị thêm nhóm GV trống TKB nhưng ĐÃ BẬN trong sheet LichNghi (bị khóa không cho chọn)
+        if (busyList.length > 0) {
+          optionsHtml += `<optgroup label="🔴 Trống TKB nhưng ĐÃ BẬN trên Lịch Nghỉ / Dạy Thay">`;
+          busyList.forEach(s => {
+            optionsHtml += `<option value="${s.name}" disabled>⛔ ${s.name} (${s.busyReason})</option>`;
           });
           optionsHtml += `</optgroup>`;
         }
 
         if (g1.length === 0 && g2.length === 0) {
-          optionsHtml += `<option value="" disabled>Không tìm thấy giáo viên trống tiết phù hợp</option>`;
+          optionsHtml += `<option value="" disabled>⚠️ Không còn giáo viên rảnh phù hợp ở tiết này</option>`;
         }
 
         const makeupVal = (p.makeupSchedule && p.makeupSchedule !== "Theo thỏa thuận") ? p.makeupSchedule : "Chưa dạy bù";
 
         rowsHtml += `
-          <tr id="ttcm-row-${idx}">
+          <tr id="ttcm-row-${idx}" data-date="${p.leaveDate}" data-session="${p.session}" data-period="${p.periodTKB}">
             <td class="p-3">
               <span class="font-bold text-rose-600">${p.dayOfWeek || ''}, ${p.leaveDate}</span><br>
               <span class="font-bold text-indigo-700">Lớp ${p.class}</span> (${p.session} - Tiết ${p.periodTKB})
