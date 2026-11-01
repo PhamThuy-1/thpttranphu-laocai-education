@@ -1313,7 +1313,7 @@
     </div>
   </div>
 
-  <!-- MODAL: BÁO CÁO HOÀN THÀNH / NỘP MINH CHỨNG -->
+  <!-- MODAL: BÁO CÁO HOÀN THÀNH / NỘP TỆP MINH CHỨNG -->
   <div id="evidence-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
       <div class="flex items-center gap-3 mb-4">
@@ -1326,12 +1326,13 @@
       <form id="evidence-form" onsubmit="submitEvidence(event)" class="space-y-4 text-sm">
         <input type="hidden" id="evidence-task-id">
         <div>
-          <div class="flex justify-between items-center mb-1">
-            <label class="block font-medium text-slate-700">Đường link minh chứng (Drive / Hình ảnh):</label>
-            <span class="text-[11px] text-slate-400 italic">Không bắt buộc</span>
+          <div class="flex justify-between items-center mb-1.5">
+            <label class="block font-semibold text-slate-700">Đính kèm tệp minh chứng:</label>
+            <span class="text-[11px] text-slate-400 italic">Tối đa 10MB (Không bắt buộc)</span>
           </div>
-          <input type="url" id="evidence-link-input" placeholder="https://drive.google.com/..." class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-          <p class="text-[11px] text-slate-400 mt-1">Thầy/Cô có thể dán link minh chứng Drive hoặc để trống nếu nhiệm vụ không yêu cầu gửi file.</p>
+          <input type="file" id="evidence-file-input" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.rar" class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 border border-slate-300 rounded-xl p-1 cursor-pointer">
+          <p id="evidence-current-file" class="text-xs text-indigo-600 font-medium mt-1.5 hidden"></p>
+          <p class="text-[11px] text-slate-400 mt-1">Hỗ trợ: PDF, Word, Excel, Hình ảnh (.jpg, .png) hoặc file nén (.zip). Có thể để trống nếu công việc không yêu cầu tệp.</p>
         </div>
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
           <button type="button" onclick="closeEvidenceModal()" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 font-medium">Hủy</button>
@@ -1340,7 +1341,7 @@
       </form>
     </div>
   </div>
-   <!-- MODAL: GIAO NHIỆM VỤ MỚI VÀO KHO KPI (BGH) -->
+	<!-- MODAL: GIAO NHIỆM VỤ MỚI VÀO KHO KPI (BGH) -->
   <div id="task-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl">
       <h3 id="task-modal-heading" class="text-lg font-bold text-slate-900 mb-4">Thêm Nhiệm Vụ Mới Vào Kho KPI</h3>
@@ -2441,15 +2442,13 @@ getPdfFromDB(id, async function(fileData) {
             ? `<span class="font-bold text-emerald-600">${r.finalScore} / ${r.baseScore}</span>`
             : `<span class="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-200">Chờ BGH chấm</span>`;
 
-          const evidenceLink = r.evidence && String(r.evidence).trim() !== "" 
-            ? `<a href="${r.evidence}" target="_blank" class="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 underline font-semibold">📁 Xem Drive</a>` 
-            : `<span class="text-xs text-slate-400 italic">Chưa có</span>`;
+          const evidenceLink = renderEvidenceButtonHtml(r.evidence);
 
           let reportBtn = "";
           if (item.isGraded) {
             reportBtn = `<span class="text-xs text-emerald-600 font-semibold">✓ Hoàn tất</span>`;
           } else if (item.isWaiting) {
-            reportBtn = `<button onclick="openEvidenceModal('${r.taskId}')" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-2.5 py-1.5 rounded border border-slate-200 transition">Cập nhật link</button>`;
+            reportBtn = `<button onclick="openEvidenceModal('${r.taskId}')" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-2.5 py-1.5 rounded border border-slate-200 transition">Đổi tệp đính kèm</button>`;
           } else {
             reportBtn = `<button onclick="openEvidenceModal('${r.taskId}')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-lg shadow-sm transition">Báo cáo hoàn thành</button>`;
           }
@@ -2542,14 +2541,74 @@ getPdfFromDB(id, async function(fileData) {
         });
       }
     }
+    // Hàm phân tích dữ liệu cột Minh chứng (Hỗ trợ cả tệp mới dạng "FILE:id|name" lẫn link cũ)
+    function renderEvidenceButtonHtml(evidenceStr) {
+      const raw = String(evidenceStr || "").trim();
+      if (!raw) return `<span class="text-xs text-slate-400 italic">Chưa có</span>`;
+
+      if (raw.startsWith("FILE:")) {
+        const payload = raw.slice(5);
+        const sepIdx = payload.indexOf("|");
+        const fileId = sepIdx !== -1 ? payload.slice(0, sepIdx) : payload;
+        const fileName = sepIdx !== -1 ? payload.slice(sepIdx + 1) : "Minh_chung_KPI";
+        const safeName = fileName.replace(/'/g, "\\'");
+        return `
+          <button onclick="downloadKpiEvidence('${fileId}', '${safeName}', this)" title="${fileName}" class="inline-flex items-center gap-1 text-xs text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-2.5 py-1 rounded-lg font-semibold transition max-w-[150px] truncate">
+            ⬇ Tải tệp
+          </button>
+        `;
+      }
+
+      // Tương thích ngược nếu có dòng dữ liệu cũ từng dán link
+      return `<a href="${raw}" target="_blank" class="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 underline font-semibold">🔗 Mở link</a>`;
+    }
+
+    async function downloadKpiEvidence(fileId, fileName, btnEl) {
+      const oldHtml = btnEl ? btnEl.innerHTML : "⬇ Tải tệp";
+      if (btnEl) {
+        btnEl.disabled = true;
+        btnEl.innerHTML = "⏳ Đang tải...";
+      }
+      try {
+        const res = await apiRequest("downloadKpiEvidence", { fileId });
+        const dataUri = `data:${res.contentType || 'application/octet-stream'};base64,${res.fileData}`;
+        const a = document.createElement("a");
+        a.href = dataUri;
+        a.download = res.fileName || fileName || "Minh_chung_KPI";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } catch (err) {
+        alert("Không thể tải tệp minh chứng: " + err.message);
+      } finally {
+        if (btnEl) {
+          btnEl.disabled = false;
+          btnEl.innerHTML = oldHtml;
+        }
+      }
+    }
+
     function openEvidenceModal(taskId) {
       document.getElementById("evidence-task-id").value = taskId;
       document.getElementById("evidence-modal-subtitle").innerText = "Mã nhiệm vụ: " + taskId;
+      const fileInput = document.getElementById("evidence-file-input");
+      if (fileInput) fileInput.value = "";
+
+      const currentFileEl = document.getElementById("evidence-current-file");
       const reg = appData.registrations.find(r => 
         (cleanStr(r.teacherCode) === cleanStr(currentUser.code) || cleanStr(r.teacherName).includes(cleanStr(currentUser.name))) && 
         cleanStr(r.taskId) === cleanStr(taskId)
       );
-      document.getElementById("evidence-link-input").value = reg ? (reg.evidence || "") : "";
+
+      if (currentFileEl) {
+        if (reg && reg.evidence && String(reg.evidence).startsWith("FILE:")) {
+          const fileName = String(reg.evidence).split("|")[1] || "Đã nộp tệp";
+          currentFileEl.innerText = `📎 Tệp hiện tại: ${fileName} (Chọn tệp mới nếu muốn thay thế)`;
+          currentFileEl.classList.remove("hidden");
+        } else {
+          currentFileEl.classList.add("hidden");
+        }
+      }
       document.getElementById("evidence-modal").classList.remove("hidden");
     }
 
@@ -2557,37 +2616,59 @@ getPdfFromDB(id, async function(fileData) {
       document.getElementById("evidence-modal").classList.add("hidden");
     }
 
+    function readFileAsBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+      });
+    }
+
     async function submitEvidence(e) {
       e.preventDefault();
       const taskId = document.getElementById("evidence-task-id").value;
-      const link = document.getElementById("evidence-link-input").value.trim();
+      const fileInput = document.getElementById("evidence-file-input");
+      const file = (fileInput && fileInput.files && fileInput.files.length > 0) ? fileInput.files[0] : null;
+
+      if (file && file.size > 10 * 1024 * 1024) {
+        alert("⚠️ Dung lượng tệp vượt quá 10MB. Vui lòng chọn tệp nhỏ hơn!");
+        return;
+      }
 
       const submitBtn = e.target.querySelector('button[type="submit"]');
       const oldText = submitBtn ? submitBtn.innerText : "Xác Nhận Hoàn Thành";
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.innerText = "⏳ Đang gửi...";
+        submitBtn.innerText = file ? "⏳ Đang tải tệp lên..." : "⏳ Đang gửi...";
       }
 
       try {
-        await apiRequest("submitEvidence", { taskId, evidence: link });
+        let payload = { taskId };
+        if (file) {
+          const base64Data = await readFileAsBase64(file);
+          payload.fileName = file.name;
+          payload.mimeType = file.type || "application/octet-stream";
+          payload.fileData = base64Data;
+        }
+
+        const res = await apiRequest("submitEvidence", payload);
         
-        // CẬP NHẬT TRỰC TIẾP TRÊN TRÌNH DUYỆT (0ms)
         const reg = appData.registrations.find(r => 
           (cleanStr(r.teacherCode) === cleanStr(currentUser.code) || cleanStr(r.teacherName).includes(cleanStr(currentUser.name))) && 
           cleanStr(r.taskId) === cleanStr(taskId)
         );
         if (reg) {
-          reg.evidence = link;
+          if (res.evidenceValue !== undefined) reg.evidence = res.evidenceValue;
           reg.level = "Chờ nghiệm thu";
         }
         
         closeEvidenceModal();
         renderTeacherDashboard();
         updateKpiNotificationBadge();
-        alert(`✅ Đã gửi minh chứng cho nhiệm vụ [${taskId}].`);
+        alert(`✅ Đã báo cáo hoàn thành nhiệm vụ [${taskId}]!`);
       } catch (err) {
-        alert(`Không thể gửi minh chứng: ${err.message}`);
+        alert(`Không thể gửi báo cáo: ${err.message}`);
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
@@ -2595,7 +2676,6 @@ getPdfFromDB(id, async function(fileData) {
         }
       }
     }
-
     async function registerKPI(taskId) {
       const task = appData.tasks.find(t => cleanStr(t.id) === cleanStr(taskId));
       if (!task) return;
