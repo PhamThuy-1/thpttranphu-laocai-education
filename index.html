@@ -1309,7 +1309,7 @@
           <div class="flex items-center justify-between">
             <span class="font-bold text-slate-800 text-xs">Danh Sách Các Tiết & Ngày Xin Nghỉ:</span>
             <button type="button" onclick="addPeriodRow()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-3 py-1.5 rounded-lg border border-rose-200 transition flex items-center gap-1">
-              ➕ Thêm ngày / tiết nghỉ mới
+              ➕ Thêm ngày nghỉ mới
             </button>
           </div>
           <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
@@ -1506,7 +1506,7 @@
         callback(null);
       };
     }
-    // DỮ LIỆU KẾ HOẠCH HOẠT ĐỘNG (12 THÁNG & 40 TUẦN)
+    // DỮ LIỆU KẾ HOẠCH HOẠT ĐỘNG 
     const MONTH_LABELS = [
       "Tháng 08/2026", "Tháng 09/2026", "Tháng 10/2026", "Tháng 11/2026", 
       "Tháng 12/2026", "Tháng 01/2027", "Tháng 02/2027", "Tháng 03/2027", 
@@ -1718,7 +1718,7 @@
             targetItem.updatedAt = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
         }       
         closeUploadDocModal();
-        renderActionPlanModule(); // Tải lại bảng Kế hoạch
+        renderActionPlanModule(); 
       });
     } catch (err) {
       alert(`Lỗi khi tải tệp lên server: ${err.message}`);
@@ -1918,7 +1918,7 @@
         switchBghTab(bghActiveTab);
       } else if (moduleKey === "students") {
         document.getElementById("students-section").classList.remove("hidden");
-		setupTeacherHomeroomClass(); // <-- THÊM DÒNG NÀY ĐỂ TỰ NHẬN DIỆN LỚP
+		setupTeacherHomeroomClass(); 
         renderStudentsSection();
       } else if (moduleKey === "leave") {
         document.getElementById("leave-substitute-section").classList.remove("hidden");
@@ -2234,7 +2234,6 @@
           </button>
         `;
       }
-      // Tương thích ngược nếu có dòng dữ liệu cũ từng dán link
       return `<a href="${raw}" target="_blank" class="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 underline font-semibold">🔗 Mở link</a>`;
     }
     async function downloadKpiEvidence(fileId, fileName, btnEl) {
@@ -2633,7 +2632,7 @@
                              gv.subject === "BGH" || 
                              cleanStr(gv.department) === "bgh" || 
                              cleanStr(gv.subject) === "bgh";
-          return !isBGHStaff; // Chỉ giữ lại giáo viên, loại bỏ BGH
+          return !isBGHStaff; 
         })
         .map(gv => {
           const gvCodeClean = cleanStr(gv.code);
@@ -2785,7 +2784,6 @@
           score: totalScore
         };
       });
-      // 2. Sắp xếp giảm dần theo điểm và lấy Top 15 giáo viên cao nhất
       teacherRanking.sort((a, b) => b.score - a.score);
       const top15 = teacherRanking.slice(0, 15);
       const labels = top15.map(t => `${t.name} (${t.code})`);
@@ -2937,7 +2935,7 @@
   const tasks = appData.tasks || [];
   if (tasks.length === 0) return "A1";
   let maxNum = 0;
-  let prefix = "A"; // Tiền tố mặc định nếu chưa tìm thấy chữ cái
+  let prefix = "A"; 
   tasks.forEach(t => {
     const idStr = String(t.id || "").trim().toUpperCase();
     // Tách phần chữ cái đầu (VD: A, NV, KPI) và phần số phía sau (VD: 1, 05, 12)
@@ -3073,14 +3071,13 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
       } catch (err) {
         alert(`Không thể xóa nhiệm vụ: ${err.message}`);
       }
-    }    // ==========================================
+    }    
     // CÁC HÀM XỬ LÝ PHÂN HỆ QUẢN LÝ HỌC SINH
     // ==========================================
     function renderStudentsSection() {
       const tbody = document.getElementById("student-discipline-table");
       tbody.innerHTML = "";
       document.getElementById("stat-violations-count").innerText = appData.disciplines.length;
-
       appData.disciplines.forEach(item => {
         const pointClass = item.points < 0 ? 'text-rose-600 font-bold' : 'text-emerald-600 font-bold';
         tbody.innerHTML += `
@@ -3095,7 +3092,6 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
         `;
       });
     }
-
     function openAddDisciplineModal() {
       const classSelect = document.getElementById("modal-disc-class");
       const classes = [...new Set(studentListFromSheet.map(student => student.lop).filter(Boolean))].sort();
@@ -3112,7 +3108,6 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
       document.getElementById("discipline-modal").classList.remove("hidden");
     }
     function closeAddDisciplineModal() { document.getElementById("discipline-modal").classList.add("hidden"); }
-
     async function handleSaveDiscipline(e) {
       e.preventDefault();
       const record = {
@@ -3132,24 +3127,19 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
         alert(`Không thể lưu ghi nhận nề nếp: ${error.message}`);
       }
     }
-
-    // =========================================================================
-    // CÁC HÀM XỬ LÝ PHÂN HỆ ĐĂNG KÝ NGHỈ DẠY & DẠY THAY
+       // CÁC HÀM XỬ LÝ PHÂN HỆ ĐĂNG KÝ NGHỈ DẠY & DẠY THAY
     // =========================================================================
     function checkSubstituteNotifications() {
       const banner = document.getElementById("substitute-alert-banner");
       const tileBadge = document.getElementById("substitute-badge-tile");
       if (!banner || !tileBadge) return;
-
       if (!currentUser) {
         banner.classList.add("hidden");
         tileBadge.classList.add("hidden");
         return;
       }
-
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-
       const mySubPeriods = [];
       (appData.leaveRequests || []).forEach(ticket => {
         if (ticket.status === "APPROVED_BGH" && ticket.periods) {
@@ -3163,7 +3153,6 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
           });
         }
       });
-
       if (mySubPeriods.length > 0) {
         banner.classList.remove("hidden");
         tileBadge.classList.remove("hidden");
@@ -3176,7 +3165,6 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
         tileBadge.classList.add("hidden");
       }
     }
-
     function switchLeaveTab(tabKey) {
       currentLeaveTab = tabKey;
       ["my", "sub", "ttcm", "bgh"].forEach(t => {
@@ -3193,7 +3181,6 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
       });
       renderLeaveModule();
     }
-
     function changeTtcmLeavePageSize(val) {
       ttcmLeaveItemsPerPage = Number(val);
       ttcmLeavePage = 1;
@@ -3206,7 +3193,6 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
       ttcmLeavePage++;
       renderLeaveModule();
     }
-
     function changeBghLeavePageSize(val) {
       bghLeaveItemsPerPage = Number(val);
       bghLeavePage = 1;
@@ -3219,36 +3205,29 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
       bghLeavePage++;
       renderLeaveModule();
     }
-
     function renderLeaveModule() {
       if (!currentUser) return;
-
       const tabTtcmBtn = document.getElementById("leave-tab-btn-ttcm");
       const tabBghBtn = document.getElementById("leave-tab-btn-bgh");
       const excelBtn = document.getElementById("btn-export-leave-excel");
-
       if (tabTtcmBtn) {
         if (currentUser.isTTCM || currentUser.role === "BGH") tabTtcmBtn.classList.remove("hidden");
         else tabTtcmBtn.classList.add("hidden");
       }
-
       if (tabBghBtn) {
         if (currentUser.role === "BGH") tabBghBtn.classList.remove("hidden");
         else tabBghBtn.classList.add("hidden");
       }
-
       if (excelBtn) {
         if (currentUser.isTTCM || currentUser.role === "BGH") excelBtn.classList.remove("hidden");
         else excelBtn.classList.add("hidden");
       }
-
       if (currentUser.role !== "BGH") {
         if (currentLeaveTab === "bgh" || (!currentUser.isTTCM && currentLeaveTab === "ttcm")) {
           switchLeaveTab("my");
           return;
         }
       }
-
       // 1. Tab đơn của tôi
       const myTickets = (appData.leaveRequests || []).filter(r => 
         (r.teacherCode && cleanStr(r.teacherCode) === cleanStr(currentUser.code)) || 
@@ -3266,11 +3245,8 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
           totalSessionsOff += countDistinctSessions(t.periods);
         }
       });
-
       document.getElementById("stat-my-sessions-off").innerHTML = `${totalSessionsOff} <span class="text-sm font-normal text-slate-500">buổi</span>`;
-
       const classBalanceMap = {};
-
       myTickets.forEach(t => {
         if (t.periods && Array.isArray(t.periods)) {
           t.periods.forEach(p => {
@@ -3285,7 +3261,6 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
           });
         }
       });
-
       (appData.leaveRequests || []).forEach(ticket => {
         if (ticket.status === "APPROVED_BGH" && ticket.periods && Array.isArray(ticket.periods)) {
           ticket.periods.forEach(p => {
@@ -3293,7 +3268,6 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
               const cls = (p.class || "Chưa rõ lớp").trim();
               const makeup = String(p.makeupSchedule || '').trim().toLowerCase();
               const isUncompensated = !makeup || makeup === "--" || makeup === "-" || makeup === "chưa có" || makeup.includes("thỏa thuận") || makeup.includes("chưa xếp") || makeup.includes("chưa dạy bù");
-
               if (isUncompensated) {
                 if (!classBalanceMap[cls]) classBalanceMap[cls] = { delayed: 0, ahead: 0 };
                 classBalanceMap[cls].ahead++;
@@ -3302,12 +3276,10 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
           });
         }
       });
-
       let totalDelayedPeriods = 0;
       let totalAheadPeriods = 0;
       const delayedByClassMap = {};
       const aheadByClassMap = {};
-
       Object.keys(classBalanceMap).forEach(cls => {
         const net = classBalanceMap[cls].ahead - classBalanceMap[cls].delayed;
         if (net < 0) {
@@ -3319,18 +3291,15 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
           aheadByClassMap[cls] = net;
         }
       });
-
       const delayedBadgeEl = document.getElementById("badge-total-delayed");
       const delayedSummaryEl = document.getElementById("stat-delayed-summary");
       const delayedDetailEl = document.getElementById("stat-delayed-classes-detail");
-
       if (delayedBadgeEl) {
         delayedBadgeEl.innerText = `${totalDelayedPeriods} tiết`;
         delayedBadgeEl.className = totalDelayedPeriods > 0 
           ? "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200"
           : "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600";
       }
-
       if (delayedSummaryEl) {
         if (totalDelayedPeriods > 0) {
           delayedSummaryEl.innerHTML = `${totalDelayedPeriods} <span class="text-sm font-normal text-slate-500">tiết chậm</span>`;
@@ -3340,7 +3309,6 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
           delayedSummaryEl.className = "text-2xl font-black text-emerald-600";
         }
       }
-
       if (delayedDetailEl) {
         const classKeys = Object.keys(delayedByClassMap);
         if (classKeys.length === 0) {
@@ -3353,18 +3321,15 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
           ).join(" ");
         }
       }
-
       const aheadBadgeEl = document.getElementById("badge-total-ahead");
       const aheadSummaryEl = document.getElementById("stat-ahead-summary");
       const aheadDetailEl = document.getElementById("stat-ahead-classes-detail");
-
       if (aheadBadgeEl) {
         aheadBadgeEl.innerText = `${totalAheadPeriods} tiết`;
         aheadBadgeEl.className = totalAheadPeriods > 0 
           ? "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200"
           : "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600";
       }
-
       if (aheadSummaryEl) {
         if (totalAheadPeriods > 0) {
           aheadSummaryEl.innerHTML = `${totalAheadPeriods} <span class="text-sm font-normal text-slate-500">tiết nhanh</span>`;
@@ -3374,7 +3339,6 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
           aheadSummaryEl.className = "text-2xl font-black text-slate-700";
         }
       }
-
       if (aheadDetailEl) {
         const aheadKeys = Object.keys(aheadByClassMap);
         if (aheadKeys.length === 0) {
@@ -3387,7 +3351,6 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
           ).join(" ");
         }
       }
-
       const myTbody = document.getElementById("my-leaves-table-body");
       myTbody.innerHTML = "";
       if (myTickets.length === 0) {
@@ -3398,9 +3361,7 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
           if (ticket.status === "PENDING_TTCM") statusBadge = `<span class="bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full text-xs font-semibold">Chờ TTCM xếp</span>`;
           else if (ticket.status === "PENDING_BGH") statusBadge = `<span class="bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full text-xs font-semibold">Chờ BGH duyệt</span>`;
           else if (ticket.status === "APPROVED_BGH") statusBadge = `<span class="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-xs font-semibold">✓ Đã phê duyệt</span>`;
-
           const sessionCount = countDistinctSessions(ticket.periods);
-
           myTbody.innerHTML += `
             <tr class="hover:bg-slate-50">
               <td class="py-3 px-4 font-bold text-slate-900">${ticket.id}</td>
@@ -3420,7 +3381,6 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
           `;
         });
       }
-
       // 2. Tab lịch dạy thay của tôi
       const subTbody = document.getElementById("my-subs-table-body");
       subTbody.innerHTML = "";
@@ -3829,7 +3789,7 @@ function onTtcmTeacherChange(selectEl) {
     teacherBName: subTeacherName,
     leaveDate: leaveDate,
     targetClass: className,
-    targetSubject: targetSubject // 👈 Truyền thêm môn học để tìm tiết dạy trả cho Nhóm 2
+    targetSubject: targetSubject 
   }).then(res => {
     if (res && res.suggestion) {
       makeupInput.value = res.suggestion;
@@ -4011,7 +3971,6 @@ function onTtcmTeacherChange(selectEl) {
               Giáo viên xin nghỉ căn cứ thời khóa biểu để báo dạy thay, đổi giờ trước khi trình tổ trưởng chuyên môn<br>
               (Số tiết được đồng nghiệp dạy thay đợt này: <b>${String(ticket.periods ? ticket.periods.length : 0).padStart(2, '0')}</b>)
             </div>
-
             <table class="sign-tbl">
               <tr>
                 <td><b>Người viết</b></td>
@@ -4131,25 +4090,20 @@ function onTtcmTeacherChange(selectEl) {
         { wch: 30 }, { wch: 14 },
         { wch: 18 }
       ];
-
       XLSX.utils.book_append_sheet(wb, ws, "ThongKe_NghiDay");
-
       const classProgressRows = [];
       classProgressRows.push([
         "STT", "Lớp", "Bộ Môn", "Tên Giáo Viên", "Tình Trạng", "Số Tiết Lệch (+ Nhanh / - Chậm)"
       ]);
-
       let classDiffIdx = 0;
       teachers.forEach(t => {
         const teacherClassMap = {};
         const gvCode = cleanStr(t.code);
         const gvName = cleanStr(t.name);
-
         const myLeaveTickets = (appData.leaveRequests || []).filter(ticket => 
           (ticket.status === "APPROVED_BGH") &&
           ((ticket.teacherCode && cleanStr(ticket.teacherCode) === gvCode) || (ticket.teacherName && cleanStr(ticket.teacherName).includes(gvName)))
         );
-
         myLeaveTickets.forEach(ticket => {
           if (ticket.periods) {
             ticket.periods.forEach(p => {
@@ -4165,7 +4119,6 @@ function onTtcmTeacherChange(selectEl) {
             });
           }
         });
-
         (appData.leaveRequests || []).forEach(ticket => {
           if (ticket.status === "APPROVED_BGH" && ticket.periods) {
             ticket.periods.forEach(p => {
@@ -4183,7 +4136,6 @@ function onTtcmTeacherChange(selectEl) {
             });
           }
         });
-
         Object.keys(teacherClassMap).sort().forEach(cls => {
           const item = teacherClassMap[cls];
           const net = item.ahead - item.delayed;
@@ -4202,17 +4154,14 @@ function onTtcmTeacherChange(selectEl) {
           }
         });
       });
-
       if (classDiffIdx === 0) {
         classProgressRows.push(["--", "--", "--", "--", "Tất cả các lớp đều đạt chuẩn tiến độ (0 tiết lệch)", "0"]);
       }
-
       const wsClassProgress = XLSX.utils.aoa_to_sheet(classProgressRows);
       wsClassProgress["!cols"] = [
         { wch: 6 }, { wch: 12 }, { wch: 18 }, { wch: 25 }, { wch: 18 }, { wch: 30 }
       ];
       XLSX.utils.book_append_sheet(wb, wsClassProgress, "ChenhLech_TienDo_Lop");
-
       const dateStr = new Date().toLocaleDateString('vi-VN').replace(/\//g, '_');
       XLSX.writeFile(wb, `Bao_Cao_Thong_Ke_Nghi_Day_THPT_Tran_Phu_${dateStr}.xlsx`);
     }
@@ -4943,7 +4892,7 @@ function createPeriodRowElement(dateVal = "", session = "Sáng", tkb = 1, classN
   `;
   return tr;
 }
-// 2. Hàm khi bấm nút "Thêm ngày / tiết nghỉ mới"
+// 2. Hàm khi bấm nút "Thêm ngày nghỉ mới"
 function addPeriodRow() {
   const tbody = document.getElementById("leave-periods-tbody");
   if (!tbody) return;
@@ -4975,7 +4924,6 @@ function setupAutoLoadTkbOnDateChange() {
           dateStr: dateVal 
         });
         if (res && res.schedules && res.schedules.length > 0) {
-          // Điền tiết đầu tiên vào đúng dòng đang thao tác
           const firstSch = res.schedules[0];
           currentRow.querySelector(".session-val").value = firstSch.session || "Sáng";
           currentRow.querySelector(".tkb-val").value = firstSch.periodTKB || 1; 
