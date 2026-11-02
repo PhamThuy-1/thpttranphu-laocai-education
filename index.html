@@ -2023,7 +2023,6 @@
         registrations: json.registrations,
         leaveRequests: json.leaveRequests,
         disciplines: json.disciplines,
-        equipmentBorrows: json.equipmentBorrows,
         violationTypes: json.violationTypes,
         permissions: json.permissions
       };
@@ -2039,7 +2038,6 @@
       if (currentModule === "kpi_me") renderTeacherDashboard();
       if (currentModule === "kpi_bgh") switchBghTab(bghActiveTab);
       if (currentModule === "leave") renderLeaveModule();
-      if (currentModule === "equipment") renderEquipmentSection();
       if (currentModule === "actionplan") renderActionPlanModule();
     }
     function renderAppView() {
