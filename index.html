@@ -1229,37 +1229,6 @@
       </form>
     </div>
   </div>
-  <!-- MODAL: GHI NHẬN NỀ NẾP HỌC SINH -->
-  <div id="discipline-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <h3 class="text-base font-bold text-slate-900 mb-3">Ghi Nhận Vi Phạm / Điểm Cộng Học Sinh</h3>
-      <form onsubmit="handleSaveDiscipline(event)" class="space-y-3 text-sm">
-        <div>
-          <label class="block font-medium text-slate-700 mb-1">Chọn lớp:</label>
-          <select id="modal-disc-class" onchange="loadDisciplineStudents()" required class="w-full border border-slate-300 rounded-lg px-3 py-2 bg-white">
-            <option value="">-- Chọn lớp từ Sheet HS --</option>
-          </select>
-        </div>
-        <div>
-          <label class="block font-medium text-slate-700 mb-1">Tên học sinh:</label>
-          <input list="discipline-student-suggestions" type="text" id="modal-disc-student" required placeholder="Chọn học sinh từ Sheet HS" class="w-full border border-slate-300 rounded-lg px-3 py-2">
-          <datalist id="discipline-student-suggestions"></datalist>
-        </div>
-        <div>
-          <label class="block font-medium text-slate-700 mb-1">Nội dung ghi nhận:</label>
-          <input type="text" id="modal-disc-content" required placeholder="Ví dụ: Đi học muộn 15 phút / Đạt giải HSG" class="w-full border border-slate-300 rounded-lg px-3 py-2">
-        </div>
-        <div>
-          <label class="block font-medium text-slate-700 mb-1">Điểm số (+ hoặc -):</label>
-          <input type="number" id="modal-disc-points" required value="-2" class="w-full border border-slate-300 rounded-lg px-3 py-2">
-        </div>
-        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
-          <button type="button" onclick="closeAddDisciplineModal()" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 font-medium">Hủy</button>
-          <button type="submit" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium shadow-sm">Lưu Nhật Ký</button>
-        </div>
-      </form>
-    </div>
-  </div>
   <!-- MODAL: TẠO ĐƠN XIN NGHỈ -->
   <div id="create-leave-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
     <div class="bg-white rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl my-8">
@@ -1494,47 +1463,12 @@
         callback(null);
       };
     }
-    // DỮ LIỆU KẾ HOẠCH HOẠT ĐỘNG 
-    const MONTH_LABELS = [
-      "Tháng 08/2026", "Tháng 09/2026", "Tháng 10/2026", "Tháng 11/2026", 
-      "Tháng 12/2026", "Tháng 01/2027", "Tháng 02/2027", "Tháng 03/2027", 
-      "Tháng 04/2027", "Tháng 05/2027", "Tháng 06/2027", "Tháng 07/2027"
-    ];
-    let monthPlanData = JSON.parse(localStorage.getItem('PLAN_MONTH_DATA_2026_2027') || 'null');
-    if (!monthPlanData) {
-      monthPlanData = MONTH_LABELS.map((m, idx) => ({
-        id: `M-${idx + 1}`,
-        title: m,
-        fileName: "",
-        hasFile: false,
-        fileData: "",
-        updatedAt: "--"
-      }));
-      localStorage.setItem('PLAN_MONTH_DATA_2026_2027', JSON.stringify(monthPlanData));
-    }
-    let weekPlanData = JSON.parse(localStorage.getItem('PLAN_WEEK_DATA_2026_2027') || 'null');
-    if (!weekPlanData) {
-      weekPlanData = [];
-      for (let i = 1; i <= 40; i++) {
-        const numStr = i < 10 ? `0${i}` : `${i}`;
-        weekPlanData.push({
-          id: `W-${numStr}`,
-          weekNum: i,
-          title: `Tuần ${numStr}`,
-          fileName: "",
-          hasFile: false,
-          fileData: "",
-          updatedAt: "--"
-        });
-      }
-      localStorage.setItem('PLAN_WEEK_DATA_2026_2027', JSON.stringify(weekPlanData));
-    }
+    // DỮ LIỆU KẾ HOẠCH HOẠT ĐỘNG
+    let monthPlanData = [];
+    let weekPlanData = [];
     let currentWeekPage = 1;
     const WEEKS_PER_PAGE = 10;
-    const TOTAL_WEEK_PAGES = Math.ceil(40 / WEEKS_PER_PAGE);
-    let currentPlanTab = 'month';
     function switchPlanTab(tab) {
-      currentPlanTab = tab;
       const btnMonth = document.getElementById('tab-btn-month');
       const btnWeek = document.getElementById('tab-btn-week');
       const contentMonth = document.getElementById('plan-month-content');
