@@ -182,10 +182,10 @@
               </div>
               <div>
                 <h4 class="font-bold text-slate-900 text-sm group-hover:text-emerald-600 transition leading-snug">
-                  QUẢN LÝ HỌC SINH
+                  THEO DÕI NỀN NẾP HỌC SINH
                 </h4>
                 <p class="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">
-                  Theo dõi chuyên cần, ghi nhận vi phạm và hạnh kiểm học sinh.
+                  Theo dõi, ghi nhận, tổng hơp các vi phạm và hạnh kiểm học sinh.
                 </p>
               </div>
             </div>
@@ -204,7 +204,7 @@
               </div>
               <div>
                 <h4 class="font-bold text-slate-900 text-sm group-hover:text-rose-600 transition leading-snug">
-                  ĐĂNG KÝ NGHỈ DẠY
+                  QUẢN LÝ NGHỈ - DẠY THAY
                 </h4>
                 <p class="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">
                   GV tạo đơn xin nghỉ -> TTCM phân công dạy thay, dạy bù -> BGH duyệt - xuất phiếu Word A4.
@@ -226,7 +226,7 @@
                   KẾ HOẠCH HOẠT ĐỘNG
                 </h4>
                 <p class="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">
-                  Kế hoạch tháng & tuần đính kèm tệp văn bản .pdf.
+                  Kế hoạch tháng và tuần
                 </p>
               </div>
             </div>
@@ -238,7 +238,7 @@
     <section id="teacher-section" class="hidden space-y-6">
         <div>
         <h3 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
-          📊 Tổng Hợp KPI Của Tôi
+          📊 Tổng Hợp Nhiệm Vụ Của Tôi
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="bg-white px-5 py-3.5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
@@ -391,9 +391,6 @@
               <h3 class="font-bold text-slate-900 text-base">Danh Sách Nhiệm Vụ Cần Chấm Điểm</h3>
               <p class="text-xs text-slate-500 mt-0.5">Tự động ưu tiên: Chờ nghiệm thu, Quá hạn, Chưa đến hạn, Đã xong.</p>
             </div>
-            <span class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full font-medium border border-slate-200">
-              Thời gian thực
-            </span>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-sm table-fixed">
@@ -613,17 +610,16 @@
       <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-end">
         <div class="flex items-center bg-slate-100 p-1.5 rounded-xl text-xs font-bold">
           <button id="tab-btn-entry" onclick="switchStudentTab('entry')" class="px-4 py-2 rounded-lg bg-white text-indigo-700 shadow-sm transition">
-            ✏️ Thẻ Nhập Dữ Liệu
+            ✏️ Nhập Dữ Liệu
           </button>
           <button id="tab-btn-stats" onclick="switchStudentTab('stats')" class="px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition">
-            📊 Thẻ Thống Kê & Xuất Excel
+            📊 Thống Kê & Xuất Excel
           </button>
         </div>
       </div>
       <!-- ==================== THẺ 1: NHẬP DỮ LIỆU VI PHẠM ==================== -->
       <div id="student-tab-entry" class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
         <form id="violation-form" onsubmit="handleSaveViolation(event)" class="space-y-5">
-          <!-- Hàng 1: Ngày vi phạm, Lớp tự nhận diện, Tên HS gợi ý, Mã HS -->
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs font-bold text-slate-700">
             <div>
               <label class="block mb-1.5">Ngày vi phạm:</label>
@@ -638,19 +634,18 @@
               </div>
             </div>
             <div>
-              <label class="block mb-1.5">Họ và tên học sinh (Chọn từ gợi ý):</label>
+              <label class="block mb-1.5">Họ và tên học sinh:</label>
               <input list="student-suggestions" id="input-student-name" oninput="onStudentInputSearch(this.value)" placeholder="Gõ hoặc chọn tên học sinh..." required class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm font-semibold focus:ring-2 focus:ring-indigo-500 focus:outline-none">
               <datalist id="student-suggestions"></datalist>
             </div>
             <div>
-              <label class="block mb-1.5">Mã HS (Tự động kéo theo):</label>
+              <label class="block mb-1.5">Mã HS:</label>
               <input type="text" id="input-student-code" readonly placeholder="Tự động đối chiếu" class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-bold text-indigo-700 focus:outline-none">
             </div>
           </div>
-          <!-- Danh mục loại vi phạm -->
           <div>
             <label class="block text-xs font-bold text-slate-800 mb-2">
-              Chọn các loại lỗi vi phạm phát sinh (Tích chọn một hoặc nhiều lỗi):
+              Chọn các loại lỗi vi phạm (tích chọn một hoặc nhiều lỗi):
             </label>
             <div id="violation-type-options" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-700">
               <p class="col-span-full text-slate-500">Đăng nhập để đọc danh mục từ Sheet dataHS.</p>
@@ -784,7 +779,7 @@
         </div>
         <div class="flex items-center gap-2">
           <button id="btn-export-leave-excel" onclick="exportLeaveReportExcel()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-1.5 transition">
-            📊 Xuất Báo Cáo Nghỉ Dạy (Excel)
+            📊 Xuất Báo Cáo 
           </button>
           <button onclick="openCreateLeaveModal()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-1.5 transition">
             ➕ Tạo Đơn Xin Nghỉ Mới
@@ -1234,7 +1229,7 @@
     <div class="bg-white rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl my-8">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
         <div>
-          <h3 class="text-lg font-black text-slate-900">Tạo Phiếu Báo Cáo Nghỉ Dạy (Nhiều Ngày)</h3>
+          <h3 class="text-lg font-black text-slate-900">Tạo Phiếu Báo Cáo Nghỉ Dạy</h3>
           <p class="text-xs text-slate-500">Thông tin cá nhân và môn dạy được đồng bộ tự động từ hồ sơ Nhân sự nhà trường.</p>
         </div>
         <button onclick="closeCreateLeaveModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl">✕</button>
@@ -1246,11 +1241,11 @@
             <input type="text" id="leave-teacher-name" readonly class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 font-bold text-slate-700">
           </div>
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Môn giảng dạy (từ sheet Nhân sự):</label>
+            <label class="block font-semibold text-slate-700 mb-1">Môn giảng dạy:</label>
             <input type="text" id="leave-subject-name" readonly class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 font-bold text-slate-700">
           </div>
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Loại lý do xin nghỉ:</label>
+            <label class="block font-semibold text-slate-700 mb-1">Lý do xin nghỉ:</label>
             <select id="leave-reason-category" required class="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-rose-500 focus:outline-none font-semibold">
               <option value="Việc riêng">Việc riêng</option>
               <option value="Công tác">Công tác</option>
@@ -1666,11 +1661,11 @@
       iframe.src = "about:blank";
       getPdfFromDB(id, async function(fileData) {
   const dataToShow = fileData || item.fileData;
-  if (dataToShow && dataToShow.length > 100) { // Đã có local cache
+  if (dataToShow && dataToShow.length > 100) { 
     iframe.src = dataToShow;
   } else {
        try {
-      iframe.src = "about:blank"; // Chờ tải
+      iframe.src = "about:blank"; 
       const res = await apiRequest("getActionPlanFile", { type: type, id: id });
       if (res && res.fileData) {
         const base64PDF = "data:application/pdf;base64," + res.fileData;
@@ -1832,7 +1827,7 @@
         renderTeacherDashboard();
       } else if (moduleKey === "kpi_bgh") {
         if (currentUser.role !== "BGH") {
-          alert("⛔ Phân hệ 'QUẢN LÝ KPI' chỉ dành cho Ban Giám Hiệu. Bạn có thể sử dụng phân hệ 'KPI CỦA TÔI'.");
+          alert("⛔ Phân hệ 'QUẢN LÝ KPI' chỉ dành cho Ban Giám Hiệu);
           goToHome();
           return;
         }
@@ -2625,7 +2620,6 @@
       }
       try {
         await apiRequest("assignTask", { taskId: task.id, teacherCode });
-        
         // CẬP NHẬT TRỰC TIẾP VÀO APPDATA
         appData.registrations.push({
           taskId: task.id,
@@ -3641,8 +3635,7 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
             optionsHtml += `<option value="${s.name}" data-subject="${s.subject || ''}" ${selected}>✅ ${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)</option>`;
           });
           optionsHtml += `</optgroup>`;
-        }
-        // Hiển thị thêm nhóm GV trống TKB nhưng ĐÃ BẬN trong sheet LichNghi 
+        } 
         if (busyList.length > 0) {
           optionsHtml += `<optgroup label="🔴 Trống TKB nhưng ĐÃ BẬN trên Lịch Nghỉ / Dạy Thay">`;
           busyList.forEach(s => {
@@ -3888,7 +3881,6 @@ function onTtcmTeacherChange(selectEl) {
                 ${rowsHtml}
               </tbody>
             </table>
-
             <div class="italic-note">
               Giáo viên xin nghỉ căn cứ thời khóa biểu để báo dạy thay, đổi giờ trước khi trình tổ trưởng chuyên môn<br>
               (Số tiết được đồng nghiệp dạy thay đợt này: <b>${String(ticket.periods ? ticket.periods.length : 0).padStart(2, '0')}</b>)
@@ -3991,7 +3983,6 @@ function onTtcmTeacherChange(selectEl) {
           totalGV
         ]);
       });
-
       reportRows.push([
         "TỔNG CỘNG", "", "TOÀN TRƯỜNG", "",
         "", grandTotalCongTac,
@@ -4000,10 +3991,8 @@ function onTtcmTeacherChange(selectEl) {
         "", grandTotalCheDo,
         grandTotalAll
       ]);
-
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(reportRows);
-
       ws["!cols"] = [
         { wch: 6 }, { wch: 10 }, { wch: 24 }, { wch: 12 },
         { wch: 30 }, { wch: 14 },
@@ -4144,7 +4133,7 @@ function onTtcmTeacherChange(selectEl) {
           if (bghSelect) bghSelect.classList.add("hidden");
           if (filterClassSelect) {
             filterClassSelect.value = targetClass;
-            filterClassSelect.disabled = true; // Khóa không cho GVCN chọn lớp khác
+            filterClassSelect.disabled = true; 
           }
         } else {
           if (classInput) classInput.value = "Chưa phân công CN";
@@ -4345,7 +4334,6 @@ function onTtcmTeacherChange(selectEl) {
             • ${e}
           </span>`
         ).join("");
-
         tbody.innerHTML += `
           <tr class="hover:bg-slate-50 transition border-b border-slate-100">
             <td class="py-3 px-3.5 text-center font-bold text-slate-400">${globalIndex}</td>
@@ -4765,7 +4753,6 @@ let currentEligibleBulkTasks = [];
         }
       }
     }
-	// 1. Hàm tạo phần tử dòng HTML chuẩn cho bảng tiết nghỉ
 function createPeriodRowElement(dateVal = "", session = "Sáng", tkb = 1, className = "", subject = "", ppct = 1, lesson = "", isAuto = false) {
   const tr = document.createElement("tr");
   if (isAuto) {
@@ -4802,14 +4789,12 @@ function createPeriodRowElement(dateVal = "", session = "Sáng", tkb = 1, classN
   `;
   return tr;
 }
-// 2. Hàm khi bấm nút "Thêm ngày nghỉ mới"
 function addPeriodRow() {
   const tbody = document.getElementById("leave-periods-tbody");
   if (!tbody) return;
   const newRow = createPeriodRowElement();
   tbody.appendChild(newRow);
 }
-// 3. Hàm tự động quét TKB khi thay đổi ngày (Đã sửa lỗi không làm mất ngày cũ)
 function setupAutoLoadTkbOnDateChange() {
   document.addEventListener("change", async function(e) {
     if (e.target && e.target.classList.contains("row-date-val")) {
@@ -4897,7 +4882,6 @@ function setupAutoLoadTkbOnDateChange() {
             </div>
           </div>
           <div class="border border-slate-200 rounded-2xl max-h-64 overflow-y-auto p-3 bg-slate-50 space-y-2" id="bulk-teacher-checkboxes-container">
-            <!-- Render động danh sách GV -->
           </div>
         </div>
         <div class="flex justify-end gap-2 pt-4 border-t border-slate-100">
