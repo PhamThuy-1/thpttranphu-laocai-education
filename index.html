@@ -4214,18 +4214,6 @@ function onTtcmTeacherChange(selectEl) {
         dataList.appendChild(opt);
       });
     }
-    function loadDisciplineStudents() {
-      const className = document.getElementById("modal-disc-class").value;
-      const studentList = document.getElementById("discipline-student-suggestions");
-      if (!studentList) return;
-      studentList.replaceChildren();
-      document.getElementById("modal-disc-student").value = "";
-      (studentListFromSheet || []).filter(student => cleanStr(student.lop) === cleanStr(className)).forEach(student => {
-        const option = document.createElement("option");
-        option.value = student.hoTen;
-        studentList.appendChild(option);
-      });
-    }
     function onStudentInputSearch(val) {
       const codeInput = document.getElementById("input-student-code");
       const targetClass = document.getElementById("input-student-class").value;
