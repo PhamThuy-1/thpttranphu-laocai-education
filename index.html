@@ -3697,7 +3697,7 @@ function onTtcmTeacherChange(selectEl) {
   const targetSubject = (subSubjectInput && subSubjectInput.value) ? subSubjectInput.value.trim() : (ticket ? ticket.subject : '');
   // Hiển thị trạng thái đang dò lịch trên ô input
   makeupInput.value = "⏳ Đang tìm lịch dạy bù...";
-  apiRequest("getMakeupSuggestion", {
+  apiRequest("GoiYDayBu", {
     teacherACode: teacherACode,
     teacherBName: subTeacherName,
     leaveDate: leaveDate,
