@@ -4624,14 +4624,15 @@ let currentEligibleBulkTasks = [];
     function closeBulkAssignModal() {
       document.getElementById("bulk-assign-modal").classList.add("hidden");
     }
-    function updateBulkTaskQuotaInfo() {
-      const taskId = document.getElementById("bulk-select-task").value;
-      const task = currentEligibleBulkTasks.find(t => t.id === taskId);
-      const hintEl = document.getElementById("bulk-task-quota-hint");
-      if (task && hintEl) {
-        hintEl.innerText = `💡 Chỉ tiêu tối đa: ${task.totalQuota} người | Đã nhận: ${task.registeredCount} | Còn lại có thể giao: ${task.remainingQuota} người`;
-      }
-    }
+function updateBulkTaskQuotaInfo() {
+  const taskId = document.getElementById("bulk-select-task").value;
+  const task = currentEligibleBulkTasks.find(t => cleanStr(t.id) === cleanStr(taskId));
+  const hintEl = document.getElementById("bulk-task-quota-hint");
+  if (task && hintEl) {
+    hintEl.innerText = `💡 Chỉ tiêu tối đa: ${task.totalQuota} người | Đã nhận: ${task.registeredCount} | Còn lại có thể giao: ${task.remainingQuota} người`;
+  }
+  renderBulkTeacherList(); 
+}
     function renderBulkTeacherList() {
       const container = document.getElementById("bulk-teacher-checkboxes-container");
       container.innerHTML = "";
