@@ -2553,9 +2553,17 @@
       }
       teacherStats.forEach((item, index) => {
         const gv = item.gv;
-        let taskOptions = eligibleTasks.map(t => 
-          `<option value="${t.id}">[${t.id}] ${t.title} (${t.score}đ - chỉ tiêu còn: ${t.remainingQuota})</option>`
-        ).join(""); 
+const assignedTaskIds = new Set(
+  (appData.registrations || [])
+    .filter(r => cleanStr(r.teacherCode) === cleanStr(gv.code))
+    .map(r => cleanStr(r.taskId))
+);
+let taskOptions = eligibleTasks.map(t => {
+  const isAlreadyTaken = assignedTaskIds.has(cleanStr(t.id));
+  return `<option value="${t.id}" ${isAlreadyTaken ? 'disabled' : ''}>
+    [${t.id}] ${t.title} (${t.score}đ - còn: ${t.remainingQuota})${isAlreadyTaken ? ' - [Đã nhận]' : ''}
+  </option>`;
+}).join("");
         if (taskOptions === "") taskOptions = `<option value="">-- Hết việc còn chỉ tiêu --</option>`;
         tbody.innerHTML += `
           <tr class="hover:bg-slate-50 transition border-b border-slate-100">
@@ -2590,10 +2598,14 @@
       }
       const task = appData.tasks.find(t => cleanStr(t.id) === cleanStr(taskId));
       if (!task) return;
-      const exists = appData.registrations.some(r => 
-        (cleanStr(r.teacherCode) === cleanStr(teacherCode) || cleanStr(r.teacherName).includes(cleanStr(teacherName))) && 
-        cleanStr(r.taskId) === cleanStr(taskId)
-      );
+	const exists = (appData.registrations || []).some(r => {
+  	const isSameTask = cleanStr(r.taskId) === cleanStr(taskId);
+  	if (!isSameTask) return false;
+  	if (cleanStr(r.teacherCode) && cleanStr(teacherCode)) {
+    return cleanStr(r.teacherCode) === cleanStr(teacherCode);
+  	}
+  	return cleanStr(r.teacherName) !== "" && cleanStr(r.teacherName) === cleanStr(teacherName);
+	});
       if (exists) {
         alert(`Giáo viên ${teacherName} đã nhận nhiệm vụ [${taskId}] rồi!`);
         return;
