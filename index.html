@@ -1507,6 +1507,8 @@
     }
     function renderWeekPlanTable() {
       const tbody = document.getElementById('plan-week-table-body');
+	  const TOTAL_WEEK_PAGES = Math.ceil((weekPlanData ? weekPlanData.length : 0) / WEEKS_PER_PAGE) || 1;
+  	  if (currentWeekPage > TOTAL_WEEK_PAGES) currentWeekPage = TOTAL_WEEK_PAGES;
       const startIdx = (currentWeekPage - 1) * WEEKS_PER_PAGE;
       const endIdx = startIdx + WEEKS_PER_PAGE;
       const pageItems = weekPlanData.slice(startIdx, endIdx);
@@ -1557,6 +1559,7 @@
       document.getElementById('week-page-numbers').innerHTML = pageNumHtml;
     }
     function changeWeekPage(delta) {
+	  const TOTAL_WEEK_PAGES = Math.ceil((weekPlanData ? weekPlanData.length : 0) / WEEKS_PER_PAGE) || 1;
       const target = currentWeekPage + delta;
       if (target >= 1 && target <= TOTAL_WEEK_PAGES) {
         currentWeekPage = target;
