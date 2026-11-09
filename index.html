@@ -3091,11 +3091,13 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
    function checkSubstituteNotifications() {
   const banner = document.getElementById("substitute-alert-banner");
   const tileBadge = document.getElementById("substitute-badge-tile");
+  const internalAlertBox = document.getElementById("leave-approval-alert-box");
   if (!banner || !tileBadge) return;
 
   if (!currentUser) {
     banner.classList.add("hidden");
     tileBadge.classList.add("hidden");
+    if (internalAlertBox) internalAlertBox.classList.add("hidden");
     return;
   }
 
@@ -3125,43 +3127,81 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
     banner.classList.add("hidden");
   }
 
-  // 2. Tính toán Badge hiển thị trên thẻ "Quản Lý Nghỉ - Dạy Thay" theo vai trò
+  // 2. Tính toán số đơn cần phê duyệt cho TTCM và BGH
+  let pendingApprovalCount = 0;
+  let targetTab = "my";
+  let roleDesc = "";
+
   if (currentUser.role === "BGH") {
-    // BGH: Cảnh báo số đơn PENDING_BGH cần phê duyệt
-    const bghPendingList = (appData.leaveRequests || []).filter(r => r.status === "PENDING_BGH");
-    if (bghPendingList.length > 0) {
-      tileBadge.innerText = `🔔 Có ${bghPendingList.length} đơn cần phê duyệt`;
-      tileBadge.classList.remove("hidden");
-      return;
-    }
+    // BGH: Đếm các đơn chờ BGH duyệt (PENDING_BGH) VÀ các đơn mới nộp chờ xếp lịch (PENDING_TTCM)
+    const bghPending = (appData.leaveRequests || []).filter(r => {
+      const st = String(r.status || "").trim().toUpperCase();
+      return st === "PENDING_BGH" || st === "PENDING_TTCM";
+    });
+    pendingApprovalCount = bghPending.length;
+    // Nếu có đơn chờ BGH duyệt thì ưu tiên nhảy vào tab BGH, ngược lại nhảy vào tab TTCM
+    const hasDirectBgh = (appData.leaveRequests || []).some(r => String(r.status || "").trim().toUpperCase() === "PENDING_BGH");
+    targetTab = hasDirectBgh ? "bgh" : "ttcm";
+    roleDesc = "Đơn xin nghỉ đang chờ xếp lịch hoặc BGH phê duyệt.";
   } else if (currentUser.isTTCM) {
-    // TTCM: Cảnh báo số đơn PENDING_TTCM của tổ chuyên môn mình phụ trách
+    // TTCM: Đếm các đơn PENDING_TTCM thuộc tổ chuyên môn của mình
     const currentDept = cleanStr(currentUser.department);
-    const ttcmPendingList = (appData.leaveRequests || []).filter(ticket => {
-      if (ticket.status !== "PENDING_TTCM") return false;
+    const currentSubj = cleanStr(currentUser.subject);
+    const ttcmPending = (appData.leaveRequests || []).filter(ticket => {
+      const st = String(ticket.status || "").trim().toUpperCase();
+      if (st !== "PENDING_TTCM") return false;
+
       let ticketDept = cleanStr(ticket.department);
-      if (ticketDept && currentDept && ticketDept === currentDept) return true;
+      let ticketSubj = cleanStr(ticket.subject);
+      if (currentDept && ticketDept && (ticketDept === currentDept || ticketDept.includes(currentDept) || currentDept.includes(ticketDept))) {
+        return true;
+      }
+      if (currentSubj && ticketSubj && (ticketSubj === currentSubj || ticketSubj.includes(currentSubj) || currentSubj.includes(ticketSubj))) {
+        return true;
+      }
       const teacherProfile = (appData.staff || []).find(s => 
         (ticket.teacherCode && cleanStr(s.code) === cleanStr(ticket.teacherCode)) ||
         (cleanStr(s.name) === cleanStr(ticket.teacherName))
       );
-      return teacherProfile && cleanStr(teacherProfile.department) === currentDept;
+      if (teacherProfile) {
+        const profDept = cleanStr(teacherProfile.department);
+        if (currentDept && profDept && (profDept === currentDept || profDept.includes(currentDept) || currentDept.includes(profDept))) {
+          return true;
+        }
+      }
+      return false;
     });
-
-    if (ttcmPendingList.length > 0) {
-      tileBadge.innerText = `🔔 Có ${ttcmPendingList.length} đơn cần phê duyệt`;
-      tileBadge.classList.remove("hidden");
-      return;
-    }
+    pendingApprovalCount = ttcmPending.length;
+    targetTab = "ttcm";
+    roleDesc = "Đơn xin nghỉ của giáo viên trong tổ đang chờ phân công dạy thay.";
   }
 
+  // 3. Hiển thị cảnh báo ra thẻ ngoài Trang chủ & bên trong Phân hệ
+  if (pendingApprovalCount > 0) {
+    tileBadge.innerText = `🔔 Có ${pendingApprovalCount} đơn cần phê duyệt`;
+    tileBadge.classList.remove("hidden");
+
+    if (internalAlertBox) {
+      document.getElementById("leave-approval-alert-title").innerText = `🔔 Có ${pendingApprovalCount} đơn cần phê duyệt`;
+      document.getElementById("leave-approval-alert-desc").innerText = roleDesc;
+      document.getElementById("leave-approval-alert-btn").onclick = function() {
+        switchLeaveTab(targetTab);
+      };
+      internalAlertBox.classList.remove("hidden");
+    }
+    return;
+  } else {
+    if (internalAlertBox) internalAlertBox.classList.add("hidden");
+  }
+
+  // 4. Nếu không có đơn chờ duyệt thì hiển thị badge lịch dạy thay (nếu có)
   if (mySubPeriods.length > 0) {
     tileBadge.innerText = `🔔 ${mySubPeriods.length} tiết dạy thay!`;
     tileBadge.classList.remove("hidden");
   } else {
     tileBadge.classList.add("hidden");
   }
-}    
+}  
 	  function switchLeaveTab(tabKey) {
       currentLeaveTab = tabKey;
       ["my", "sub", "ttcm", "bgh"].forEach(t => {
