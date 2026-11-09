@@ -1917,6 +1917,8 @@
       }
     }
     function processUserSession(identity, avatar) {
+		const posUpper = String(identity.position || identity.role || "").toUpperCase();
+		
       currentUser = {
         email: identity.email,
         name: identity.name,
