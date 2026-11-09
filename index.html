@@ -153,24 +153,27 @@
             </div>
           </div>
           <!-- 2. QUẢN LÝ KPI -->
-          <div onclick="navigateToModule('kpi_bgh')" class="group bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 hover:border-amber-500 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between shadow-sm">
-            <div class="space-y-2">
-              <div class="flex items-center justify-between">
-                <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg group-hover:bg-amber-600 group-hover:text-white transition duration-300 shadow-sm">
-                  👑
-                </div>
-                <span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full border border-amber-200">Chỉ BGH</span>
-              </div>
-              <div>
-                <h4 class="font-bold text-slate-900 text-sm group-hover:text-amber-600 transition leading-snug">
-                  QUẢN LÝ KPI
-                </h4>
-                <p class="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">
-                  Giao việc tự động, duyệt minh chứng, chấm điểm, giám sát tiến độ & xuất báo cáo.
-                </p>
-              </div>
-            </div>
-        </div>
+<div onclick="navigateToModule('kpi_bgh')" class="relative group bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 hover:border-amber-500 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between shadow-sm">
+  <div id="kpi-bgh-badge-tile" class="hidden absolute -top-2 -right-2 bg-rose-600 text-white font-extrabold text-[10px] px-2.5 py-0.5 rounded-full shadow-lg border-2 border-white animate-badge z-10">
+    0 việc cần chấm điểm
+  </div>
+  <div class="space-y-2">
+    <div class="flex items-center justify-between">
+      <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg group-hover:bg-amber-600 group-hover:text-white transition duration-300 shadow-sm">
+        👑
+      </div>
+      <span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full border border-amber-200">Chỉ BGH</span>
+    </div>
+    <div>
+      <h4 class="font-bold text-slate-900 text-sm group-hover:text-amber-600 transition leading-snug">
+        QUẢN LÝ KPI
+      </h4>
+      <p class="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+        Giao việc tự động, duyệt minh chứng, chấm điểm, giám sát tiến độ & xuất báo cáo.
+      </p>
+    </div>
+  </div>
+</div>
           <!-- 3. QUẢN LÝ HỌC SINH -->
           <div onclick="navigateToModule('students')" class="group bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 hover:border-emerald-500 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between shadow-sm">
             <div class="space-y-2">
@@ -1711,34 +1714,61 @@
   }
 } 
       function updateKpiNotificationBadge() {
-      const badge = document.getElementById("kpi-badge-tile");
-      if (!badge) return;
-      if (!currentUser) {
-        badge.classList.add("hidden");
-        return;
-      }
-      const myCodeClean = cleanStr(currentUser.code);
-      const myNameClean = cleanStr(currentUser.name);
-      const myRegs = (appData.registrations || []).filter(r => {
-        const rCode = cleanStr(r.teacherCode);
-        const rName = cleanStr(r.teacherName);
-        if (myCodeClean && rCode) return rCode === myCodeClean;
-        return rName === myNameClean;
-      });
-      const pendingTasks = myRegs.filter(r => {
-        const status = cleanStr(r.level);
-        const hasFinalScore = (r.finalScore !== null && r.finalScore !== "" && !isNaN(Number(r.finalScore)));
-        const isCompleted = status.includes("đã xong") || status.includes("đã nghiệm thu") || (status.includes("xong") && hasFinalScore);
-        return !isCompleted;
-      });
-      const count = pendingTasks.length;
-      if (count > 0) {
-        badge.innerText = `🔔 ${count} việc cần làm!`;
-        badge.classList.remove("hidden");
-      } else {
-        badge.classList.add("hidden");
-      }
+  const badgeMe = document.getElementById("kpi-badge-tile");
+  const badgeBgh = document.getElementById("kpi-bgh-badge-tile");
+  
+  if (!currentUser) {
+    if (badgeMe) badgeMe.classList.add("hidden");
+    if (badgeBgh) badgeBgh.classList.add("hidden");
+    return;
+  }
+
+  // 1. Cảnh báo nhiệm vụ của cá nhân (GV)
+  if (badgeMe) {
+    const myCodeClean = cleanStr(currentUser.code);
+    const myNameClean = cleanStr(currentUser.name);
+    const myRegs = (appData.registrations || []).filter(r => {
+      const rCode = cleanStr(r.teacherCode);
+      const rName = cleanStr(r.teacherName);
+      if (myCodeClean && rCode) return rCode === myCodeClean;
+      return rName === myNameClean;
+    });
+    const pendingTasks = myRegs.filter(r => {
+      const status = cleanStr(r.level);
+      const hasFinalScore = (r.finalScore !== null && r.finalScore !== "" && !isNaN(Number(r.finalScore)));
+      const isCompleted = status.includes("đã xong") || status.includes("đã nghiệm thu") || (status.includes("xong") && hasFinalScore);
+      return !isCompleted;
+    });
+    if (pendingTasks.length > 0) {
+      badgeMe.innerText = `🔔 ${pendingTasks.length} việc cần làm!`;
+      badgeMe.classList.remove("hidden");
+    } else {
+      badgeMe.classList.add("hidden");
     }
+  }
+
+  // 2. Cảnh báo chấm điểm nhiệm vụ cho BGH
+  if (badgeBgh) {
+    if (currentUser.role === "BGH") {
+      const pendingGrading = (appData.registrations || []).filter(r => {
+        const hasScore = (r.finalScore !== null && r.finalScore !== "" && !isNaN(Number(r.finalScore)));
+        const status = cleanStr(r.level);
+        // Việc GV đã báo cáo minh chứng hoặc chuyển sang Chờ nghiệm thu nhưng chưa chấm điểm
+        const isWaiting = status.includes("chờ nghiệm thu") || Boolean(r.evidence && String(r.evidence).trim() !== "");
+        return !hasScore && isWaiting;
+      });
+
+      if (pendingGrading.length > 0) {
+        badgeBgh.innerText = `🔔 Có ${pendingGrading.length} nhiệm vụ cần chấm điểm`;
+        badgeBgh.classList.remove("hidden");
+      } else {
+        badgeBgh.classList.add("hidden");
+      }
+    } else {
+      badgeBgh.classList.add("hidden");
+    }
+  }
+}
     // --- ĐIỀU KHIỂN TAB VÀ PHÂN TRANG KHO KPI ---
     let currentKpiTab = "all";
     let currentPage = 1;
@@ -3046,43 +3076,81 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
     }
        // CÁC HÀM XỬ LÝ PHÂN HỆ ĐĂNG KÝ NGHỈ DẠY & DẠY THAY
     // =========================================================================
-    function checkSubstituteNotifications() {
-      const banner = document.getElementById("substitute-alert-banner");
-      const tileBadge = document.getElementById("substitute-badge-tile");
-      if (!banner || !tileBadge) return;
-      if (!currentUser) {
-        banner.classList.add("hidden");
-        tileBadge.classList.add("hidden");
-        return;
-      }
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const mySubPeriods = [];
-      (appData.leaveRequests || []).forEach(ticket => {
-        if (ticket.status === "APPROVED_BGH" && ticket.periods) {
-          ticket.periods.forEach(p => {
-            if (p.subTeacher && cleanStr(p.subTeacher) === cleanStr(currentUser.name)) {
-              const subDate = parseDateSafe(p.leaveDate);
-              if (subDate && subDate >= today) {
-                mySubPeriods.push({ ...p, fromTeacher: ticket.teacherName });
-              }
-            }
-          });
+   function checkSubstituteNotifications() {
+  const banner = document.getElementById("substitute-alert-banner");
+  const tileBadge = document.getElementById("substitute-badge-tile");
+  if (!banner || !tileBadge) return;
+
+  if (!currentUser) {
+    banner.classList.add("hidden");
+    tileBadge.classList.add("hidden");
+    return;
+  }
+
+  // 1. Kiểm tra lịch dạy thay cá nhân của GV
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const mySubPeriods = [];
+  (appData.leaveRequests || []).forEach(ticket => {
+    if (ticket.status === "APPROVED_BGH" && ticket.periods) {
+      ticket.periods.forEach(p => {
+        if (p.subTeacher && cleanStr(p.subTeacher) === cleanStr(currentUser.name)) {
+          const subDate = parseDateSafe(p.leaveDate);
+          if (subDate && subDate >= today) {
+            mySubPeriods.push({ ...p, fromTeacher: ticket.teacherName });
+          }
         }
       });
-      if (mySubPeriods.length > 0) {
-        banner.classList.remove("hidden");
-        tileBadge.classList.remove("hidden");
-        tileBadge.innerText = `🔔 ${mySubPeriods.length} tiết dạy thay!`;
-        const first = mySubPeriods[0];
-        document.getElementById("substitute-alert-msg").innerText = 
-          `Thầy/Cô được xếp dạy thay cho ${first.fromTeacher} (Lớp ${first.class}, Tiết ${first.periodTKB}, Ngày ${first.leaveDate}). Xem bài dạy ngay!`;
-      } else {
-        banner.classList.add("hidden");
-        tileBadge.classList.add("hidden");
-      }
     }
-    function switchLeaveTab(tabKey) {
+  });
+
+  if (mySubPeriods.length > 0) {
+    banner.classList.remove("hidden");
+    const first = mySubPeriods[0];
+    document.getElementById("substitute-alert-msg").innerText = 
+      `Thầy/Cô được xếp dạy thay cho ${first.fromTeacher} (Lớp ${first.class}, Tiết ${first.periodTKB}, Ngày ${first.leaveDate}). Xem bài dạy ngay!`;
+  } else {
+    banner.classList.add("hidden");
+  }
+
+  // 2. Tính toán Badge hiển thị trên thẻ "Quản Lý Nghỉ - Dạy Thay" theo vai trò
+  if (currentUser.role === "BGH") {
+    // BGH: Cảnh báo số đơn PENDING_BGH cần phê duyệt
+    const bghPendingList = (appData.leaveRequests || []).filter(r => r.status === "PENDING_BGH");
+    if (bghPendingList.length > 0) {
+      tileBadge.innerText = `🔔 Có ${bghPendingList.length} đơn cần phê duyệt`;
+      tileBadge.classList.remove("hidden");
+      return;
+    }
+  } else if (currentUser.isTTCM) {
+    // TTCM: Cảnh báo số đơn PENDING_TTCM của tổ chuyên môn mình phụ trách
+    const currentDept = cleanStr(currentUser.department);
+    const ttcmPendingList = (appData.leaveRequests || []).filter(ticket => {
+      if (ticket.status !== "PENDING_TTCM") return false;
+      let ticketDept = cleanStr(ticket.department);
+      if (ticketDept && currentDept && ticketDept === currentDept) return true;
+      const teacherProfile = (appData.staff || []).find(s => 
+        (ticket.teacherCode && cleanStr(s.code) === cleanStr(ticket.teacherCode)) ||
+        (cleanStr(s.name) === cleanStr(ticket.teacherName))
+      );
+      return teacherProfile && cleanStr(teacherProfile.department) === currentDept;
+    });
+
+    if (ttcmPendingList.length > 0) {
+      tileBadge.innerText = `🔔 Có ${ttcmPendingList.length} đơn cần phê duyệt`;
+      tileBadge.classList.remove("hidden");
+      return;
+    }
+  }
+
+  if (mySubPeriods.length > 0) {
+    tileBadge.innerText = `🔔 ${mySubPeriods.length} tiết dạy thay!`;
+    tileBadge.classList.remove("hidden");
+  } else {
+    tileBadge.classList.add("hidden");
+  }
+}    
+	  function switchLeaveTab(tabKey) {
       currentLeaveTab = tabKey;
       ["my", "sub", "ttcm", "bgh"].forEach(t => {
         const btn = document.getElementById("leave-tab-btn-" + t);
@@ -3578,6 +3646,7 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
         });
         closeCreateLeaveModal();
         renderLeaveModule();
+		checkSubstituteNotifications();
         alert(`✅ Đã gửi đơn ${result.id}, gồm ${sessionCount} buổi nghỉ.`);
       } catch (error) {
         alert(`Không thể gửi đơn nghỉ: ${error.message}`);
@@ -3749,6 +3818,7 @@ function onTtcmTeacherChange(selectEl) {
         ticket.periods = updatedPeriods;
         closeTtcmModal();
         renderLeaveModule();
+		checkSubstituteNotifications();
         alert("✅ Đã lưu phân công dạy thay và chuyển đơn lên BGH.");
       } catch (error) {
         alert(`Không thể lưu phân công dạy thay: ${error.message}`);
