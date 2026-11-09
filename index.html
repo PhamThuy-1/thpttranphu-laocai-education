@@ -1916,9 +1916,15 @@
         alert(error.message);
       }
     }
-    function processUserSession(identity, avatar) {
-		const posUpper = String(identity.position || identity.role || "").toUpperCase();
-		
+   function processUserSession(identity, avatar) {
+      const posUpper = String(identity.position || identity.role || "").toUpperCase();
+      
+      // Chỉ nhận diện TTCM dựa trên TTCM, Tổ trưởng hoặc chức danh TT
+      const detectedTTCM = Boolean(identity.isTTCM) || 
+                           posUpper.includes("TTCM") || 
+                           posUpper.includes("TỔ TRƯỞNG") || 
+                           posUpper === "TT";
+
       currentUser = {
         email: identity.email,
         name: identity.name,
@@ -1927,7 +1933,7 @@
         department: identity.department,
         position: identity.position,
         homeroom: identity.homeroom,
-        isTTCM: Boolean(identity.isTTCM),
+        isTTCM: detectedTTCM,
         role: identity.role,
         permissions: identity.permissions || [],
         avatar: avatar || "https://placehold.co/100x100?text=GV"
@@ -1938,8 +1944,8 @@
       if (!document.getElementById('actionplan-section').classList.contains('hidden')) {
         renderActionPlanModule();
       }
-    }
-    function logout() {
+    } 
+	  function logout() {
       currentUser = null;
       apiIdToken = "";
       document.getElementById("user-info-bar").classList.add("hidden");
