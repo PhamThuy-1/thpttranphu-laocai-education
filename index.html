@@ -5006,24 +5006,88 @@ function setupAutoLoadTkbOnDateChange() {
 	const KEY_PART_1 = "AQ.Ab8RN6JEpq5s8rf";
     const KEY_PART_2 = "JgUv5VxwQw6yne8oGS";
     const KEY_PART_3 = "wrKUCwbXnNUDSJgnQ";
-    const CLIENT_GEMINI_KEY = (KEY_PART_1 + KEY_PART_2 + KEY_PART_3).trim();
+    const DIRECT_GEMINI_KEY = (KEY_PART_1 + KEY_PART_2 + KEY_PART_3).trim();
+async function runStudentAIAnalysis() {
+  const resultBox = document.getElementById("ai-analysis-result");
+  const classSelect = document.getElementById("filter-student-class");
+  const selectedClass = classSelect ? classSelect.value.trim() : "";
 
-    async function runStudentAIAnalysis() {
-      const resultBox = document.getElementById("ai-analysis-result");
-      const classSelect = document.getElementById("filter-student-class");
-      const selectedClass = classSelect ? classSelect.value.trim() : "";
-
-      resultBox.classList.remove("hidden");
-      resultBox.innerText = "🤖 Trợ lý Gemini AI đang quét dữ liệu sheet dataHS và tổng hợp báo cáo, vui lòng đợi trong giây lát...";
-      
-      try {
-        // Gọi API thông qua hệ thống định tuyến chuẩn của Apps Script
-        const res = await apiRequest("analyzeStudentAI", { className: selectedClass });
-        resultBox.innerText = res.analysis || "Không nhận được phản hồi phân tích từ AI.";
-      } catch (err) {
-        resultBox.innerText = "❌ Lỗi khi kết nối với AI: " + err.message;
-      }
+  resultBox.classList.remove("hidden");
+  resultBox.innerText = "🤖 Trợ lý Gemini AI đang phân tích dữ liệu nề nếp...";
+  
+  try {
+    // 1. Tự động lấy dữ liệu vi phạm trên RAM của trình duyệt
+    if (!currentQueriedList || currentQueriedList.length === 0) {
+      await queryViolations();
     }
+
+    if (!currentQueriedList || currentQueriedList.length === 0) {
+      resultBox.innerText = "✅ Hiện tại không có dữ liệu vi phạm nào trong phạm vi đang chọn để AI phân tích.";
+      return;
+    }
+
+    // 2. Tổng hợp dữ liệu cực kỳ gọn nhẹ
+    let totalRecords = currentQueriedList.length;
+    let studentMap = {};
+    let errorCounts = {};
+
+    currentQueriedList.forEach(item => {
+      const cName = item.lop || "Khác";
+      if (selectedClass && cName.toLowerCase() !== selectedClass.toLowerCase()) return;
+      
+      const sKey = `${item.hoTen} (Lớp ${cName})`;
+      const errs = item.errors || [];
+      if (errs.length > 0) {
+        if (!studentMap[sKey]) studentMap[sKey] = 0;
+        studentMap[sKey] += errs.length;
+        errs.forEach(e => {
+          errorCounts[e] = (errorCounts[e] || 0) + 1;
+        });
+      }
+    });
+
+    const topStudents = Object.entries(studentMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([k, v]) => `${k} (${v} lần)`).join(", ");
+
+    const topErrors = Object.entries(errorCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([k, v]) => `${k} (${v} lượt)`).join(", ");
+
+    const promptText = `Bạn là trợ lý AI quản lý nề nếp trường THPT Trần Phú. Dữ liệu thực tế:
+- Tổng số bản ghi vi phạm: ${totalRecords}
+- Học sinh vi phạm nhiều lần: ${topStudents || 'Không có'}
+- Các lỗi phổ biến: ${topErrors || 'Không có'}
+
+Hãy viết báo cáo phân tích ngắn gọn trong 3 ý bằng tiếng Việt:
+1. Học sinh cần lưu ý đặc biệt.
+2. Xu hướng lỗi vi phạm.
+3. 2 lời khuyên sư phạm cho giáo viên.`;
+
+    // 3. GỌI THẲNG SANG GOOGLE GEMINI API (Dùng model gemini-2.0-flash siêu tốc độ)
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${DIRECT_GEMINI_KEY.trim()}`;
+    
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: promptText }] }],
+        generationConfig: { temperature: 0.4, maxOutputTokens: 600 }
+      })
+    });
+
+    const data = await response.json();
+    if (response.ok && data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+      resultBox.innerText = data.candidates[0].content.parts[0].text;
+    } else {
+      throw new Error(data?.error?.message || "Không nhận được phản hồi hợp lệ từ Google AI.");
+    }
+  } catch (err) {
+    resultBox.innerText = "❌ Lỗi kết nối AI trực tiếp: " + err.message;
+  }
+}
   </script>
 <!-- MODAL: GIAO VIỆC HÀNG LOẠT CHO GIÁO VIÊN -->
   <div id="bulk-assign-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
