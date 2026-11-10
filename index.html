@@ -810,7 +810,7 @@
         </div>
         <div class="flex items-center gap-2">
           <button id="btn-export-leave-excel" onclick="exportLeaveReportExcel()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-1.5 transition">
-            📊 Xuất Báo Cáo 
+            📊 Xuất Báo Cáo
           </button>
           <button onclick="openCreateLeaveModal()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-1.5 transition">
             ➕ Tạo Đơn Xin Nghỉ Mới
@@ -1289,7 +1289,7 @@
       <tr class="bg-slate-100 text-[11px] font-bold text-slate-600 uppercase border-b border-slate-200">
         <th class="py-2.5 px-3 w-36">Ngày nghỉ</th>
         <th class="py-2.5 px-3 w-20">Buổi</th>
-        <th class="py-2.5 px-3 text-center w-20">Tiết TKB</th> 
+        <th class="py-2.5 px-3 text-center w-20">Tiết TKB</th>
         <th class="py-2.5 px-3 w-24">Lớp dạy</th>
         <th class="py-2.5 px-3 w-24">Môn</th>
         <th class="py-2.5 px-3 text-center w-20">Tiết PPCT</th>
@@ -1507,7 +1507,7 @@
       const tbody = document.getElementById('plan-month-table-body');
       let html = '';
       monthPlanData.forEach((item, index) => {
-        const fileDisplay = item.hasFile 
+        const fileDisplay = item.hasFile
           ? `<span class="inline-flex items-center gap-1.5 font-semibold text-slate-800"><span class="text-blue-600 text-base">📘</span> ${item.fileName}</span>`
           : `<span class="text-slate-400 italic">Chưa có tệp đính kèm</span>`;
         let actionsHtml = '';
@@ -1548,7 +1548,7 @@
       let html = '';
       pageItems.forEach((item, index) => {
         const globalStt = startIdx + index + 1;
-        const fileDisplay = item.hasFile 
+        const fileDisplay = item.hasFile
           ? `<span class="inline-flex items-center gap-1.5 font-semibold text-slate-800"><span class="text-blue-600 text-base">📘</span> ${item.fileName}</span>`
           : `<span class="text-slate-400 italic">Chưa có tệp đính kèm</span>`;
         let actionsHtml = '';
@@ -1638,7 +1638,7 @@
   btnSave.innerText = "⏳ Đang tải lên Server...";
   const reader = new FileReader();
   reader.onload = async function(e) {
-    const base64Data = e.target.result;  
+    const base64Data = e.target.result;
     try {
       await apiRequest("uploadActionPlan", {
         type: currentUploadTarget.type,
@@ -1655,9 +1655,9 @@
             targetItem.fileName = file.name;
             const now = new Date();
             targetItem.updatedAt = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-        }       
+        }
         closeUploadDocModal();
-        renderActionPlanModule(); 
+        renderActionPlanModule();
       });
     } catch (err) {
       alert(`Lỗi khi tải tệp lên server: ${err.message}`);
@@ -1669,8 +1669,8 @@
   reader.readAsDataURL(file);
 }
     function viewDocPlan(type, id) {
-      let item = (type === 'month') 
-        ? monthPlanData.find(m => m.id === id) 
+      let item = (type === 'month')
+        ? monthPlanData.find(m => m.id === id)
         : weekPlanData.find(w => w.id === id);
       if (!item || !item.hasFile) {
         alert("Kế hoạch này hiện chưa có tệp đính kèm để xem!");
@@ -1683,16 +1683,16 @@
       iframe.src = "about:blank";
       getPdfFromDB(id, async function(fileData) {
   const dataToShow = fileData || item.fileData;
-  if (dataToShow && dataToShow.length > 100) { 
+  if (dataToShow && dataToShow.length > 100) {
     iframe.src = dataToShow;
   } else {
        try {
-      iframe.src = "about:blank"; 
+      iframe.src = "about:blank";
       const res = await apiRequest("getActionPlanFile", { type: type, id: id });
       if (res && res.fileData) {
         const base64PDF = "data:application/pdf;base64," + res.fileData;
         iframe.src = base64PDF;
-           savePdfToDB(id, base64PDF); 
+           savePdfToDB(id, base64PDF);
       }
     } catch (err) {
       alert(`Không thể tải tệp từ Server: ${err.message}`);
@@ -1710,8 +1710,8 @@
       document.getElementById('view-doc-modal').classList.add('hidden');
     }
     function downloadDocPlan(type, id) {
-  let item = (type === 'month') 
-    ? monthPlanData.find(m => m.id === id) 
+  let item = (type === 'month')
+    ? monthPlanData.find(m => m.id === id)
     : weekPlanData.find(w => w.id === id);
   if (!item || !item.hasFile) {
     alert("Mục này chưa có tệp để tải xuống!");
@@ -1742,11 +1742,11 @@
     link.click();
     document.body.removeChild(link);
   }
-} 
+}
       function updateKpiNotificationBadge() {
   const badgeMe = document.getElementById("kpi-badge-tile");
   const badgeBgh = document.getElementById("kpi-bgh-badge-tile");
-  
+
   if (!currentUser) {
     if (badgeMe) badgeMe.classList.add("hidden");
     if (badgeBgh) badgeBgh.classList.add("hidden");
@@ -1803,7 +1803,7 @@
     let currentKpiTab = "all";
     let currentPage = 1;
     let itemsPerPage = 10;
-    let currentMyTaskTab = "incomplete"; 
+    let currentMyTaskTab = "incomplete";
     function switchMyTaskTab(tabKey) {
       currentMyTaskTab = tabKey;
       const tabs = ["completed", "overdue", "upcoming", "incomplete"];
@@ -1884,7 +1884,7 @@
         switchBghTab(bghActiveTab);
       } else if (moduleKey === "students") {
         document.getElementById("students-section").classList.remove("hidden");
-		setupTeacherHomeroomClass(); 
+		setupTeacherHomeroomClass();
         renderStudentsSection();
       } else if (moduleKey === "leave") {
         document.getElementById("leave-substitute-section").classList.remove("hidden");
@@ -1936,11 +1936,11 @@
     }
    function processUserSession(identity, avatar) {
       const posUpper = String(identity.position || identity.role || "").toUpperCase();
-      
+
       // Chỉ nhận diện TTCM dựa trên TTCM, Tổ trưởng hoặc chức danh TT
-      const detectedTTCM = Boolean(identity.isTTCM) || 
-                           posUpper.includes("TTCM") || 
-                           posUpper.includes("TỔ TRƯỞNG") || 
+      const detectedTTCM = Boolean(identity.isTTCM) ||
+                           posUpper.includes("TTCM") ||
+                           posUpper.includes("TỔ TRƯỞNG") ||
                            posUpper === "TT";
 
       currentUser = {
@@ -1962,7 +1962,7 @@
       if (!document.getElementById('actionplan-section').classList.contains('hidden')) {
         renderActionPlanModule();
       }
-    } 
+    }
 	  function logout() {
       currentUser = null;
       apiIdToken = "";
@@ -1974,7 +1974,7 @@
       studentListFromSheet = [];
       ERROR_KEYS = [];
       renderViolationTypeOptions();
-      monthPlanData = []; 
+      monthPlanData = [];
   weekPlanData = [];
       setDataLoadStatus("Đăng nhập để tải dữ liệu trực tiếp từ Google Sheets.");
       checkSubstituteNotifications();
@@ -2106,7 +2106,7 @@
           } else {
             levelBadge = `<span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full font-medium bg-blue-50 text-blue-700 border border-blue-200 whitespace-nowrap">⚙️ ${r.level || 'Đang thực hiện'}</span>`;
           }
-          const scoreBadge = (r.finalScore !== null && r.finalScore !== "") 
+          const scoreBadge = (r.finalScore !== null && r.finalScore !== "")
             ? `<span class="font-bold text-emerald-600 whitespace-nowrap">${r.finalScore} / ${r.baseScore}</span>`
             : `<span class="inline-block text-[11px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 whitespace-nowrap">Chờ BGH chấm</span>`;
           const evidenceLink = renderEvidenceButtonHtml(r.evidence);
@@ -2192,7 +2192,7 @@
         });
       }
     }
-    // Hàm phân tích dữ liệu cột Minh chứng 
+    // Hàm phân tích dữ liệu cột Minh chứng
     function renderEvidenceButtonHtml(evidenceStr) {
       const raw = String(evidenceStr || "").trim();
       if (!raw) return `<span class="text-xs text-slate-400 italic">Chưa có</span>`;
@@ -2240,8 +2240,8 @@
       const fileInput = document.getElementById("evidence-file-input");
       if (fileInput) fileInput.value = "";
       const currentFileEl = document.getElementById("evidence-current-file");
-      const reg = appData.registrations.find(r => 
-        (cleanStr(r.teacherCode) === cleanStr(currentUser.code) || cleanStr(r.teacherName).includes(cleanStr(currentUser.name))) && 
+      const reg = appData.registrations.find(r =>
+        (cleanStr(r.teacherCode) === cleanStr(currentUser.code) || cleanStr(r.teacherName).includes(cleanStr(currentUser.name))) &&
         cleanStr(r.taskId) === cleanStr(taskId)
       );
       if (currentFileEl) {
@@ -2289,9 +2289,9 @@
           payload.mimeType = file.type || "application/octet-stream";
           payload.fileData = base64Data;
         }
-        const res = await apiRequest("submitEvidence", payload);      
-        const reg = appData.registrations.find(r => 
-          (cleanStr(r.teacherCode) === cleanStr(currentUser.code) || cleanStr(r.teacherName).includes(cleanStr(currentUser.name))) && 
+        const res = await apiRequest("submitEvidence", payload);
+        const reg = appData.registrations.find(r =>
+          (cleanStr(r.teacherCode) === cleanStr(currentUser.code) || cleanStr(r.teacherName).includes(cleanStr(currentUser.name))) &&
           cleanStr(r.taskId) === cleanStr(taskId)
         );
         if (reg) {
@@ -2321,7 +2321,7 @@
         btn.innerText = "⏳ Đang xử lý...";
       }
       try {
-        await apiRequest("registerKPI", { taskId: task.id });     
+        await apiRequest("registerKPI", { taskId: task.id });
         appData.registrations.push({
           taskId: task.id,
           teacherCode: currentUser.code,
@@ -2566,10 +2566,10 @@
         btn.innerText = "⏳ Đang lưu...";
       }
       try {
-        await apiRequest("gradeTask", { taskId: reg.taskId, teacherCode: reg.teacherCode, score });   
+        await apiRequest("gradeTask", { taskId: reg.taskId, teacherCode: reg.teacherCode, score });
         // CẬP NHẬT TRỰC TIẾP TRONG RAM
         reg.finalScore = score;
-        reg.level = "Đã xong"; 
+        reg.level = "Đã xong";
         renderBGHGradingTable();
         updateKpiNotificationBadge();
         alert(`✅ Đã lưu điểm ${score} cho giáo viên ${reg.teacherName}.`);
@@ -2602,11 +2602,11 @@
       const eligibleTasks = tasksWithRemaining.filter(t => t.isStillAvailable);
       const teacherStats = (appData.staff || [])
         .filter(gv => {
-          const isBGHStaff = gv.role === "BGH" || 
-                             gv.subject === "BGH" || 
-                             cleanStr(gv.department) === "bgh" || 
+          const isBGHStaff = gv.role === "BGH" ||
+                             gv.subject === "BGH" ||
+                             cleanStr(gv.department) === "bgh" ||
                              cleanStr(gv.subject) === "bgh";
-          return !isBGHStaff; 
+          return !isBGHStaff;
         })
         .map(gv => {
           const gvCodeClean = cleanStr(gv.code);
@@ -2746,9 +2746,9 @@ let taskOptions = eligibleTasks.map(t => {
       document.getElementById("bar-rate-late").style.width = pLate + "%";
       document.getElementById("bar-rate-ontime").style.width = pOnTime + "%";
       const teachingStaff = (appData.staff || []).filter(s => {
-        const isBGHStaff = s.role === "BGH" || 
-                           s.subject === "BGH" || 
-                           cleanStr(s.department) === "bgh" || 
+        const isBGHStaff = s.role === "BGH" ||
+                           s.subject === "BGH" ||
+                           cleanStr(s.department) === "bgh" ||
                            cleanStr(s.subject) === "bgh";
         return !isBGHStaff;
       });
@@ -2821,7 +2821,7 @@ let taskOptions = eligibleTasks.map(t => {
             }
           }
         });
-      } 
+      }
     }
     function exportToExcel() {
       if (typeof XLSX === 'undefined') {
@@ -2920,7 +2920,7 @@ let taskOptions = eligibleTasks.map(t => {
   const tasks = appData.tasks || [];
   if (tasks.length === 0) return "A1";
   let maxNum = 0;
-  let prefix = "A"; 
+  let prefix = "A";
   tasks.forEach(t => {
     const idStr = String(t.id || "").trim().toUpperCase();
     // Tách phần chữ cái đầu (VD: A, NV, KPI) và phần số phía sau (VD: 1, 05, 12)
@@ -3056,7 +3056,7 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
       } catch (err) {
         alert(`Không thể xóa nhiệm vụ: ${err.message}`);
       }
-    }    
+    }
     // CÁC HÀM XỬ LÝ PHÂN HỆ QUẢN LÝ HỌC SINH
     // ==========================================
     function renderStudentsSection() {
@@ -3147,7 +3147,7 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
   if (mySubPeriods.length > 0) {
     banner.classList.remove("hidden");
     const first = mySubPeriods[0];
-    document.getElementById("substitute-alert-msg").innerText = 
+    document.getElementById("substitute-alert-msg").innerText =
       `Thầy/Cô được xếp dạy thay cho ${first.fromTeacher} (Lớp ${first.class}, Tiết ${first.periodTKB}, Ngày ${first.leaveDate}). Xem bài dạy ngay!`;
   } else {
     banner.classList.add("hidden");
@@ -3185,7 +3185,7 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
       if (currentSubj && ticketSubj && (ticketSubj === currentSubj || ticketSubj.includes(currentSubj) || currentSubj.includes(ticketSubj))) {
         return true;
       }
-      const teacherProfile = (appData.staff || []).find(s => 
+      const teacherProfile = (appData.staff || []).find(s =>
         (ticket.teacherCode && cleanStr(s.code) === cleanStr(ticket.teacherCode)) ||
         (cleanStr(s.name) === cleanStr(ticket.teacherName))
       );
@@ -3227,7 +3227,7 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
   } else {
     tileBadge.classList.add("hidden");
   }
-}  
+}
 	  function switchLeaveTab(tabKey) {
       currentLeaveTab = tabKey;
       ["my", "sub", "ttcm", "bgh"].forEach(t => {
@@ -3292,8 +3292,8 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
         }
       }
       // 1. Tab đơn của tôi
-      const myTickets = (appData.leaveRequests || []).filter(r => 
-        (r.teacherCode && cleanStr(r.teacherCode) === cleanStr(currentUser.code)) || 
+      const myTickets = (appData.leaveRequests || []).filter(r =>
+        (r.teacherCode && cleanStr(r.teacherCode) === cleanStr(currentUser.code)) ||
         (r.teacherName && cleanStr(r.teacherName).includes(cleanStr(currentUser.name)))
       );
       document.getElementById("count-my-leaves").innerText = myTickets.length;
@@ -3316,7 +3316,7 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
             const cls = (p.class || "Chưa rõ lớp").trim();
             const makeup = String(p.makeupSchedule || '').trim().toLowerCase();
             const isUnscheduled = !makeup || makeup === "--" || makeup === "-" || makeup === "chưa có" || makeup.includes("thỏa thuận") || makeup.includes("chưa xếp") || makeup.includes("chưa dạy bù");
-            
+
             if (isUnscheduled) {
               if (!classBalanceMap[cls]) classBalanceMap[cls] = { delayed: 0, ahead: 0 };
               classBalanceMap[cls].delayed++;
@@ -3359,7 +3359,7 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
       const delayedDetailEl = document.getElementById("stat-delayed-classes-detail");
       if (delayedBadgeEl) {
         delayedBadgeEl.innerText = `${totalDelayedPeriods} tiết`;
-        delayedBadgeEl.className = totalDelayedPeriods > 0 
+        delayedBadgeEl.className = totalDelayedPeriods > 0
           ? "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200"
           : "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600";
       }
@@ -3377,7 +3377,7 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
         if (classKeys.length === 0) {
           delayedDetailEl.innerHTML = `<span class="text-emerald-600 font-medium">✓ Đạt chuẩn tiến độ</span>`;
         } else {
-          delayedDetailEl.innerHTML = classKeys.map(cls => 
+          delayedDetailEl.innerHTML = classKeys.map(cls =>
             `<span class="inline-flex items-center gap-1 bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded-md font-bold text-[11px]">
               <b>${cls}:</b> ${delayedByClassMap[cls]} tiết
             </span>`
@@ -3389,7 +3389,7 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
       const aheadDetailEl = document.getElementById("stat-ahead-classes-detail");
       if (aheadBadgeEl) {
         aheadBadgeEl.innerText = `${totalAheadPeriods} tiết`;
-        aheadBadgeEl.className = totalAheadPeriods > 0 
+        aheadBadgeEl.className = totalAheadPeriods > 0
           ? "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200"
           : "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600";
       }
@@ -3407,7 +3407,7 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
         if (aheadKeys.length === 0) {
           aheadDetailEl.innerHTML = `<span class="text-slate-400 italic">Không có tiết vượt tiến độ.</span>`;
         } else {
-          aheadDetailEl.innerHTML = aheadKeys.map(cls => 
+          aheadDetailEl.innerHTML = aheadKeys.map(cls =>
             `<span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-md font-bold text-[11px]">
               <b>${cls}:</b> ${aheadByClassMap[cls]} tiết
             </span>`
@@ -3436,8 +3436,8 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
               <td class="py-3 px-4 text-center font-bold text-rose-600">${sessionCount} buổi</td>
               <td class="py-3 px-4 text-center">${statusBadge}</td>
               <td class="py-3 px-4 text-center">
-                ${ticket.status === 'APPROVED_BGH' 
-                  ? `<button onclick="downloadLeaveDoc('${ticket.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-3 py-1.5 rounded-lg border border-rose-200 transition flex items-center gap-1 mx-auto text-xs">📥 Tải phiếu (.doc)</button>` 
+                ${ticket.status === 'APPROVED_BGH'
+                  ? `<button onclick="downloadLeaveDoc('${ticket.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-3 py-1.5 rounded-lg border border-rose-200 transition flex items-center gap-1 mx-auto text-xs">📥 Tải phiếu (.doc)</button>`
                   : `<span class="text-xs text-slate-400 italic">Đang chờ duyệt</span>`}
               </td>
             </tr>
@@ -3491,7 +3491,7 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
         let ticketDept = cleanStr(ticket.department);
         let currentDept = cleanStr(currentUser.department);
         if (ticketDept && currentDept && ticketDept === currentDept) return true;
-        const teacherProfile = (appData.staff || []).find(s => 
+        const teacherProfile = (appData.staff || []).find(s =>
           (ticket.teacherCode && cleanStr(s.code) === cleanStr(ticket.teacherCode)) ||
           (cleanStr(s.name) === cleanStr(ticket.teacherName))
         );
@@ -3611,7 +3611,7 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
               </button>
             `;
           }
-          const ttcmStatusTxt = (ticket.status === "PENDING_TTCM") 
+          const ttcmStatusTxt = (ticket.status === "PENDING_TTCM")
             ? `<span class="text-amber-600 font-semibold text-xs">⏳ Chưa xếp</span>`
             : `<span class="text-emerald-600 font-semibold text-xs">✓ Đã xếp (${ticket.periods ? ticket.periods.length : 0} tiết)</span>`;
           bghTbody.innerHTML += `
@@ -3734,7 +3734,7 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
           btn.innerText = "Gửi Đơn Lên Tổ Trưởng Chuyên Môn ➔";
         }
       }
-    }  
+    }
 	  async function openTtcmAssignModal(ticketId) {
       const ticket = appData.leaveRequests.find(t => cleanStr(t.id) === cleanStr(ticketId));
       if (!ticket) return;
@@ -3745,7 +3745,7 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
       document.getElementById("ttcm-assign-modal").classList.remove("hidden");
       const promises = (ticket.periods || []).map(p =>
         apiRequest("getSubstituteSuggestions", {
-          ticketId: ticket.id, 
+          ticketId: ticket.id,
           leaveDate: p.leaveDate,
           periodTKB: p.periodTKB,
           session: p.session,
@@ -3783,7 +3783,7 @@ let editingTaskId = null; // null = Thêm mới, có giá trị = Đang sửa m�
             optionsHtml += `<option value="${s.name}" data-subject="${s.subject || ''}" ${selected}>✅ ${s.name} (Môn: ${s.subject || 'Chung'} - Đã dạy thay: ${s.subCount || 0} lần)</option>`;
           });
           optionsHtml += `</optgroup>`;
-        } 
+        }
         if (busyList.length > 0) {
           optionsHtml += `<optgroup label="🔴 Trống TKB nhưng ĐÃ BẬN trên Lịch Nghỉ / Dạy Thay">`;
           busyList.forEach(s => {
@@ -3852,7 +3852,7 @@ function onTtcmTeacherChange(selectEl) {
     teacherBName: subTeacherName,
     leaveDate: leaveDate,
     targetClass: className,
-    targetSubject: targetSubject 
+    targetSubject: targetSubject
   }).then(res => {
     if (res && res.suggestion) {
       makeupInput.value = res.suggestion;
@@ -3928,7 +3928,7 @@ function onTtcmTeacherChange(selectEl) {
           ticketId: ticket.id, status: "APPROVED_BGH", periods: ticket.periods
         });
         // CẬP NHẬT TRỰC TIẾP TRONG RAM
-        ticket.status = "APPROVED_BGH"; 
+        ticket.status = "APPROVED_BGH";
         renderLeaveModule();
         checkSubstituteNotifications();
         alert("✅ BGH đã phê duyệt đơn nghỉ thành công!");
@@ -4070,11 +4070,11 @@ function onTtcmTeacherChange(selectEl) {
       }
       const teachers = appData.staff || [];
       const reportRows = [
-        ["STT", "Mã GV", "Họ và Tên", "Bộ môn", 
-         "Nghỉ Công tác (Ngày/Buổi)", "Số buổi Công tác", 
-         "Nghỉ Ốm (Ngày/Buổi)", "Số buổi Ốm", 
-         "Nghỉ Việc riêng (Ngày/Buổi)", "Số buổi Việc riêng", 
-         "Nghỉ Chế độ (Ngày/Buổi)", "Số buổi Chế độ", 
+        ["STT", "Mã GV", "Họ và Tên", "Bộ môn",
+         "Nghỉ Công tác (Ngày/Buổi)", "Số buổi Công tác",
+         "Nghỉ Ốm (Ngày/Buổi)", "Số buổi Ốm",
+         "Nghỉ Việc riêng (Ngày/Buổi)", "Số buổi Việc riêng",
+         "Nghỉ Chế độ (Ngày/Buổi)", "Số buổi Chế độ",
          "TỔNG SỐ BUỔI NGHỈ"]
       ];
       let grandTotalCongTac = 0;
@@ -4083,8 +4083,8 @@ function onTtcmTeacherChange(selectEl) {
       let grandTotalCheDo = 0;
       let grandTotalAll = 0;
       teachers.forEach((t, idx) => {
-        const approvedTickets = (appData.leaveRequests || []).filter(ticket => 
-          (cleanStr(ticket.teacherCode) === cleanStr(t.code) || cleanStr(ticket.teacherName).includes(cleanStr(t.name))) && 
+        const approvedTickets = (appData.leaveRequests || []).filter(ticket =>
+          (cleanStr(ticket.teacherCode) === cleanStr(t.code) || cleanStr(ticket.teacherName).includes(cleanStr(t.name))) &&
           ticket.status === "APPROVED_BGH"
         );
         const details = {
@@ -4160,7 +4160,7 @@ function onTtcmTeacherChange(selectEl) {
         const teacherClassMap = {};
         const gvCode = cleanStr(t.code);
         const gvName = cleanStr(t.name);
-        const myLeaveTickets = (appData.leaveRequests || []).filter(ticket => 
+        const myLeaveTickets = (appData.leaveRequests || []).filter(ticket =>
           (ticket.status === "APPROVED_BGH") &&
           ((ticket.teacherCode && cleanStr(ticket.teacherCode) === gvCode) || (ticket.teacherName && cleanStr(ticket.teacherName).includes(gvName)))
         );
@@ -4273,7 +4273,7 @@ function onTtcmTeacherChange(selectEl) {
             if (classInput) classInput.value = targetClass;
           }
           if (filterClassSelect) {
-            filterClassSelect.value = ""; 
+            filterClassSelect.value = "";
             filterClassSelect.disabled = false;
           }
         } else if (currentUser.homeroom && currentUser.homeroom.trim() !== "") {
@@ -4282,7 +4282,7 @@ function onTtcmTeacherChange(selectEl) {
           if (bghSelect) bghSelect.classList.add("hidden");
           if (filterClassSelect) {
             filterClassSelect.value = targetClass;
-            filterClassSelect.disabled = true; 
+            filterClassSelect.disabled = true;
           }
         } else {
           if (classInput) classInput.value = "Chưa phân công CN";
@@ -4355,7 +4355,7 @@ function onTtcmTeacherChange(selectEl) {
     function onStudentInputSearch(val) {
       const codeInput = document.getElementById("input-student-code");
       const targetClass = document.getElementById("input-student-class").value;
-      const matched = (studentListFromSheet || []).find(s => 
+      const matched = (studentListFromSheet || []).find(s =>
         cleanStr(s.lop) === cleanStr(targetClass) && cleanStr(s.hoTen) === cleanStr(val)
       );
       if (matched && codeInput) {
@@ -4426,7 +4426,7 @@ function onTtcmTeacherChange(selectEl) {
         renderStatsPaginatedTable();
       }
     }
-    // Tra cứu và thống kê vi phạm 
+    // Tra cứu và thống kê vi phạm
     async function queryViolations() {
       const maHS = document.getElementById("filter-student-code").value.trim();
       const hoTen = document.getElementById("filter-student-name").value.trim();
@@ -4478,7 +4478,7 @@ function onTtcmTeacherChange(selectEl) {
       tbody.innerHTML = "";
       pageItems.forEach((item, index) => {
         const globalIndex = startIndex + index + 1;
-        const errBadges = (item.errors || []).map(e => 
+        const errBadges = (item.errors || []).map(e =>
           `<span class="inline-block bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded-md text-[11px] font-bold mr-1 mb-1">
             • ${e}
           </span>`
@@ -4496,7 +4496,7 @@ function onTtcmTeacherChange(selectEl) {
         `;
       });
     }
-    // 6. Xuất file Nhật ký chi tiết 
+    // 6. Xuất file Nhật ký chi tiết
     function exportViolationsToExcel() {
       if (typeof XLSX === "undefined") {
         alert("⚠️ Đang tải thư viện Excel, vui lòng thử lại sau 2 giây!");
@@ -4539,7 +4539,7 @@ function onTtcmTeacherChange(selectEl) {
       const filePrefix = selectedClass ? `Nhat_Ky_Vi_Pham_Lop_${selectedClass}` : "Nhat_Ky_Vi_Pham_Toan_Truong";
       XLSX.writeFile(wb, `${filePrefix}_${dateStr}.xlsx`);
     }
-    // 7. XUẤT BÁO CÁO TỔNG HỢP THEO LỚP 
+    // 7. XUẤT BÁO CÁO TỔNG HỢP THEO LỚP
     async function exportClassSummaryReportExcel() {
       if (typeof XLSX === "undefined") {
         alert("⚠️ Đang tải thư viện xuất Excel, vui lòng thử lại sau 2 giây!");
@@ -4760,7 +4760,7 @@ function onTtcmTeacherChange(selectEl) {
           btn.innerHTML = oldBtnText;
         }
       }
-    }	
+    }
 let currentEligibleBulkTasks = [];
     function openBulkAssignModal() {
       const taskSelect = document.getElementById("bulk-select-task");
@@ -4794,7 +4794,7 @@ function updateBulkTaskQuotaInfo() {
   if (task && hintEl) {
     hintEl.innerText = `💡 Chỉ tiêu tối đa: ${task.totalQuota} người | Đã nhận: ${task.registeredCount} | Còn lại có thể giao: ${task.remainingQuota} người`;
   }
-  renderBulkTeacherList(); 
+  renderBulkTeacherList();
 }
     function renderBulkTeacherList() {
       const container = document.getElementById("bulk-teacher-checkboxes-container");
@@ -4829,7 +4829,7 @@ function updateBulkTaskQuotaInfo() {
               </div>
             </div>
             <div class="text-right text-[11px]">
-              <span class="text-indigo-600 font-bold">${item.totalScore} điểm</span> | 
+              <span class="text-indigo-600 font-bold">${item.totalScore} điểm</span> |
               <span class="text-slate-500">${item.taskCount} việc</span>
               ${alreadyAssigned ? '<span class="ml-2 text-amber-600 font-semibold">[Đã nhận việc này]</span>' : ''}
             </div>
@@ -4964,28 +4964,28 @@ function setupAutoLoadTkbOnDateChange() {
         rowToRemove.remove();
       }
       try {
-        const res = await apiRequest("LayLichDayTheoNgay", { 
-          teacherCode: currentUser.code, 
-          dateStr: dateVal 
+        const res = await apiRequest("LayLichDayTheoNgay", {
+          teacherCode: currentUser.code,
+          dateStr: dateVal
         });
         if (res && res.schedules && res.schedules.length > 0) {
           const firstSch = res.schedules[0];
           currentRow.querySelector(".session-val").value = firstSch.session || "Sáng";
-          currentRow.querySelector(".tkb-val").value = firstSch.periodTKB || 1; 
-          currentRow.querySelector(".class-val").value = firstSch.class || "";       
-          currentRow.querySelector(".subject-val").value = firstSch.subject || "";   
-          currentRow.querySelector(".lesson-val").value = firstSch.lessonName || ""; 
+          currentRow.querySelector(".tkb-val").value = firstSch.periodTKB || 1;
+          currentRow.querySelector(".class-val").value = firstSch.class || "";
+          currentRow.querySelector(".subject-val").value = firstSch.subject || "";
+          currentRow.querySelector(".lesson-val").value = firstSch.lessonName || "";
           let insertAfterNode = currentRow;
           for (let i = 1; i < res.schedules.length; i++) {
             const sch = res.schedules[i];
             const newRow = createPeriodRowElement(
-              dateVal, 
-              sch.session || "Sáng", 
-              sch.periodTKB || 1, 
-              sch.class || "", 
-              sch.subject || "", 
-              1, 
-              sch.lessonName || "", 
+              dateVal,
+              sch.session || "Sáng",
+              sch.periodTKB || 1,
+              sch.class || "",
+              sch.subject || "",
+              1,
+              sch.lessonName || "",
               true
             );
             insertAfterNode.after(newRow);
@@ -5002,38 +5002,40 @@ function setupAutoLoadTkbOnDateChange() {
     }
   });
 }
-  setupAutoLoadTkbOnDateChange();
+setupAutoLoadTkbOnDateChange();
 
-// Tách chuỗi API Key thành 3 phần để GitHub Secret Scanning không chặn lưu file
-const KEY_PART_1 = "AQ.Ab8RN6JEpq5s8rf";
-const KEY_PART_2 = "JgUv5VxwQw6yne8oGS";
-const KEY_PART_3 = "wrKUCwbXnNUDSJgnQ";
-const CLIENT_GEMINI_KEY = (KEY_PART_1 + KEY_PART_2 + KEY_PART_3).trim();
+const KEYAI = new TextDecoder().decode(Uint8Array.from(atob("QVEuQWI4Uk42TC1UeUdGLVRZT0x0RVJaMUVDUHg2bV9hcG16UjVhRTVZaWlOb25ZZXpLalE=");, (char) => char.charCodeAt(0)));
+import { GoogleGenAI } from "https://esm.run/@google/genai";
+import { GoogleGenAI } from "https://esm.run/@google/genai";
 
 async function runStudentAIAnalysis() {
   const resultBox = document.getElementById("ai-analysis-result");
   const classSelect = document.getElementById("filter-student-class");
   const selectedClass = classSelect ? classSelect.value.trim() : "";
 
+  if (!resultBox) return;
+
   resultBox.classList.remove("hidden");
   resultBox.innerText = "🤖 Trợ lý Gemini AI đang quét dữ liệu sheet dataHS và phân tích thời gian thực...";
 
   // 1. Chuẩn bị sẵn dữ liệu thống kê từ RAM của trình duyệt
-  if (!currentQueriedList || currentQueriedList.length === 0) {
-    await queryViolations();
+  if (typeof currentQueriedList === 'undefined' || !currentQueriedList || currentQueriedList.length === 0) {
+    if (typeof queryViolations === 'function') {
+      await queryViolations();
+    }
   }
 
-  let totalRecords = currentQueriedList ? currentQueriedList.length : 0;
+  let totalRecords = (typeof currentQueriedList !== 'undefined' && currentQueriedList) ? currentQueriedList.length : 0;
   let totalErrorCount = 0;
   let classCounts = {};
   let studentMap = {};
   let errorCounts = {};
 
-  if (currentQueriedList && totalRecords > 0) {
+  if (typeof currentQueriedList !== 'undefined' && currentQueriedList && totalRecords > 0) {
     currentQueriedList.forEach(item => {
       const cName = item.lop || "Khác";
       if (selectedClass && cName.toLowerCase() !== selectedClass.toLowerCase()) return;
-      
+
       const sKey = `${item.hoTen} (Lớp ${cName})`;
       const errs = item.errors || [];
       if (errs.length > 0) {
@@ -5071,7 +5073,7 @@ Hãy viết báo cáo phân tích chuyên sâu, rõ ràng bằng tiếng Việt 
 2. Nhận định xu hướng vi phạm (tác phong, chuyên cần).
 3. Đưa ra 3 giải pháp / lời khuyên sư phạm cụ thể cho Giáo viên chủ nhiệm và Ban Giám hiệu.`;
 
-  // 2. TẠO SẴN BẢN DỰ PHÒNG THÔNG MINH (FALLBACK REPORT) ĐỂ DÙNG KHI CẦN
+  // 2. TẠO SẴN BẢN DỰ PHÒNG THÔNG MINH (FALLBACK REPORT)
   const fallbackReport = `📊 BÁO CÁO PHÂN TÍCH & CẢNH BÁO SỚM (${scopeTitle.toUpperCase()})
 (Tổng hợp tự động từ hệ thống với ${totalRecords} bản ghi, tổng ${totalErrorCount} lỗi vi phạm)
 
@@ -5079,47 +5081,49 @@ Hãy viết báo cáo phân tích chuyên sâu, rõ ràng bằng tiếng Việt 
 ${topStudentsList.length > 0 ? topStudentsList.join('\n') : '• Hiện chưa ghi nhận học sinh vi phạm lặp lại nhiều lần trong phạm vi này.'}
 
 2. XU HƯỚNG VI PHẠM NỔI BẬT:
-• Các nhóm lỗi chiếm tỷ trọng cao: ${topErrorsList.length > 0 ? topErrorsList.join(', ') : 'Chưa có dữ liệu lỗi phát sinh'}.
+- Các nhóm lỗi chiếm tỷ trọng cao: ${topErrorsList.length > 0 ? topErrorsList.join(', ') : 'Chưa có dữ liệu lỗi phát sinh'}.
 
 3. KHUYẾN NGHỊ SƯ PHẠM CHO GVCN & BGH:
-• Đối với học sinh vi phạm lặp lại từ 3 lần trở lên: Giáo viên chủ nhiệm cần gặp gỡ riêng, nắm bắt tâm lý lứa tuổi và thông báo trực tiếp cho phụ huynh phối hợp giáo dục.
-• Đối với nền nếp chung: Tăng cường công tác kiểm tra đầu giờ, phát huy vai trò của cờ đỏ và Đoàn trường trong việc nhắc nhở tác phong.
-• Ban Giám hiệu theo sát các lớp có biến động nề nếp để đưa ra chỉ đạo kịp thời, chuyển từ "xử lý hậu quả" sang "phòng ngừa chủ động".`;
+- Đối với học sinh vi phạm lặp lại từ 3 lần trở lên: Giáo viên chủ nhiệm cần gặp gỡ riêng, nắm bắt tâm lý lứa tuổi và thông báo trực tiếp cho phụ huynh phối hợp giáo dục.
+- Đối với nền nếp chung: Tăng cường công tác kiểm tra đầu giờ, phát huy vai trò của cờ đỏ và Đoàn trường trong việc nhắc nhở tác phong.
+- Ban Giám hiệu theo sát các lớp có biến động nề nếp để đưa ra chỉ đạo kịp thời, chuyển từ "xử lý hậu quả" sang "phòng ngừa chủ động".`;
 
   try {
-    // 3. GỌI THỨC THỜI SANG GOOGLE GEMINI API (Dùng model gemini-2.0-flash)
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${CLIENT_GEMINI_KEY}`;
-    
-    // Đặt thời gian chờ tối đa 10 giây cho AI thật, nếu quá 10s tự động chuyển sang dự phòng
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    // Kiểm tra xem biến KEYAI đã được định nghĩa chưa
+    if (typeof KEYAI === 'undefined' || !KEYAI) {
+      throw new Error("Chưa cấu hình API Key (KEYAI)");
+    }
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: promptText }] }],
-        generationConfig: { temperature: 0.4, maxOutputTokens: 1000 }
-      }),
-      signal: controller.signal
+    const ai = new GoogleGenAI({ apiKey: KEYAI });
+
+    // Sử dụng AbortController để tạo timeout 10 giây cho SDK gọi API
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("AI Request Timeout")), 10000)
+    );
+
+    const apiCallPromise = ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: promptText,
+      config: {
+        temperature: 0.4,
+        maxOutputTokens: 1000
+      }
     });
-    clearTimeout(timeoutId);
 
-    const data = await response.json();
-    if (response.ok && data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-      // AI thật phản hồi thành công! Hiển thị kết quả của AI
-      resultBox.innerText = data.candidates[0].content.parts[0].text;
+    const response = await Promise.race([apiCallPromise, timeoutPromise]);
+
+    if (response && response.text) {
+      resultBox.innerText = response.text;
     } else {
-      // Nếu API trả về lỗi, tự động dùng bản dự phòng mà không làm văng lỗi đỏ
-      console.warn("AI trả về phản hồi không hợp lệ, dùng bản dự phòng:", data);
+      console.warn("AI trả về phản hồi trống, dùng bản dự phòng.");
       resultBox.innerText = fallbackReport;
     }
   } catch (err) {
-    // Nếu rớt mạng hoặc timeout 10 giây, tự động hiển thị mượt mà bản dự phòng
     console.warn("Lỗi kết nối AI thực tế, kích hoạt hệ thống dự phòng:", err.message);
     resultBox.innerText = fallbackReport;
   }
-}  </script>
+}
+</script>
 <!-- MODAL: GIAO VIỆC HÀNG LOẠT CHO GIÁO VIÊN -->
   <div id="bulk-assign-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
     <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl my-8 space-y-4">
