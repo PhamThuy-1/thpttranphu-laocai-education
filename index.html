@@ -13,6 +13,7 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <!-- Google Sign-In SDK -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.js"></script>
   <style>
     body { font-family: 'Inter', sans-serif; }
     .times-font { font-family: 'Times New Roman', Times, serif; }
@@ -5158,7 +5159,7 @@ ${topStudentsList.length > 0 ? topStudentsList.join('\n') : '• Hiện chưa gh
         });
 
         if (response) {
-            resultBox.innerText = response;
+            resultBox.innerHTML = marked.parse(response);
         } else {
             resultBox.innerText = fallbackReport;
         }
