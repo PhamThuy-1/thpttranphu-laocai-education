@@ -5100,8 +5100,9 @@ ${topStudentsList.length > 0 ? topStudentsList.join('\n') : '• Hiện chưa gh
         setTimeout(() => reject(new Error("AI Request Timeout")), 10000)
       );
 
+      console.log("3.0")
       const apiCallPromise = ai.models.generateContent({
-        model: 'gemini-3.8-flash',
+        model: 'gemini-3.0-flash',
         contents: promptText,
         config: {
           temperature: 0.4,
