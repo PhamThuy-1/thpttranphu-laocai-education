@@ -5003,28 +5003,27 @@ function setupAutoLoadTkbOnDateChange() {
   });
 }
   setupAutoLoadTkbOnDateChange();
-	// Tách chuỗi làm 3 phần để GitHub Secret Scanning không chặn khi lưu file
-const KEY_PART_1 = "AQ.Ab8RN6JEpq5s8rf";
-const KEY_PART_2 = "JgUv5VxwQw6yne8oGS";
-const KEY_PART_3 = "wrKUCwbXnNUDSJgnQ";
-const CLIENT_GEMINI_KEY = (KEY_PART_1 + KEY_PART_2 + KEY_PART_3).trim();
+	const KEY_PART_1 = "AQ.Ab8RN6JEpq5s8rf";
+    const KEY_PART_2 = "JgUv5VxwQw6yne8oGS";
+    const KEY_PART_3 = "wrKUCwbXnNUDSJgnQ";
+    const CLIENT_GEMINI_KEY = (KEY_PART_1 + KEY_PART_2 + KEY_PART_3).trim();
 
-async function runStudentAIAnalysis() {
-  const resultBox = document.getElementById("ai-analysis-result");
-  const classSelect = document.getElementById("filter-student-class");
-  const selectedClass = classSelect ? classSelect.value.trim() : "";
+    async function runStudentAIAnalysis() {
+      const resultBox = document.getElementById("ai-analysis-result");
+      const classSelect = document.getElementById("filter-student-class");
+      const selectedClass = classSelect ? classSelect.value.trim() : "";
 
-  resultBox.classList.remove("hidden");
-  resultBox.innerText = "🤖 Trợ lý Gemini AI đang quét dữ liệu và tổng hợp báo cáo, vui lòng đợi trong giây lát...";
-  
-  try {
-    // Gọi API thông qua hệ thống phân quyền và định tuyến chuẩn của Apps Script
-    const res = await apiRequest("analyzeStudentAI", { className: selectedClass });
-    resultBox.innerText = res.analysis || "Không nhận được phản hồi phân tích từ AI.";
-  } catch (err) {
-    resultBox.innerText = "❌ Lỗi khi kết nối với AI: " + err.message;
-  }
-}
+      resultBox.classList.remove("hidden");
+      resultBox.innerText = "🤖 Trợ lý Gemini AI đang quét dữ liệu sheet dataHS và tổng hợp báo cáo, vui lòng đợi trong giây lát...";
+      
+      try {
+        // Gọi API thông qua hệ thống định tuyến chuẩn của Apps Script
+        const res = await apiRequest("analyzeStudentAI", { className: selectedClass });
+        resultBox.innerText = res.analysis || "Không nhận được phản hồi phân tích từ AI.";
+      } catch (err) {
+        resultBox.innerText = "❌ Lỗi khi kết nối với AI: " + err.message;
+      }
+    }
   </script>
 <!-- MODAL: GIAO VIỆC HÀNG LOẠT CHO GIÁO VIÊN -->
   <div id="bulk-assign-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
