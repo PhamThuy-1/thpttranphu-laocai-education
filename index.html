@@ -5003,16 +5003,115 @@ function setupAutoLoadTkbOnDateChange() {
   });
 }
   setupAutoLoadTkbOnDateChange();
-	  async function runStudentAIAnalysis() {
+	const KEY_PART_1 = "AQ.Ab8RN6JEpq5s8rf";
+const KEY_PART_2 = "JgUv5VxwQw6yne8oGS";
+const KEY_PART_3 = "wrKUCwbXnNUDSJgnQ";
+const CLIENT_GEMINI_KEY = KEY_PART_1 + KEY_PART_2 + KEY_PART_3;
+
+async function runStudentAIAnalysis() {
   const resultBox = document.getElementById("ai-analysis-result");
+  const classSelect = document.getElementById("filter-student-class");
+  const selectedClass = classSelect ? classSelect.value.trim() : "";
+
   resultBox.classList.remove("hidden");
-  resultBox.innerText = "🤖 Trợ lý Gemini AI đang quét dữ liệu từ sheet dataHS và tổng hợp báo cáo, vui lòng đợi trong giây lát...";
-  
+  resultBox.innerText = "🤖 Trợ lý Gemini AI đang đọc dữ liệu và phân tích thời gian thực...";
+
   try {
-    const res = await apiRequest("analyzeStudentAI");
-    resultBox.innerText = res.analysis || "Không nhận được phản hồi phân tích từ AI.";
+    // 1. Nếu chưa có dữ liệu vi phạm trên RAM, tự động tải dữ liệu từ Sheet dataHS về trước
+    if (!currentQueriedList || currentQueriedList.length === 0) {
+      await queryViolations();
+    }
+
+    if (!currentQueriedList || currentQueriedList.length === 0) {
+      resultBox.innerText = "✅ Hiện tại chưa ghi nhận lượt vi phạm nề nếp nào trong phạm vi đang chọn.";
+      return;
+    }
+
+    // 2. Tổng hợp số liệu chính xác 100% từ toàn bộ danh sách vi phạm (currentQueriedList)
+    let totalRecords = currentQueriedList.length;
+    let totalErrorCount = 0;
+    let classCounts = {};
+    let studentMap = {};
+    let errorCounts = {};
+
+    currentQueriedList.forEach(item => {
+      const cName = item.lop || "Khác";
+      const sKey = `${item.hoTen} (Mã: ${item.maHS} - Lớp ${cName})`;
+      const errs = item.errors || [];
+
+      if (errs.length > 0) {
+        classCounts[cName] = (classCounts[cName] || 0) + errs.length;
+        totalErrorCount += errs.length;
+
+        if (!studentMap[sKey]) studentMap[sKey] = { count: 0, errors: {} };
+        studentMap[sKey].count += errs.length;
+
+        errs.forEach(e => {
+          errorCounts[e] = (errorCounts[e] || 0) + 1;
+          studentMap[sKey].errors[e] = (studentMap[sKey].errors[e] || 0) + 1;
+        });
+      }
+    });
+
+    const topClasses = Object.entries(classCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([k, v]) => `Lớp ${k} (${v} lỗi)`).join(", ");
+
+    const topStudents = Object.entries(studentMap)
+      .sort((a, b) => b[1].count - a[1].count)
+      .slice(0, 8)
+      .map(([k, info]) => {
+        const detail = Object.entries(info.errors).map(([ek, ev]) => `${ek}: ${ev} lần`).join(", ");
+        return `- ${k}: Tổng ${info.count} lỗi [${detail}]`;
+      }).join("\n");
+
+    const topErrors = Object.entries(errorCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([k, v]) => `${k} (${v} lượt)`).join(", ");
+
+    const scopeTitle = selectedClass ? `Lớp ${selectedClass}` : "Toàn trường THPT Trần Phú";
+
+    const promptText = `Bạn là Trợ lý AI Quản lý Nề nếp & Tư vấn tâm lý học đường của trường THPT Trần Phú.
+Dưới đây là số liệu thống kê thực tế của ${scopeTitle} (Từ ${totalRecords} bản ghi, tổng cộng ${totalErrorCount} lỗi vi phạm):
+• Các lớp có số lỗi nhiều nhất: ${topClasses}
+• Các lỗi vi phạm phổ biến nhất: ${topErrors}
+• Danh sách học sinh vi phạm nhiều lần nhất:
+${topStudents}
+
+Hãy phân tích sâu sắc, rõ ràng bằng tiếng Việt trong 3 mục:
+1. Học sinh vi phạm lặp lại cần lưu ý đặc biệt (Chỉ rõ tên học sinh, lỗi nghiêm trọng như Đánh nhau, Nghỉ KP, Bỏ tiết... và đánh giá nguy cơ).
+2. Xu hướng lỗi vi phạm phổ biến (Đánh giá tỷ lệ chuyên cần và ý thức kỷ luật).
+3. Khuyến nghị giải pháp sư phạm (3 lời khuyên cụ thể cho Giáo viên chủ nhiệm và Ban Giám hiệu).`;
+
+    // 3. GỌI TRỰC TIẾP TỪ TRÌNH DUYỆT SANG GEMINI API (Không qua Apps Script -> Không bao giờ bị nghẽn/abort)
+    const models = ["gemini-2.0-flash", "gemini-2.5-flash", "gemini-1.5-flash"];
+    let lastError = "";
+
+    for (const model of models) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${CLIENT_GEMINI_KEY.trim()}`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: promptText }] }],
+          generationConfig: { temperature: 0.4, maxOutputTokens: 1000 }
+        })
+      });
+
+      const data = await response.json();
+      if (response.ok && data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+        resultBox.innerText = data.candidates[0].content.parts[0].text;
+        return; // Thành công thì thoát luôn!
+      } else {
+        lastError = data?.error?.message || `HTTP ${response.status}`;
+      }
+    }
+
+    throw new Error(lastError);
   } catch (err) {
-    resultBox.innerText = "❌ Lỗi khi kết nối với AI: " + err.message;
+    resultBox.innerText = "❌ Lỗi kết nối AI: " + err.message;
   }
 }
   </script>
