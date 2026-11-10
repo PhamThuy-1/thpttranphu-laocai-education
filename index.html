@@ -5087,40 +5087,74 @@ ${topStudentsList.length > 0 ? topStudentsList.join('\n') : '• Hiện chưa gh
 - Đối với học sinh vi phạm lặp lại từ 3 lần trở lên: Giáo viên chủ nhiệm cần gặp gỡ riêng, nắm bắt tâm lý lứa tuổi và thông báo trực tiếp cho phụ huynh phối hợp giáo dục.
 - Đối với nền nếp chung: Tăng cường công tác kiểm tra đầu giờ, phát huy vai trò của cờ đỏ và Đoàn trường trong việc nhắc nhở tác phong.
 - Ban Giám hiệu theo sát các lớp có biến động nề nếp để đưa ra chỉ đạo kịp thời, chuyển từ "xử lý hậu quả" sang "phòng ngừa chủ động".`;
+
   try {
       if (typeof KEYAI === 'undefined' || !KEYAI) {
-        throw new Error("Chưa cấu hình API Key (KEYAI)");
+          throw new Error("Chưa cấu hình API Key (KEYAI)");
       }
-
-      // Nạp động thư viện GoogleGenAI khi người dùng bấm nút (không gây lỗi thẻ <script>)
-      const { GoogleGenAI } = await import("https://esm.run/@google/genai");
-      const ai = new GoogleGenAI({ apiKey: KEYAI });
 
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("AI Request Timeout")), 10000)
+          setTimeout(() => reject(new Error("AI Request Timeout")), 10000)
       );
 
-      console.log("3.1")
-      const apiCallPromise = ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: promptText,
-        config: {
-          temperature: 0.4,
-          maxOutputTokens: 1000
-        }
+      console.log("3.0");
+
+      const apiCallPromise = fetch(
+          "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+          {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "x-goog-api-key": KEYAI
+              },
+              body: JSON.stringify({
+                  contents: [
+                      {
+                          role: "user",
+                          parts: [
+                              { text: promptText }
+                          ]
+                      }
+                  ],
+                  generationConfig: {
+                      temperature: 0.4,
+                      maxOutputTokens: 1000
+                  }
+              })
+          }
+      ).then(async response => {
+          const data = await response.json();
+
+          if (!response.ok) {
+              throw new Error(
+                  data.error?.message || "Gemini API Error"
+              );
+          }
+
+          return data.candidates?.[0]?.content?.parts
+              ?.map(part => part.text || "")
+              .join("") || null;
       });
 
-      const response = await Promise.race([apiCallPromise, timeoutPromise]);
+      const response = await Promise.race([
+          apiCallPromise,
+          timeoutPromise
+      ]);
 
-      if (response && response.text) {
-        resultBox.innerText = response.text;
+      if (response) {
+          resultBox.innerText = response;
       } else {
-        resultBox.innerText = fallbackReport;
+          resultBox.innerText = fallbackReport;
       }
-    } catch (err) {
-      console.warn("Lỗi kết nối AI thực tế, kích hoạt hệ thống dự phòng:", err.message);
+
+  } catch (err) {
+      console.warn(
+          "Lỗi kết nối AI thực tế, kích hoạt hệ thống dự phòng:",
+          err.message
+      );
+
       resultBox.innerText = fallbackReport;
-    }
+  }
 }
 </script>
 <!-- MODAL: GIAO VIỆC HÀNG LOẠT CHO GIÁO VIÊN -->
