@@ -5088,7 +5088,7 @@ ${topStudentsList.length > 0 ? topStudentsList.join('\n') : '• Hiện chưa gh
 
   try {
     // 3. GỌI THỨC THỜI SANG GOOGLE GEMINI API (Dùng model gemini-2.0-flash)
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${CLIENT_GEMINI_KEY}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${CLIENT_GEMINI_KEY}`;
     
     // Đặt thời gian chờ tối đa 10 giây cho AI thật, nếu quá 10s tự động chuyển sang dự phòng
     const controller = new AbortController();
