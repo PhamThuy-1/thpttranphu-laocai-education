@@ -5004,9 +5004,9 @@ function setupAutoLoadTkbOnDateChange() {
 }
 setupAutoLoadTkbOnDateChange();
 
-const KEYAI = new TextDecoder().decode(Uint8Array.from(atob("QVEuQWI4Uk42TC1UeUdGLVRZT0x0RVJaMUVDUHg2bV9hcG16UjVhRTVZaWlOb25ZZXpLalE=");, (char) => char.charCodeAt(0)));
-import { GoogleGenAI } from "https://esm.run/@google/genai";
-import { GoogleGenAI } from "https://esm.run/@google/genai";
+const KEYAI = new TextDecoder().decode(
+  Uint8Array.from(atob("QVEuQWI4Uk42TC1UeUdGLVRZT0x0RVJaMUVDUHg2bV9hcG16UjVhRTVZaWlOb25ZZXpLalE="), (char) => char.charCodeAt(0))
+);
 
 async function runStudentAIAnalysis() {
   const resultBox = document.getElementById("ai-analysis-result");
@@ -5087,41 +5087,39 @@ ${topStudentsList.length > 0 ? topStudentsList.join('\n') : '• Hiện chưa gh
 - Đối với học sinh vi phạm lặp lại từ 3 lần trở lên: Giáo viên chủ nhiệm cần gặp gỡ riêng, nắm bắt tâm lý lứa tuổi và thông báo trực tiếp cho phụ huynh phối hợp giáo dục.
 - Đối với nền nếp chung: Tăng cường công tác kiểm tra đầu giờ, phát huy vai trò của cờ đỏ và Đoàn trường trong việc nhắc nhở tác phong.
 - Ban Giám hiệu theo sát các lớp có biến động nề nếp để đưa ra chỉ đạo kịp thời, chuyển từ "xử lý hậu quả" sang "phòng ngừa chủ động".`;
-
   try {
-    // Kiểm tra xem biến KEYAI đã được định nghĩa chưa
-    if (typeof KEYAI === 'undefined' || !KEYAI) {
-      throw new Error("Chưa cấu hình API Key (KEYAI)");
-    }
-
-    const ai = new GoogleGenAI({ apiKey: KEYAI });
-
-    // Sử dụng AbortController để tạo timeout 10 giây cho SDK gọi API
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("AI Request Timeout")), 10000)
-    );
-
-    const apiCallPromise = ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: promptText,
-      config: {
-        temperature: 0.4,
-        maxOutputTokens: 1000
+      if (typeof KEYAI === 'undefined' || !KEYAI) {
+        throw new Error("Chưa cấu hình API Key (KEYAI)");
       }
-    });
 
-    const response = await Promise.race([apiCallPromise, timeoutPromise]);
+      // Nạp động thư viện GoogleGenAI khi người dùng bấm nút (không gây lỗi thẻ <script>)
+      const { GoogleGenAI } = await import("https://esm.run/@google/genai");
+      const ai = new GoogleGenAI({ apiKey: KEYAI });
 
-    if (response && response.text) {
-      resultBox.innerText = response.text;
-    } else {
-      console.warn("AI trả về phản hồi trống, dùng bản dự phòng.");
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("AI Request Timeout")), 10000)
+      );
+
+      const apiCallPromise = ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: promptText,
+        config: {
+          temperature: 0.4,
+          maxOutputTokens: 1000
+        }
+      });
+
+      const response = await Promise.race([apiCallPromise, timeoutPromise]);
+
+      if (response && response.text) {
+        resultBox.innerText = response.text;
+      } else {
+        resultBox.innerText = fallbackReport;
+      }
+    } catch (err) {
+      console.warn("Lỗi kết nối AI thực tế, kích hoạt hệ thống dự phòng:", err.message);
       resultBox.innerText = fallbackReport;
     }
-  } catch (err) {
-    console.warn("Lỗi kết nối AI thực tế, kích hoạt hệ thống dự phòng:", err.message);
-    resultBox.innerText = fallbackReport;
-  }
 }
 </script>
 <!-- MODAL: GIAO VIỆC HÀNG LOẠT CHO GIÁO VIÊN -->
