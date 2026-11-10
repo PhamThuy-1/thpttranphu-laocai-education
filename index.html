@@ -5087,74 +5087,90 @@ ${topStudentsList.length > 0 ? topStudentsList.join('\n') : '• Hiện chưa gh
 - Đối với học sinh vi phạm lặp lại từ 3 lần trở lên: Giáo viên chủ nhiệm cần gặp gỡ riêng, nắm bắt tâm lý lứa tuổi và thông báo trực tiếp cho phụ huynh phối hợp giáo dục.
 - Đối với nền nếp chung: Tăng cường công tác kiểm tra đầu giờ, phát huy vai trò của cờ đỏ và Đoàn trường trong việc nhắc nhở tác phong.
 - Ban Giám hiệu theo sát các lớp có biến động nề nếp để đưa ra chỉ đạo kịp thời, chuyển từ "xử lý hậu quả" sang "phòng ngừa chủ động".`;
-
   try {
-      if (typeof KEYAI === 'undefined' || !KEYAI) {
-          throw new Error("Chưa cấu hình API Key (KEYAI)");
-      }
+        if (typeof KEYAI === 'undefined' || !KEYAI) {
+            throw new Error("Chưa cấu hình API Key (KEYAI)");
+        }
 
-      const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("AI Request Timeout")), 60000)
-      );
+        console.log("3.0");
 
-      console.log("3.0");
+        // Hàm hỗ trợ gọi API có cơ chế retry tự động khi gặp lỗi 503 hoặc timeout
+        async function fetchWithRetry(url, options, retries = 3, delay = 2000) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 60000);
 
-      const apiCallPromise = fetch(
-          "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
-          {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/json",
-                  "x-goog-api-key": KEYAI
-              },
-              body: JSON.stringify({
-                  contents: [
-                      {
-                          role: "user",
-                          parts: [
-                              { text: promptText }
-                          ]
-                      }
-                  ],
-                  generationConfig: {
-                      temperature: 0.4,
-                      maxOutputTokens: 1000
-                  }
-              })
-          }
-      ).then(async response => {
-          const data = await response.json();
+                    const response = await fetch(url, {
+                        ...options,
+                        signal: controller.signal
+                    });
 
-          if (!response.ok) {
-              throw new Error(
-                  data.error?.message || "Gemini API Error"
-              );
-          }
+                    clearTimeout(timeoutId);
+                    const data = await response.json();
 
-          return data.candidates?.[0]?.content?.parts
-              ?.map(part => part.text || "")
-              .join("") || null;
-      });
+                    if (!response.ok) {
+                        // Nếu lỗi 503 (quá tải), cho phép thử lại
+                        if (response.status === 503 && i < retries - 1) {
+                            console.warn(`Model quá tải (503), đang thử lại lần ${i + 2}...`);
+                            await new Promise(res => setTimeout(res, delay * (i + 1)));
+                            continue;
+                        }
+                        throw new Error(data.error?.message || `Gemini API Error: ${response.status}`);
+                    }
 
-      const response = await Promise.race([
-          apiCallPromise,
-          timeoutPromise
-      ]);
+                    return data.candidates?.[0]?.content?.parts
+                        ?.map(part => part.text || "")
+                        .join("") || null;
+                } catch (err) {
+                    if (err.name === 'AbortError') {
+                        throw new Error("AI Request Timeout");
+                    }
+                    if (i === retries - 1) throw err;
+                    await new Promise(res => setTimeout(res, delay));
+                }
+            }
+        }
 
-      if (response) {
-          resultBox.innerText = response;
-      } else {
-          resultBox.innerText = fallbackReport;
-      }
+        // Đã đổi sang model gemini-3.1-flash-lite (hoặc bạn có thể đổi thành gemini-2.5-flash)
+        const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent";
 
-  } catch (err) {
-      console.warn(
-          "Lỗi kết nối AI thực tế, kích hoạt hệ thống dự phòng:",
-          err.message
-      );
+        const response = await fetchWithRetry(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "x-goog-api-key": KEYAI
+            },
+            body: JSON.stringify({
+                contents: [
+                    {
+                        role: "user",
+                        parts: [
+                            { text: promptText }
+                        ]
+                    }
+                ],
+                generationConfig: {
+                    temperature: 0.4,
+                    maxOutputTokens: 1000
+                }
+            })
+        });
 
-      resultBox.innerText = fallbackReport;
-  }
+        if (response) {
+            resultBox.innerText = response;
+        } else {
+            resultBox.innerText = fallbackReport;
+        }
+
+    } catch (err) {
+        console.warn(
+            "Lỗi kết nối AI thực tế, kích hoạt hệ thống dự phòng:",
+            err.message
+        );
+
+        resultBox.innerText = fallbackReport;
+    }
 }
 </script>
 <!-- MODAL: GIAO VIỆC HÀNG LOẠT CHO GIÁO VIÊN -->
