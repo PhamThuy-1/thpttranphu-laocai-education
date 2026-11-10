@@ -5094,7 +5094,7 @@ ${topStudentsList.length > 0 ? topStudentsList.join('\n') : '• Hiện chưa gh
       }
 
       const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("AI Request Timeout")), 10000)
+          setTimeout(() => reject(new Error("AI Request Timeout")), 60000)
       );
 
       console.log("3.0");
