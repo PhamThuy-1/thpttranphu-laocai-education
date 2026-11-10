@@ -5134,7 +5134,7 @@ ${topStudentsList.length > 0 ? topStudentsList.join('\n') : '• Hiện chưa gh
         }
 
         // Đã đổi sang model gemini-3.1-flash-lite (hoặc bạn có thể đổi thành gemini-2.5-flash)
-        const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent";
+        const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent";
 
         const response = await fetchWithRetry(apiUrl, {
             method: "POST",
