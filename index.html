@@ -1348,7 +1348,7 @@
   </div>
   <script>
     // --- CẤU HÌNH API GOOGLE APPS SCRIPT ---
-    const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbwLlpU_KNQTS-iTc7K24b4TCHhVhYCBmPUprLc6bOVnqlqZSrI4HFelmJvQI0EespZX3A/exec";
+    const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbxr4WczLF7HLEKxOyiLFJCju1JSMwCwdHMMWavG7YbGaOhDSdkXTFPeZiuqcUFVyYK5kQ/exec";
     const GOOGLE_CLIENT_ID = "575102440654-fvv1hcq0p7buoh4ov3rgjk4p56o2d3bk.apps.googleusercontent.com";
     let appData = {
       staff: [],
@@ -5004,18 +5004,17 @@ function setupAutoLoadTkbOnDateChange() {
   });
 }
 setupAutoLoadTkbOnDateChange();
-function runStudentAIAnalysis() {
+async function runStudentAIAnalysis() {
   const resultBox = document.getElementById("ai-analysis-result");
   const classSelect = document.getElementById("filter-student-class");
   const selectedClass = classSelect ? classSelect.value.trim() : "";
 
   if (!resultBox) return;
 
-  // Hiển thị trạng thái đang tải
   resultBox.classList.remove("hidden");
-  resultBox.innerText = "🤖 Trợ lý Gemini AI đang quét dữ liệu sheet và phân tích...";
+  resultBox.innerText = "🤖 Trợ lý Gemini AI đang quét dữ liệu sheet và phân tích thời gian thực...";
 
-  // 1. Gom dữ liệu thống kê từ bảng/RAM của bạn
+  // 1. Gom dữ liệu thống kê từ RAM của trình duyệt
   let totalRecords = (typeof currentQueriedList !== 'undefined' && currentQueriedList) ? currentQueriedList.length : 0;
   let totalErrorCount = 0;
   let studentMap = {};
@@ -5056,20 +5055,20 @@ function runStudentAIAnalysis() {
     topErrorsList: topErrorsList
   };
 
-  // 2. Gọi sang Backend của Google Apps Script (Code.gs)
-  google.script.run
-    .withSuccessHandler(function(response) {
-      if (response && response.success) {
-        // Đã có thư viện marked.js thì dùng marked.parse, không thì hiển thị text thuần có xuống dòng
-        resultBox.innerHTML = typeof marked !== 'undefined' ? marked.parse(response.report) : response.report;
-      } else {
-        resultBox.innerText = "⚠️ Lỗi phân tích từ AI: " + (response?.error || "Không rõ nguyên nhân");
-      }
-    })
-    .withFailureHandler(function(err) {
-      resultBox.innerText = "❌ Lỗi kết nối đến Server: " + err.message;
-    })
-    .analyzeStudentViolations(payloadData);
+  try {
+    // 2. Sử dụng đúng hàm apiRequest chuẩn của hệ thống để gọi sang GAS Backend
+    const res = await apiRequest("AnalyzeStudentViolations", payloadData);
+
+    if (res && res.success && res.report) {
+      resultBox.innerHTML = typeof marked !== 'undefined' ? marked.parse(res.report) : res.report;
+    } else {
+      resultBox.innerText = "⚠️ Lỗi phân tích từ AI: " + (res?.error || "Không rõ nguyên nhân");
+    }
+
+  } catch (err) {
+    console.error("Lỗi gọi AI Analysis:", err);
+    resultBox.innerText = "❌ Lỗi kết nối khi gọi trợ lý AI: " + err.message;
+  }
 }
 </script>
 <!-- MODAL: GIAO VIỆC HÀNG LOẠT CHO GIÁO VIÊN -->
