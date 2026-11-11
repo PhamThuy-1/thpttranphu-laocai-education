@@ -1348,7 +1348,7 @@
   </div>
   <script>
     // --- CẤU HÌNH API GOOGLE APPS SCRIPT ---
-    const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbybnIjmwwZB9UYtRgVCxP6nzcthGez8dEyH9xmv9xS-TRUNAO8HUoY3zo4NOXCIS_20Dg/exec";
+    const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbw0-pCPHALIRBeOPNbdhnyQlQkzjfb2yk0qxJGY7SAd5G0kMliuLb2pZHCSdB49Mztr4w/exec";
     const GOOGLE_CLIENT_ID = "575102440654-fvv1hcq0p7buoh4ov3rgjk4p56o2d3bk.apps.googleusercontent.com";
     let appData = {
       staff: [],
@@ -5076,7 +5076,7 @@ async function runStudentAIAnalysis() {
     };
 
     // 3. Gửi request thông qua hàm apiRequest chuẩn của dự án
-    const res = await apiRequest("analyzeStudentAI", payloadData);
+    const res = await apiRequest("AnalyzeStudentViolations", payloadData);
 
     if (res && res.success && res.analysis) {
       // Hiển thị kết quả bằng marked để format Markdown đẹp đẽ
