@@ -1348,7 +1348,7 @@
   </div>
   <script>
     // --- CẤU HÌNH API GOOGLE APPS SCRIPT ---
-    const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbyUBao_J5d_Hy8z8q6YnhnCuu2d96bauku70vPDzH2bpk8T-DwUn1FFqHmBMee6_bmUwA/exec";
+    const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbybnIjmwwZB9UYtRgVCxP6nzcthGez8dEyH9xmv9xS-TRUNAO8HUoY3zo4NOXCIS_20Dg/exec";
     const GOOGLE_CLIENT_ID = "575102440654-fvv1hcq0p7buoh4ov3rgjk4p56o2d3bk.apps.googleusercontent.com";
     let appData = {
       staff: [],
@@ -5012,62 +5012,86 @@ async function runStudentAIAnalysis() {
   if (!resultBox) return;
 
   resultBox.classList.remove("hidden");
-  resultBox.innerText = "🤖 Trợ lý Gemini AI đang quét dữ liệu sheet và phân tích thời gian thực...";
+  resultBox.innerHTML = "🤖 <b>Trợ lý Gemini AI</b> đang quét dữ liệu sheet và phân tích thời gian thực...";
 
-  // 1. Gom dữ liệu thống kê từ RAM của trình duyệt
-  let totalRecords = (typeof currentQueriedList !== 'undefined' && currentQueriedList) ? currentQueriedList.length : 0;
-  let totalErrorCount = 0;
-  let studentMap = {};
-  let errorCounts = {};
+  try {
+    // 1. Đảm bảo đã có dữ liệu trên RAM
+    if (typeof currentQueriedList === 'undefined' || !currentQueriedList || currentQueriedList.length === 0) {
+      if (typeof queryViolations === 'function') {
+        await queryViolations();
+      }
+    }
 
-  if (typeof currentQueriedList !== 'undefined' && currentQueriedList && totalRecords > 0) {
-    currentQueriedList.forEach(item => {
+    if (typeof currentQueriedList === 'undefined' || !currentQueriedList || currentQueriedList.length === 0) {
+      resultBox.innerHTML = "✅ Hiện tại chưa ghi nhận lượt vi phạm nề nếp nào trong phạm vi đang chọn.";
+      return;
+    }
+
+    // 2. Lọc theo lớp nếu có chọn
+    let filteredList = currentQueriedList;
+    if (selectedClass) {
+      filteredList = currentQueriedList.filter(item =>
+        (item.lop || "").toLowerCase() === selectedClass.toLowerCase()
+      );
+    }
+
+    let totalRecords = filteredList.length;
+    let totalErrorCount = 0;
+    let classCounts = {};
+    let studentMap = {};
+    let errorCounts = {};
+
+    filteredList.forEach(item => {
       const cName = item.lop || "Khác";
-      if (selectedClass && cName.toLowerCase() !== selectedClass.toLowerCase()) return;
-
-      const sKey = `${item.hoTen} (Lớp ${cName})`;
+      const sKey = `${item.hoTen} (Mã: ${item.maHS || 'N/A'} - Lớp ${cName})`;
       const errs = item.errors || [];
+
       if (errs.length > 0) {
+        classCounts[cName] = (classCounts[cName] || 0) + errs.length;
         totalErrorCount += errs.length;
-        studentMap[sKey] = (studentMap[sKey] || 0) + errs.length;
+
+        if (!studentMap[sKey]) studentMap[sKey] = { count: 0, errors: {} };
+        studentMap[sKey].count += errs.length;
+
         errs.forEach(e => {
           errorCounts[e] = (errorCounts[e] || 0) + 1;
+          studentMap[sKey].errors[e] = (studentMap[sKey].errors[e] || 0) + 1;
         });
       }
     });
-  }
 
-  const topStudentsList = Object.entries(studentMap)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5)
-    .map(([name, count]) => ({ name, count }));
+    if (totalErrorCount === 0) {
+      resultBox.innerHTML = "✅ Phạm vi này không có học sinh nào phát sinh lỗi vi phạm.";
+      return;
+    }
 
-  const topErrorsList = Object.entries(errorCounts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 3)
-    .map(([name, count]) => ({ name, count }));
+    // Đóng gói dữ liệu chuẩn bị gửi lên Backend
+    const payloadData = {
+      selectedClass: selectedClass,
+      totalRecords: totalRecords,
+      totalErrorCount: totalErrorCount,
+      classCounts: classCounts,
+      studentMap: studentMap,
+      errorCounts: errorCounts
+    };
 
-  const payloadData = {
-    selectedClass: selectedClass,
-    totalRecords: totalRecords,
-    totalErrorCount: totalErrorCount,
-    topStudentsList: topStudentsList,
-    topErrorsList: topErrorsList
-  };
+    // 3. Gửi request thông qua hàm apiRequest chuẩn của dự án
+    const res = await apiRequest("analyzeStudentAI", payloadData);
 
-  try {
-    // 2. Sử dụng đúng hàm apiRequest chuẩn của hệ thống để gọi sang GAS Backend
-    const res = await apiRequest("AnalyzeStudentViolations", payloadData);
-
-    if (res && res.success && res.report) {
-      resultBox.innerHTML = marked.parse(res.report);
+    if (res && res.success && res.analysis) {
+      // Hiển thị kết quả bằng marked để format Markdown đẹp đẽ
+      if (typeof marked !== 'undefined') {
+        resultBox.innerHTML = marked.parse(res.analysis);
+      } else {
+        resultBox.innerText = res.analysis;
+      }
     } else {
-      resultBox.innerText = "⚠️ Lỗi phân tích từ AI: " + (res?.error || "Không rõ nguyên nhân");
+      resultBox.innerHTML = "⚠️ Lỗi phân tích từ AI: " + (res?.error || "Không rõ nguyên nhân");
     }
 
   } catch (err) {
     console.error("Lỗi gọi AI Analysis:", err);
-    resultBox.innerText = "❌ Lỗi kết nối khi gọi trợ lý AI: " + err.message;
+    resultBox.innerHTML = "❌ Lỗi kết nối khi gọi trợ lý AI: " + err.message;
   }
 }
 </script>

@@ -1,5 +1,5 @@
 const SPREADSHEET_ID = '1qJyIXs80N_ds-lqsKoWYLgY63l86vnPZp7UX1-6Hg54';
-const API_READ_ACTIONS_ = ['getInitialData', 'getData', 'getStudentViolations', 'getDiscipline', 'getActionPlan', 'getActionPlanFile', 'LayLichDayTheoNgay', 'getSubstituteSuggestions','GoiYDayBu','downloadKpiEvidence','analyzeStudentAI'];
+const API_READ_ACTIONS_ = ['getInitialData', 'getData', 'getStudentViolations', 'getDiscipline', 'getActionPlan', 'getActionPlanFile', 'LayLichDayTheoNgay', 'getSubstituteSuggestions','GoiYDayBu','downloadKpiEvidence','AnalyzeStudentViolations'];
 let cachedSS_ = null;
 function getSS_() {
   if (!cachedSS_) {
@@ -122,8 +122,8 @@ function routeApiRequest_(data) {
           busySubList: sugRes.busySubList || []
         };
         break;
-        case 'analyzeStudentAI':
-        result = analyzeStudentViolationsAI_(identity, data);
+        case 'AnalyzeStudentViolations':
+        result = AnalyzeStudentViolations(identity, data);
         break;
       case 'uploadActionPlan':
         result = uploadActionPlan_(data);
@@ -220,7 +220,7 @@ function authorizeAction_(identity, action) {
     getSubstituteSuggestions: 'leave.create',
     downloadKpiEvidence: 'kpi.read.self',
     GoiYDayBu: 'leave.assign',
-    analyzeStudentAI: 'students.read.class'
+    AnalyzeStudentViolations: 'students.read.class'
   };
   const permission = required[action];
   if (!permission || permissions.indexOf(permission) === -1) {
@@ -1408,5 +1408,151 @@ function GoiYDayBu(teacherACode, teacherBName, leaveDate, targetClass, targetSub
   } catch (err) {
     Logger.log("Lỗi GoiYDayBu: " + err.message);
     return "Chưa dạy bù";
+  }
+}
+function AnalyzeStudentViolations(data) {
+  try {
+    // Thay KEYAI của bạn vào đây hoặc lấy từ PropertiesService nếu bạn lưu bảo mật
+    const apiKey = PropertiesService.getScriptProperties().getProperty("KEYAI") || "ĐIỀN_API_KEY_GEMINI_VÀO_ĐÂY_NẾU_CHƯA_SET";
+    if (!apiKey || apiKey.includes("ĐIỀN_API_KEY")) {
+      throw new Error("Chưa cấu hình Gemini API Key (KEYAI)");
+    }
+
+    const scopeTitle = data.selectedClass
+      ? "Lớp " + data.selectedClass
+      : "Toàn trường THPT Trần Phú";
+
+    const totalRecords = Number(data.totalRecords) || 0;
+    const totalErrorCount = Number(data.totalErrorCount) || 0;
+
+    const topStudentsList = (data.topStudentsList || [])
+      .map(x => `• ${x.name}: ${x.count} lần vi phạm`)
+      .join("\n");
+
+    const topErrorsList = (data.topErrorsList || [])
+      .map(x => `• ${x.name}: ${x.count} lượt`)
+      .join("\n");
+
+    // PROMPT CHO TRỢ LÝ GEMINI AI
+    const promptText = `
+Bạn là Trợ lý AI Quản lý Nề nếp và Tư vấn giáo dục
+của trường THPT Trần Phú.
+
+Dưới đây là thống kê dữ liệu thực tế của ${scopeTitle}:
+
+Tổng số bản ghi: ${totalRecords}
+Tổng số lỗi vi phạm: ${totalErrorCount}
+
+1. HỌC SINH VI PHẠM LẶP LẠI NHIỀU LẦN:
+${topStudentsList || "Không có"}
+
+2. CÁC LOẠI LỖI PHỔ BIẾN:
+${topErrorsList || "Không có"}
+
+Hãy viết báo cáo phân tích chuyên sâu, rõ ràng bằng tiếng Việt,
+gồm 3 mục:
+
+1. ĐÁNH GIÁ TỔNG QUAN
+- Đánh giá tình hình nền nếp.
+- Chỉ ra các trường hợp có số lần vi phạm cao cần được giáo viên xem xét.
+- Không tự ý kết luận học sinh có vấn đề tâm lý hoặc gắn nhãn học sinh.
+
+2. XU HƯỚNG VI PHẠM
+- Phân tích các nhóm lỗi phổ biến.
+- Nhận định về tác phong và chuyên cần dựa trên dữ liệu được cung cấp.
+- Không suy diễn những thông tin không có trong thống kê.
+
+3. GIẢI PHÁP VÀ KHUYẾN NGHỊ
+Đưa ra 3 giải pháp cụ thể dành cho:
+- Giáo viên chủ nhiệm.
+- Ban Giám hiệu.
+- Công tác phối hợp với phụ huynh.
+
+Văn phong chuyên nghiệp, khách quan, có tính sư phạm.
+Trình bày dễ đọc, sử dụng Markdown. - Đặc biệt lưu ý là ngắn gọn rõ ràng và tốn dưới 5000 token
+`;
+
+    // Cấu trúc Payload chuẩn cho Google Gemini API
+    const payload = {
+      contents: [
+        {
+          role: "user",
+          parts: [
+            { text: promptText }
+          ]
+        }
+      ],
+      generationConfig: {
+        temperature: 0.4,
+        maxOutputTokens: 10000
+      }
+    };
+
+    // Sử dụng model gemini-3.5-flash-lite và truyền key qua URL parameter để tránh lỗi mạng/CORS ngầm
+    const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=" + apiKey;
+
+    // GỌI API VÀ RETRY KHI GẶP LỖI TẠM THỜI (503, 429...)
+    let responseData = null;
+    let lastError = "";
+
+    for (let i = 0; i < 3; i++) {
+      try {
+        const response = UrlFetchApp.fetch(url, {
+          method: "post",
+          contentType: "application/json",
+          payload: JSON.stringify(payload),
+          muteHttpExceptions: true
+        });
+
+        const status = response.getResponseCode();
+        const body = JSON.parse(response.getContentText());
+
+        if (status >= 200 && status < 300) {
+          responseData = body;
+          break;
+        }
+
+        lastError = body.error?.message || "HTTP " + status;
+
+        // Chỉ retry nếu là lỗi quá tải (503) hoặc giới hạn tần suất (429) hoặc lỗi server tạm thời
+        if (![429, 500, 502, 503, 504].includes(status)) {
+          throw new Error(lastError);
+        }
+
+      } catch (err) {
+        lastError = err.message;
+        if (i === 2) {
+          throw err;
+        }
+      }
+
+      // Thời gian chờ tăng dần giữa các lần thử lại (1.5s, 3s)
+      Utilities.sleep(1500 * (i + 1));
+    }
+
+    if (!responseData) {
+      throw new Error(lastError || "Gemini không trả về dữ liệu");
+    }
+
+    // LẤY TEXT PHẢN HỒI TỪ CẤU TRÚC GEMINI CANDIDATES
+    const report = responseData.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+    if (!report) {
+      throw new Error("Gemini không tạo được nội dung báo cáo");
+    }
+
+    return {
+      success: true,
+      report: report,
+      model: responseData.modelVersion || "gemini-3.5-flash-lite"
+    };
+
+  } catch (error) {
+    console.error("Gemini Analysis Error:", error);
+
+    return {
+      success: false,
+      error: error.message
+    };
   }
 }
