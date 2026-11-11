@@ -1348,7 +1348,7 @@
   </div>
   <script>
     // --- CẤU HÌNH API GOOGLE APPS SCRIPT ---
-    const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbwX-nwah5ACf6WEmoaTb_pi1CbhAxcRUnnCLJa-doJEzcCAnGyJY0ZGz3PWvFDdYHP_/exec";
+    const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbwLlpU_KNQTS-iTc7K24b4TCHhVhYCBmPUprLc6bOVnqlqZSrI4HFelmJvQI0EespZX3A/exec";
     const GOOGLE_CLIENT_ID = "575102440654-fvv1hcq0p7buoh4ov3rgjk4p56o2d3bk.apps.googleusercontent.com";
     let appData = {
       staff: [],
@@ -5006,16 +5006,70 @@ function setupAutoLoadTkbOnDateChange() {
 setupAutoLoadTkbOnDateChange();
 function runStudentAIAnalysis() {
   const resultBox = document.getElementById("ai-analysis-result");
-  resultBox.innerText = "🤖 Trợ lý Gemini AI đang phân tích...";
+  const classSelect = document.getElementById("filter-student-class");
+  const selectedClass = classSelect ? classSelect.value.trim() : "";
 
+  if (!resultBox) return;
+
+  // Hiển thị trạng thái đang tải
+  resultBox.classList.remove("hidden");
+  resultBox.innerText = "🤖 Trợ lý Gemini AI đang quét dữ liệu sheet và phân tích...";
+
+  // 1. Gom dữ liệu thống kê từ bảng/RAM của bạn
+  let totalRecords = (typeof currentQueriedList !== 'undefined' && currentQueriedList) ? currentQueriedList.length : 0;
+  let totalErrorCount = 0;
+  let studentMap = {};
+  let errorCounts = {};
+
+  if (typeof currentQueriedList !== 'undefined' && currentQueriedList && totalRecords > 0) {
+    currentQueriedList.forEach(item => {
+      const cName = item.lop || "Khác";
+      if (selectedClass && cName.toLowerCase() !== selectedClass.toLowerCase()) return;
+
+      const sKey = `${item.hoTen} (Lớp ${cName})`;
+      const errs = item.errors || [];
+      if (errs.length > 0) {
+        totalErrorCount += errs.length;
+        studentMap[sKey] = (studentMap[sKey] || 0) + errs.length;
+        errs.forEach(e => {
+          errorCounts[e] = (errorCounts[e] || 0) + 1;
+        });
+      }
+    });
+  }
+
+  const topStudentsList = Object.entries(studentMap)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([name, count]) => ({ name, count }));
+
+  const topErrorsList = Object.entries(errorCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([name, count]) => ({ name, count }));
+
+  const payloadData = {
+    selectedClass: selectedClass,
+    totalRecords: totalRecords,
+    totalErrorCount: totalErrorCount,
+    topStudentsList: topStudentsList,
+    topErrorsList: topErrorsList
+  };
+
+  // 2. Gọi sang Backend của Google Apps Script (Code.gs)
   google.script.run
-    .withSuccessHandler(function(responseHtml) {
-      resultBox.innerHTML = marked.parse(responseHtml);
+    .withSuccessHandler(function(response) {
+      if (response && response.success) {
+        // Đã có thư viện marked.js thì dùng marked.parse, không thì hiển thị text thuần có xuống dòng
+        resultBox.innerHTML = typeof marked !== 'undefined' ? marked.parse(response.report) : response.report;
+      } else {
+        resultBox.innerText = "⚠️ Lỗi phân tích từ AI: " + (response?.error || "Không rõ nguyên nhân");
+      }
     })
     .withFailureHandler(function(err) {
-      resultBox.innerText = "Lỗi: " + err.message;
+      resultBox.innerText = "❌ Lỗi kết nối đến Server: " + err.message;
     })
-    .callGeminiFromServer(promptText);
+    .analyzeStudentViolations(payloadData);
 }
 </script>
 <!-- MODAL: GIAO VIỆC HÀNG LOẠT CHO GIÁO VIÊN -->
