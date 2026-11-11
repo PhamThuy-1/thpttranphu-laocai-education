@@ -5060,7 +5060,7 @@ async function runStudentAIAnalysis() {
     const res = await apiRequest("AnalyzeStudentViolations", payloadData);
 
     if (res && res.success && res.report) {
-      resultBox.innerHTML = typeof marked !== 'undefined' ? marked.parse(res.report) : res.report;
+      resultBox.innerHTML = marked.parse(res.report);
     } else {
       resultBox.innerText = "⚠️ Lỗi phân tích từ AI: " + (res?.error || "Không rõ nguyên nhân");
     }
