@@ -1025,6 +1025,7 @@
           </div>
         </div>
       </div>
+
       <div class="bg-white rounded-2xl border border-slate-200 p-2 flex items-center gap-2 shadow-sm">
         <button id="tab-btn-month" onclick="switchPlanTab('month')" class="flex-1 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm text-amber-700 bg-amber-50 border border-amber-200/60 shadow-sm transition flex items-center justify-center gap-2">
           <span>🗓️</span> Kế hoạch tháng
@@ -1033,97 +1034,121 @@
           <span>📆</span> Kế hoạch tuần
         </button>
       </div>
+
       <!-- NỘI DUNG TAB 1: KẾ HOẠCH THÁNG -->
       <div id="plan-month-content" class="space-y-4">
         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-          <div class="px-5 py-3.5 bg-slate-50/80 border-b border-slate-200 flex items-center justify-between">
-            <h3 class="text-xs sm:text-sm font-bold text-slate-800 uppercase tracking-wide">
-              Danh sách Kế hoạch theo tháng (Năm học 2026 - 2027)
-            </h3>
-            <span class="text-[11px] text-slate-500 font-medium">Định dạng văn bản: .pdf</span>
+          <div class="px-5 py-3.5 bg-slate-50/80 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 class="text-xs sm:text-sm font-bold text-slate-800 uppercase tracking-wide">
+                Danh sách Kế hoạch theo tháng (Năm học 2026 - 2027)
+              </h3>
+              <span class="text-[11px] text-slate-500 font-medium">Tự động lưu trữ vào thư mục Drive: <b>KH tháng</b> (.pdf)</span>
+            </div>
+            <!-- Nút Thêm Mới Kế Hoạch Tháng (Hiện cho BGH) -->
+            <button id="btn-add-month-plan" onclick="openUploadDocModal('month')" class="hidden px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold text-xs shadow-sm transition inline-flex items-center gap-1.5">
+              <span class="text-sm font-black">+</span> Thêm kế hoạch tháng
+            </button>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs sm:text-sm">
               <thead>
                 <tr class="bg-slate-100/70 text-slate-600 font-bold border-b border-slate-200 uppercase text-[11px]">
-                  <th class="py-3 px-4 w-16 text-center">STT</th>
-                  <th class="py-3 px-4">Thời gian</th>
-                  <th class="py-3 px-4">Tên tệp văn bản đính kèm</th>
-                  <th class="py-3 px-4">Cập nhật lần cuối</th>
-                  <th class="py-3 px-4 text-center w-64">Thao tác</th>
+                  <th class="py-3 px-4 w-14 text-center">STT</th>
+                  <th class="py-3 px-4 w-28">Tháng</th>
+                  <th class="py-3 px-4">Tên kế hoạch</th>
+                  <th class="py-3 px-4">Tệp đính kèm (.pdf)</th>
+                  <th class="py-3 px-4 w-40">Cập nhật lần cuối</th>
+                  <th class="py-3 px-4 text-center w-60">Thao tác</th>
                 </tr>
               </thead>
-              <tbody id="plan-month-table-body" class="divide-y divide-slate-100">
-              </tbody>
+              <tbody id="plan-month-table-body" class="divide-y divide-slate-100"></tbody>
             </table>
           </div>
         </div>
       </div>
+
       <!-- NỘI DUNG TAB 2: KẾ HOẠCH TUẦN -->
       <div id="plan-week-content" class="hidden space-y-4">
         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
           <div class="px-5 py-3.5 bg-slate-50/80 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
             <div>
               <h3 class="text-xs sm:text-sm font-bold text-slate-800 uppercase tracking-wide">
-                Danh sách Kế hoạch theo tuần
+                Danh sách Kế hoạch theo tuần (Năm học 2026 - 2027)
               </h3>
-              <p class="text-[11px] text-slate-500">Phân bố tuần lễ công tác năm học 2026 - 2027</p>
+              <p class="text-[11px] text-slate-500">Tự động lưu trữ vào thư mục Drive: <b>KH tuần</b> (.pdf)</p>
             </div>
-            <div class="flex items-center gap-1.5 text-xs font-semibold">
-              <span id="week-page-info" class="text-slate-500 mr-2">Trang 1 / 4</span>
-              <button onclick="changeWeekPage(-1)" id="btn-prev-week" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 disabled:opacity-40 transition">
-                ◀ Trước
+            <div class="flex flex-wrap items-center gap-2">
+              <!-- Nút Thêm Mới Kế Hoạch Tuần (Hiện cho BGH) -->
+              <button id="btn-add-week-plan" onclick="openUploadDocModal('week')" class="hidden px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold text-xs shadow-sm transition inline-flex items-center gap-1.5">
+                <span class="text-sm font-black">+</span> Thêm kế hoạch tuần
               </button>
-              <div id="week-page-numbers" class="flex gap-1"></div>
-              <button onclick="changeWeekPage(1)" id="btn-next-week" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-40 transition">
-                Sau ▶
-              </button>
+              <div class="flex items-center gap-1.5 text-xs font-semibold">
+                <span id="week-page-info" class="text-slate-500 mr-1">Trang 1 / 1</span>
+                <button onclick="changeWeekPage(-1)" id="btn-prev-week" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 disabled:opacity-40 transition">
+                  ◀ Trước
+                </button>
+                <div id="week-page-numbers" class="flex gap-1"></div>
+                <button onclick="changeWeekPage(1)" id="btn-next-week" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 disabled:opacity-40 transition">
+                  Sau ▶
+                </button>
+              </div>
             </div>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs sm:text-sm">
               <thead>
                 <tr class="bg-slate-100/70 text-slate-600 font-bold border-b border-slate-200 uppercase text-[11px]">
-                  <th class="py-3 px-4 w-16 text-center">STT</th>
-                  <th class="py-3 px-4">Tuần công tác</th>
+                  <th class="py-3 px-4 w-14 text-center">STT</th>
+                  <th class="py-3 px-4 w-28">Tuần</th>
+                  <th class="py-3 px-4">Tên kế hoạch</th>
                   <th class="py-3 px-4">Tệp đính kèm (.pdf)</th>
-                  <th class="py-3 px-4">Thời gian cập nhật</th>
-                  <th class="py-3 px-4 text-center w-64">Thao tác</th>
+                  <th class="py-3 px-4 w-40">Thời gian cập nhật</th>
+                  <th class="py-3 px-4 text-center w-60">Thao tác</th>
                 </tr>
               </thead>
-              <tbody id="plan-week-table-body" class="divide-y divide-slate-100">
-              </tbody>
+              <tbody id="plan-week-table-body" class="divide-y divide-slate-100"></tbody>
             </table>
           </div>
         </div>
       </div>
     </section>
   </main>
-  <!-- MODAL: UPLOAD TỆP .pdf  -->
+
+  <!-- MODAL: THÊM MỚI / CẬP NHẬT KẾ HOẠCH (.PDF) -->
   <div id="upload-doc-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden animate-fade-in">
       <div class="bg-amber-600 text-white px-5 py-4 flex items-center justify-between">
-        <h3 class="font-bold text-sm sm:text-base flex items-center gap-2">
-          <span>📤</span> Tải Lên Kế Hoạch .pdf
+        <h3 id="upload-modal-header" class="font-bold text-sm sm:text-base flex items-center gap-2">
+          <span>📤</span> Thêm Kế Hoạch Mới (.pdf)
         </h3>
         <button onclick="closeUploadDocModal()" class="text-white hover:text-amber-200 font-bold text-lg leading-none">✕</button>
       </div>
-      <div class="p-5 space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Mục kế hoạch áp dụng:</label>
-          <input type="text" id="upload-target-title" readonly class="w-full bg-slate-100 text-slate-700 font-bold text-xs p-2.5 rounded-xl border border-slate-200">
+      <div class="p-5 space-y-4 text-xs">
+        <div class="grid grid-cols-3 gap-3">
+          <div class="col-span-1">
+            <label id="upload-period-label" class="block font-bold text-slate-700 mb-1">Tháng:</label>
+            <input type="number" id="upload-period-num" min="1" max="52" required class="w-full bg-white text-indigo-700 font-extrabold text-sm p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none text-center">
+          </div>
+          <div class="col-span-2">
+            <label class="block font-bold text-slate-700 mb-1">Thư mục lưu trữ tự động:</label>
+            <input type="text" id="upload-folder-hint" readonly value="📁 Drive: KH tháng" class="w-full bg-slate-100 text-slate-600 font-semibold text-xs p-2.5 rounded-xl border border-slate-200">
+          </div>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Chọn tệp văn bản Word/PDF (.pdf):</label>
+          <label class="block font-bold text-slate-700 mb-1">Tên kế hoạch:</label>
+          <input type="text" id="upload-plan-title" placeholder="Nhập tên kế hoạch..." required class="w-full bg-white text-slate-800 font-semibold text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Chọn tệp văn bản (.pdf - Tối đa 10MB):</label>
           <input type="file" id="upload-file-input" accept=".pdf" class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 border border-slate-200 rounded-xl p-1 cursor-pointer">
-          <p class="text-[11px] text-slate-400 mt-1.5 italic">* Hệ thống chấp nhận tệp định dạng .pdf.</p>
         </div>
         <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
           <button onclick="closeUploadDocModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
             Hủy
           </button>
-          <button onclick="confirmUploadDocFile()" class="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-sm transition">
-            Lưu Kế Hoạch
+          <button id="btn-confirm-upload-doc" onclick="confirmUploadDocFile()" class="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-sm transition">
+            Lưu & Tải Lên Drive
           </button>
         </div>
       </div>
@@ -1500,22 +1525,38 @@
         contentMonth.classList.add('hidden');
       }
     }
-    function renderActionPlanModule() {
+   function renderActionPlanModule() {
+      // Hiển thị nút "+ Thêm kế hoạch tháng / tuần" nếu là BGH
+      const btnAddMonth = document.getElementById('btn-add-month-plan');
+      const btnAddWeek = document.getElementById('btn-add-week-plan');
+      if (btnAddMonth) btnAddMonth.classList.toggle('hidden', !isBGH());
+      if (btnAddWeek) btnAddWeek.classList.toggle('hidden', !isBGH());
+
       renderMonthPlanTable();
       renderWeekPlanTable();
     }
+
     function renderMonthPlanTable() {
       const tbody = document.getElementById('plan-month-table-body');
+      if (!tbody) return;
+      if (!monthPlanData || monthPlanData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">Chưa có kế hoạch tháng nào.</td></tr>`;
+        return;
+      }
       let html = '';
       monthPlanData.forEach((item, index) => {
+        const monthNum = item.periodNum || (String(item.title || '').match(/\d+/) || [''])[0] || (index + 1);
+        const monthBadge = `<span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 font-bold text-xs border border-amber-200">Tháng ${monthNum}</span>`;
         const fileDisplay = item.hasFile
-          ? `<span class="inline-flex items-center gap-1.5 font-semibold text-slate-800"><span class="text-blue-600 text-base">📘</span> ${item.fileName}</span>`
+          ? `<span class="inline-flex items-center gap-1.5 font-semibold text-slate-800"><span class="text-rose-600 text-base">📕</span> ${item.fileName}</span>`
           : `<span class="text-slate-400 italic">Chưa có tệp đính kèm</span>`;
+
         let actionsHtml = '';
         if (isBGH()) {
+          const safeTitle = String(item.title || '').replace(/'/g, "\\'");
           actionsHtml += `
-            <button onclick="openUploadDocModal('month', '${item.id}', '${item.title}')" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-bold text-xs shadow-sm transition mr-1.5 inline-flex items-center gap-1">
-              <span>+</span> ${item.hasFile ? 'Đổi tệp' : 'Thêm mới'}
+            <button onclick="openUploadDocModal('month', '${item.id}', '${safeTitle}', ${monthNum})" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-bold text-xs shadow-sm transition mr-1.5 inline-flex items-center gap-1">
+              <span>✏️</span> ${item.hasFile ? 'Đổi tệp' : 'Tải tệp'}
             </button>
           `;
         }
@@ -1527,58 +1568,74 @@
             <span>⬇</span> Tải xuống
           </button>
         `;
+
         html += `
           <tr class="hover:bg-amber-50/40 transition">
             <td class="py-3 px-4 text-center font-bold text-slate-400">${index + 1}</td>
-            <td class="py-3 px-4 font-bold text-slate-900">${item.title}</td>
+            <td class="py-3 px-4">${monthBadge}</td>
+            <td class="py-3 px-4 font-bold text-slate-900">${item.title || `Kế hoạch tháng ${monthNum}`}</td>
             <td class="py-3 px-4">${fileDisplay}</td>
-            <td class="py-3 px-4 text-slate-500">${item.updatedAt}</td>
+            <td class="py-3 px-4 text-slate-500 text-xs">${item.updatedAt || '--'}</td>
             <td class="py-3 px-4 text-center whitespace-nowrap">${actionsHtml}</td>
           </tr>
         `;
       });
       tbody.innerHTML = html;
     }
+
     function renderWeekPlanTable() {
       const tbody = document.getElementById('plan-week-table-body');
-	  const TOTAL_WEEK_PAGES = Math.ceil((weekPlanData ? weekPlanData.length : 0) / WEEKS_PER_PAGE) || 1;
-  	  if (currentWeekPage > TOTAL_WEEK_PAGES) currentWeekPage = TOTAL_WEEK_PAGES;
+      if (!tbody) return;
+      const TOTAL_WEEK_PAGES = Math.ceil((weekPlanData ? weekPlanData.length : 0) / WEEKS_PER_PAGE) || 1;
+      if (currentWeekPage > TOTAL_WEEK_PAGES) currentWeekPage = TOTAL_WEEK_PAGES;
       const startIdx = (currentWeekPage - 1) * WEEKS_PER_PAGE;
       const endIdx = startIdx + WEEKS_PER_PAGE;
-      const pageItems = weekPlanData.slice(startIdx, endIdx);
-      let html = '';
-      pageItems.forEach((item, index) => {
-        const globalStt = startIdx + index + 1;
-        const fileDisplay = item.hasFile
-          ? `<span class="inline-flex items-center gap-1.5 font-semibold text-slate-800"><span class="text-blue-600 text-base">📘</span> ${item.fileName}</span>`
-          : `<span class="text-slate-400 italic">Chưa có tệp đính kèm</span>`;
-        let actionsHtml = '';
-        if (isBGH()) {
+      const pageItems = (weekPlanData || []).slice(startIdx, endIdx);
+
+      if (pageItems.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">Chưa có kế hoạch tuần nào.</td></tr>`;
+      } else {
+        let html = '';
+        pageItems.forEach((item, index) => {
+          const globalStt = startIdx + index + 1;
+          const weekNum = item.periodNum || item.weekNum || (String(item.title || '').match(/\d+/) || [''])[0] || globalStt;
+          const weekBadge = `<span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 font-bold text-xs border border-indigo-200">Tuần ${weekNum}</span>`;
+          const fileDisplay = item.hasFile
+            ? `<span class="inline-flex items-center gap-1.5 font-semibold text-slate-800"><span class="text-rose-600 text-base">📕</span> ${item.fileName}</span>`
+            : `<span class="text-slate-400 italic">Chưa có tệp đính kèm</span>`;
+
+          let actionsHtml = '';
+          if (isBGH()) {
+            const safeTitle = String(item.title || '').replace(/'/g, "\\'");
+            actionsHtml += `
+              <button onclick="openUploadDocModal('week', '${item.id}', '${safeTitle}', ${weekNum})" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-bold text-xs shadow-sm transition mr-1.5 inline-flex items-center gap-1">
+                <span>✏️</span> ${item.hasFile ? 'Đổi tệp' : 'Tải tệp'}
+              </button>
+            `;
+          }
           actionsHtml += `
-            <button onclick="openUploadDocModal('week', '${item.id}', '${item.title}')" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-bold text-xs shadow-sm transition mr-1.5 inline-flex items-center gap-1">
-              <span>+</span> ${item.hasFile ? 'Đổi tệp' : 'Thêm mới'}
+            <button onclick="viewDocPlan('week', '${item.id}')" ${!item.hasFile ? 'disabled' : ''} class="px-2.5 py-1.5 ${item.hasFile ? 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-300 cursor-not-allowed'} rounded-lg font-bold text-xs border border-indigo-200/50 transition mr-1.5 inline-flex items-center gap-1">
+              <span>👁️</span> Xem
+            </button>
+            <button onclick="downloadDocPlan('week', '${item.id}')" ${!item.hasFile ? 'disabled' : ''} class="px-2.5 py-1.5 ${item.hasFile ? 'bg-slate-100 hover:bg-slate-200 text-slate-700' : 'bg-slate-100 text-slate-300 cursor-not-allowed'} rounded-lg font-bold text-xs border border-slate-200 transition inline-flex items-center gap-1">
+              <span>⬇</span> Tải xuống
             </button>
           `;
-        }
-        actionsHtml += `
-          <button onclick="viewDocPlan('week', '${item.id}')" ${!item.hasFile ? 'disabled' : ''} class="px-2.5 py-1.5 ${item.hasFile ? 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-300 cursor-not-allowed'} rounded-lg font-bold text-xs border border-indigo-200/50 transition mr-1.5 inline-flex items-center gap-1">
-            <span>👁️</span> Xem
-          </button>
-          <button onclick="downloadDocPlan('week', '${item.id}')" ${!item.hasFile ? 'disabled' : ''} class="px-2.5 py-1.5 ${item.hasFile ? 'bg-slate-100 hover:bg-slate-200 text-slate-700' : 'bg-slate-100 text-slate-300 cursor-not-allowed'} rounded-lg font-bold text-xs border border-slate-200 transition inline-flex items-center gap-1">
-            <span>⬇</span> Tải xuống
-          </button>
-        `;
-        html += `
-          <tr class="hover:bg-amber-50/40 transition">
-            <td class="py-3 px-4 text-center font-bold text-slate-400">${globalStt}</td>
-            <td class="py-3 px-4 font-bold text-indigo-950">${item.title}</td>
-            <td class="py-3 px-4">${fileDisplay}</td>
-            <td class="py-3 px-4 text-slate-500">${item.updatedAt}</td>
-            <td class="py-3 px-4 text-center whitespace-nowrap">${actionsHtml}</td>
-          </tr>
-        `;
-      });
-      tbody.innerHTML = html;
+
+          html += `
+            <tr class="hover:bg-amber-50/40 transition">
+              <td class="py-3 px-4 text-center font-bold text-slate-400">${globalStt}</td>
+              <td class="py-3 px-4">${weekBadge}</td>
+              <td class="py-3 px-4 font-bold text-indigo-950">${item.title || `Kế hoạch tuần ${weekNum}`}</td>
+              <td class="py-3 px-4">${fileDisplay}</td>
+              <td class="py-3 px-4 text-slate-500 text-xs">${item.updatedAt || '--'}</td>
+              <td class="py-3 px-4 text-center whitespace-nowrap">${actionsHtml}</td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      }
+
       document.getElementById('week-page-info').innerText = `Trang ${currentWeekPage} / ${TOTAL_WEEK_PAGES}`;
       document.getElementById('btn-prev-week').disabled = (currentWeekPage === 1);
       document.getElementById('btn-next-week').disabled = (currentWeekPage === TOTAL_WEEK_PAGES);
@@ -1592,83 +1649,131 @@
       }
       document.getElementById('week-page-numbers').innerHTML = pageNumHtml;
     }
-    function changeWeekPage(delta) {
-	  const TOTAL_WEEK_PAGES = Math.ceil((weekPlanData ? weekPlanData.length : 0) / WEEKS_PER_PAGE) || 1;
-      const target = currentWeekPage + delta;
-      if (target >= 1 && target <= TOTAL_WEEK_PAGES) {
-        currentWeekPage = target;
-        renderWeekPlanTable();
-      }
-    }
-    function goToWeekPage(page) {
-      currentWeekPage = page;
-      renderWeekPlanTable();
-    }
-    let currentUploadTarget = { type: '', id: '', title: '' };
-    function openUploadDocModal(type, id, title) {
+
+    // Mở Modal Thêm mới (id = '') hoặc Cập nhật kế hoạch đã có (id != '')
+    let currentUploadTarget = { type: 'month', id: '' };
+    function openUploadDocModal(type, id = '', existingTitle = '', existingPeriodNum = null) {
       if (!isBGH()) {
         alert("Chỉ Ban Giám Hiệu mới có quyền thêm mới hoặc tải lên tệp kế hoạch!");
         return;
       }
-      currentUploadTarget = { type, id, title };
-      document.getElementById('upload-target-title').value = title;
-      document.getElementById('upload-file-input').value = '';
+      currentUploadTarget = { type, id };
+
+      const headerEl = document.getElementById('upload-modal-header');
+      const periodLabelEl = document.getElementById('upload-period-label');
+      const periodNumInput = document.getElementById('upload-period-num');
+      const folderHintEl = document.getElementById('upload-folder-hint');
+      const titleInput = document.getElementById('upload-plan-title');
+      const fileInput = document.getElementById('upload-file-input');
+
+      fileInput.value = '';
+
+      if (type === 'month') {
+        const currentMonth = new Date().getMonth() + 1; // Mặc định là tháng hiện hành (1-12)
+        const defaultMonth = existingPeriodNum || currentMonth;
+        headerEl.innerHTML = id ? `<span>✏️</span> Cập Nhật Kế Hoạch Tháng` : `<span>➕</span> Thêm Mới Kế Hoạch Tháng`;
+        periodLabelEl.innerText = "Tháng (1 - 12):";
+        periodNumInput.min = 1;
+        periodNumInput.max = 12;
+        periodNumInput.value = defaultMonth;
+        folderHintEl.value = "📁 Drive: KH tháng";
+        titleInput.value = existingTitle || `Kế hoạch công tác tháng ${defaultMonth}`;
+
+        // Tự động gợi ý tên kế hoạch khi người dùng đổi số tháng (nếu đang thêm mới)
+        periodNumInput.oninput = function() {
+          if (!id && (!titleInput.value || titleInput.value.startsWith("Kế hoạch công tác tháng "))) {
+            titleInput.value = `Kế hoạch công tác tháng ${this.value}`;
+          }
+        };
+      } else {
+        // Tính tuần tiếp theo mặc định (dựa trên số tuần lớn nhất hiện có + 1)
+        const maxWeek = (weekPlanData || []).reduce((max, w) => Math.max(max, Number(w.periodNum || w.weekNum) || 0), 0);
+        const defaultWeek = existingPeriodNum || (maxWeek + 1) || 1;
+        headerEl.innerHTML = id ? `<span>✏️</span> Cập Nhật Kế Hoạch Tuần` : `<span>➕</span> Thêm Mới Kế Hoạch Tuần`;
+        periodLabelEl.innerText = "Tuần thứ:";
+        periodNumInput.min = 1;
+        periodNumInput.max = 52;
+        periodNumInput.value = defaultWeek;
+        folderHintEl.value = "📁 Drive: KH tuần";
+        titleInput.value = existingTitle || `Kế hoạch công tác tuần ${defaultWeek}`;
+
+        periodNumInput.oninput = function() {
+          if (!id && (!titleInput.value || titleInput.value.startsWith("Kế hoạch công tác tuần "))) {
+            titleInput.value = `Kế hoạch công tác tuần ${this.value}`;
+          }
+        };
+      }
+
       document.getElementById('upload-doc-modal').classList.remove('hidden');
     }
-    function closeUploadDocModal() {
-      document.getElementById('upload-doc-modal').classList.add('hidden');
-    }
-   async function confirmUploadDocFile() {
-  const fileInput = document.getElementById('upload-file-input');
-  if (!fileInput.files || fileInput.files.length === 0) {
-    alert("Vui lòng chọn tệp định dạng .pdf từ máy tính của bạn!");
-    return;
-  }
-  const file = fileInput.files[0];
-  if (!file.name.toLowerCase().endsWith('.pdf')) {
-    alert("Vui lòng chỉ chọn tệp văn bản có phần mở rộng .pdf!");
-    return;
-  }
-	if (file.size > 5 * 1024 * 1024) {
-    alert("Dung lượng tệp vượt quá 5MB. Vui lòng nén file PDF lại trước khi tải lên!");
-    return;
-  }
-  const btnSave = document.querySelector('#upload-doc-modal button.bg-amber-600');
-   const oldText = btnSave.innerText;
-  btnSave.disabled = true;
-  btnSave.innerText = "⏳ Đang tải lên Server...";
-  const reader = new FileReader();
-  reader.onload = async function(e) {
-    const base64Data = e.target.result;
-    try {
-      await apiRequest("uploadActionPlan", {
-        type: currentUploadTarget.type,
-        id: currentUploadTarget.id,
-        fileName: file.name,
-        fileData: base64Data
-      });
-      savePdfToDB(currentUploadTarget.id, base64Data, function() {
-        alert(`✅ Đã tải lên và đồng bộ thành công tệp: ${file.name}`);
-        const targetArray = currentUploadTarget.type === 'month' ? monthPlanData : weekPlanData;
-        const targetItem = targetArray.find(item => item.id === currentUploadTarget.id);
-        if (targetItem) {
-            targetItem.hasFile = true;
-            targetItem.fileName = file.name;
-            const now = new Date();
-            targetItem.updatedAt = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+    async function confirmUploadDocFile() {
+      const periodNum = Number(document.getElementById('upload-period-num').value);
+      const planTitle = document.getElementById('upload-plan-title').value.trim();
+      const fileInput = document.getElementById('upload-file-input');
+
+      if (!periodNum || periodNum < 1) {
+        alert("Vui lòng nhập số Tháng/Tuần hợp lệ!");
+        return;
+      }
+      if (!planTitle) {
+        alert("Vui lòng nhập tên kế hoạch!");
+        return;
+      }
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert("Vui lòng chọn tệp định dạng .pdf từ máy tính của bạn!");
+        return;
+      }
+      const file = fileInput.files[0];
+      if (!file.name.toLowerCase().endsWith('.pdf')) {
+        alert("Vui lòng chỉ chọn tệp văn bản có phần mở rộng .pdf!");
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        alert("Dung lượng tệp vượt quá 10MB. Vui lòng nén file PDF lại trước khi tải lên!");
+        return;
+      }
+
+      const btnSave = document.getElementById('btn-confirm-upload-doc');
+      const oldText = btnSave.innerText;
+      btnSave.disabled = true;
+      btnSave.innerText = "⏳ Đang tải lên Drive...";
+
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const base64Data = e.target.result;
+        try {
+          const res = await apiRequest("uploadActionPlan", {
+            type: currentUploadTarget.type,
+            id: currentUploadTarget.id, // Rỗng nếu là thêm mới, có mã nếu là sửa
+            periodNum: periodNum,
+            title: planTitle,
+            fileName: file.name,
+            fileData: base64Data
+          });
+
+          const savedItem = res.item;
+          savePdfToDB(savedItem.id, base64Data, function() {
+            const targetArray = currentUploadTarget.type === 'month' ? monthPlanData : weekPlanData;
+            const existingIdx = targetArray.findIndex(item => item.id === savedItem.id);
+            if (existingIdx !== -1) {
+              targetArray[existingIdx] = savedItem;
+            } else {
+              targetArray.push(savedItem);
+            }
+            alert(`✅ ${res.message || 'Đã lưu kế hoạch thành công!'}`);
+            closeUploadDocModal();
+            renderActionPlanModule();
+          });
+        } catch (err) {
+          alert(`Lỗi khi tải tệp lên server: ${err.message}`);
+        } finally {
+          btnSave.disabled = false;
+          btnSave.innerText = oldText;
         }
-        closeUploadDocModal();
-        renderActionPlanModule();
-      });
-    } catch (err) {
-      alert(`Lỗi khi tải tệp lên server: ${err.message}`);
-    } finally {
-      btnSave.disabled = false;
-      btnSave.innerText = oldText;
+      };
+      reader.readAsDataURL(file);
     }
-  };
-  reader.readAsDataURL(file);
-}
     function viewDocPlan(type, id) {
       let item = (type === 'month')
         ? monthPlanData.find(m => m.id === id)
