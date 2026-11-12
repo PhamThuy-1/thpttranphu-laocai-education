@@ -1074,7 +1074,66 @@
           <div class="px-5 py-3.5 bg-slate-50/80 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
             <div>
               <h3 class="text-xs sm:text-sm font-bold text-slate-800 uppercase tracking-wide">
-                Danh sách Kế hoạch theo  <!-- MODAL: XEM KẾ HOẠCH VĂN BẢN -->
+                Danh sách Kế hoạch theo tuần (Năm học 2026 - 2027)
+              </h3>
+              <span class="text-[11px] text-slate-500 font-medium">Lưu trữ tự động vào thư mục Drive: <b>KH tuần</b> (.pdf)</span>
+            </div>
+            <button id="btn-add-week-plan" onclick="openUploadDocModal('week')" class="hidden px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold text-xs shadow-sm transition inline-flex items-center gap-1.5">
+              <span class="text-sm font-black">+</span> Thêm kế hoạch tuần
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr class="bg-slate-100/70 text-slate-600 font-bold border-b border-slate-200 uppercase text-[11px]">
+                  <th class="py-3 px-4 w-14 text-center">STT</th>
+                  <th class="py-3 px-4">Tuần / Tên kế hoạch</th>
+                  <th class="py-3 px-4">Tệp đính kèm (.pdf)</th>
+                  <th class="py-3 px-4 w-40">Cập nhật lần cuối</th>
+                  <th class="py-3 px-4 text-center w-60">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="plan-week-table-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+          <!-- Phân trang kế hoạch tuần -->
+          <div class="p-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
+            <span id="week-page-info">Trang 1 / 1</span>
+            <div class="flex items-center gap-1.5">
+              <button id="btn-prev-week" onclick="changeWeekPage(-1)" class="px-3 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40">◀ Trước</button>
+              <div id="week-page-numbers" class="flex items-center gap-1"></div>
+              <button id="btn-next-week" onclick="changeWeekPage(1)" class="px-3 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40">Sau ▶</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL: TẢI LÊN KẾ HOẠCH PDF (BỊ THIẾU TRONG CODE CŨ) -->
+  <div id="upload-doc-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-base text-slate-900">📤 Tải Lên Văn Bản Kế Hoạch (.PDF)</h3>
+        <button onclick="closeUploadDocModal()" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Mục kế hoạch:</label>
+          <input type="text" id="upload-target-title" readonly class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 font-bold text-slate-800">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Chọn tệp PDF (Tối đa 5MB):</label>
+          <input type="file" id="upload-file-input" accept=".pdf" class="w-full border border-slate-300 rounded-xl p-1.5 text-xs">
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+        <button onclick="closeUploadDocModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-600">Hủy</button>
+        <button onclick="confirmUploadDocFile()" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-sm">Lưu & Tải lên</button>
+      </div>
+    </div>
+  </div> 
+	<!-- MODAL: XEM KẾ HOẠCH VĂN BẢN -->
   <div id="view-doc-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
     <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col h-[90vh]">
       <div class="bg-indigo-900 text-white px-5 py-3.5 flex items-center justify-between flex-shrink-0">
