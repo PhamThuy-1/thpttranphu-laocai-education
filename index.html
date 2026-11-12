@@ -1706,7 +1706,23 @@
 
       document.getElementById('upload-doc-modal').classList.remove('hidden');
     }
+function closeUploadDocModal() {
+      document.getElementById('upload-doc-modal').classList.add('hidden');
+    }
 
+    function changeWeekPage(delta) {
+      const TOTAL_WEEK_PAGES = Math.ceil((weekPlanData ? weekPlanData.length : 0) / WEEKS_PER_PAGE) || 1;
+      const target = currentWeekPage + delta;
+      if (target >= 1 && target <= TOTAL_WEEK_PAGES) {
+        currentWeekPage = target;
+        renderWeekPlanTable();
+      }
+    }
+
+    function goToWeekPage(page) {
+      currentWeekPage = page;
+      renderWeekPlanTable();
+    }
     async function confirmUploadDocFile() {
       const periodNum = Number(document.getElementById('upload-period-num').value);
       const planTitle = document.getElementById('upload-plan-title').value.trim();
