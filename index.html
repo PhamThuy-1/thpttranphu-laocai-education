@@ -13,8 +13,7 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <!-- Google Sign-In SDK -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.js"></script>
-  <style>
+   <style>
     body { font-family: 'Inter', sans-serif; }
     .times-font { font-family: 'Times New Roman', Times, serif; }
     @keyframes pulse-slow {
@@ -674,25 +673,7 @@
             </h3>
             <p class="text-xs text-slate-500 mt-0.5">Lọc dữ liệu theo học sinh, khoảng ngày và xuất báo cáo Excel chuẩn cấu trúc sheet dataHS</p>
           </div>
-			<!-- KHUNG TRỢ LÝ AI PHÂN TÍCH RỦI RO -->
-<div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-5 rounded-2xl shadow-md space-y-3 mb-6 border border-indigo-500/30">
-  <div class="flex flex-wrap items-center justify-between gap-3">
-    <div class="flex items-center gap-2.5">
-      <span class="text-xl bg-indigo-600/30 p-2 rounded-xl border border-indigo-400/30">🤖</span>
-      <div>
-        <h4 class="font-bold text-sm sm:text-base text-white">Trợ Lý AI Phân Tích & Cảnh Báo Nề Nếp</h4>
-        <p class="text-xs text-indigo-200">Sử dụng Google Gemini AI quét dữ liệu sheet dataHS để dự báo học sinh nguy cơ cao.</p>
-      </div>
-    </div>
-    <button onclick="runStudentAIAnalysis()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow transition flex items-center gap-1.5 whitespace-nowrap">
-      <span>⚡</span> Chạy Phân Tích AI
-    </button>
-  </div>
-  <div id="ai-analysis-result" class="hidden bg-white/10 backdrop-blur-md p-4 rounded-xl text-xs sm:text-sm text-indigo-100 whitespace-pre-line border border-white/10 leading-relaxed max-h-96 overflow-y-auto">
-    Đang chờ kích hoạt phân tích...
-  </div>
-</div>
-          <!-- Nút xuất Excel -->
+			      <!-- Nút xuất Excel -->
           <div class="flex flex-wrap items-center gap-2">
             <button onclick="exportViolationsToExcel()" class="inline-flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-2 rounded-xl border border-slate-300 transition">
               <span>📋</span> Nhật Ký Chi Tiết
@@ -5125,96 +5106,6 @@ function setupAutoLoadTkbOnDateChange() {
   });
 }
 setupAutoLoadTkbOnDateChange();
-async function runStudentAIAnalysis() {
-  const resultBox = document.getElementById("ai-analysis-result");
-  const classSelect = document.getElementById("filter-student-class");
-  const selectedClass = classSelect ? classSelect.value.trim() : "";
-
-  if (!resultBox) return;
-
-  resultBox.classList.remove("hidden");
-  resultBox.innerHTML = "🤖 <b>Trợ lý Gemini AI</b> đang quét dữ liệu sheet và phân tích thời gian thực...";
-
-  try {
-    // 1. Đảm bảo đã có dữ liệu trên RAM
-    if (typeof currentQueriedList === 'undefined' || !currentQueriedList || currentQueriedList.length === 0) {
-      if (typeof queryViolations === 'function') {
-        await queryViolations();
-      }
-    }
-
-    if (typeof currentQueriedList === 'undefined' || !currentQueriedList || currentQueriedList.length === 0) {
-      resultBox.innerHTML = "✅ Hiện tại chưa ghi nhận lượt vi phạm nề nếp nào trong phạm vi đang chọn.";
-      return;
-    }
-
-    // 2. Lọc theo lớp nếu có chọn
-    let filteredList = currentQueriedList;
-    if (selectedClass) {
-      filteredList = currentQueriedList.filter(item =>
-        (item.lop || "").toLowerCase() === selectedClass.toLowerCase()
-      );
-    }
-
-    let totalRecords = filteredList.length;
-    let totalErrorCount = 0;
-    let classCounts = {};
-    let studentMap = {};
-    let errorCounts = {};
-
-    filteredList.forEach(item => {
-      const cName = item.lop || "Khác";
-      const sKey = `${item.hoTen} (Mã: ${item.maHS || 'N/A'} - Lớp ${cName})`;
-      const errs = item.errors || [];
-
-      if (errs.length > 0) {
-        classCounts[cName] = (classCounts[cName] || 0) + errs.length;
-        totalErrorCount += errs.length;
-
-        if (!studentMap[sKey]) studentMap[sKey] = { count: 0, errors: {} };
-        studentMap[sKey].count += errs.length;
-
-        errs.forEach(e => {
-          errorCounts[e] = (errorCounts[e] || 0) + 1;
-          studentMap[sKey].errors[e] = (studentMap[sKey].errors[e] || 0) + 1;
-        });
-      }
-    });
-
-    if (totalErrorCount === 0) {
-      resultBox.innerHTML = "✅ Phạm vi này không có học sinh nào phát sinh lỗi vi phạm.";
-      return;
-    }
-
-    // Đóng gói dữ liệu chuẩn bị gửi lên Backend
-    const payloadData = {
-      selectedClass: selectedClass,
-      totalRecords: totalRecords,
-      totalErrorCount: totalErrorCount,
-      classCounts: classCounts,
-      studentMap: studentMap,
-      errorCounts: errorCounts
-    };
-
-    // 3. Gửi request thông qua hàm apiRequest chuẩn của dự án
-    const res = await apiRequest("AnalyzeStudentViolations", payloadData);
-
-    if (res && res.success && res.analysis) {
-      // Hiển thị kết quả bằng marked để format Markdown đẹp đẽ
-      if (typeof marked !== 'undefined') {
-        resultBox.innerHTML = marked.parse(res.analysis);
-      } else {
-        resultBox.innerText = res.analysis;
-      }
-    } else {
-      resultBox.innerHTML = "⚠️ Lỗi phân tích từ AI: " + (res?.error || "Không rõ nguyên nhân");
-    }
-
-  } catch (err) {
-    console.error("Lỗi gọi AI Analysis:", err);
-    resultBox.innerHTML = "❌ Lỗi kết nối khi gọi trợ lý AI: " + err.message;
-  }
-}
 </script>
 <!-- MODAL: GIAO VIỆC HÀNG LOẠT CHO GIÁO VIÊN -->
   <div id="bulk-assign-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
