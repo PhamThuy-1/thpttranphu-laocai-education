@@ -2132,41 +2132,7 @@ function closeUploadDocModal() {
         alert(error.message);
       }
     }
-    function closeLoginModal() {
-      document.getElementById("login-modal").classList.add("hidden");
-    }
-    // --- KHỞI TẠO VÀ LẤY DỮ LIỆU ĐỒNG BỘ TỪ GOOGLE SHEET ---
-    window.onload = function() {
-      const now = new Date();
-      const badge = document.getElementById("current-date-badge");
-      if (badge) badge.innerText = `📅 Ngày ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
-      if (window.google?.accounts?.id && GOOGLE_CLIENT_ID && !GOOGLE_CLIENT_ID.includes("YOUR_GOOGLE_CLIENT_ID")) {
-        google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: handleGoogleLoginResponse
-        });
-        google.accounts.id.renderButton(
-          document.getElementById("google-signin-btn"),
-          { theme: "outline", size: "large", width: 280, text: "signin_with" }
-        );
-      }
-      goToHome();
-      if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.includes("YOUR_GOOGLE_CLIENT_ID")) {
-        setDataLoadStatus("Cần cấu hình Google OAuth Client ID để đăng nhập và đọc Google Sheets.", "error");
-      }
-    };
-    async function handleGoogleLoginResponse(response) {
-      apiIdToken = response.credential;
-      setDataLoadStatus("Đang xác thực và tải dữ liệu từ Google Sheets...");
-      try {
-        await fetchRemoteData();
-        closeLoginModal();
-      } catch (error) {
-        apiIdToken = "";
-        setDataLoadStatus(error.message, "error");
-        alert(error.message);
-      }
-    }
+   
    function processUserSession(identity, avatar) {
       const posUpper = String(identity.position || identity.role || "").toUpperCase();
 
@@ -2199,6 +2165,7 @@ function closeUploadDocModal() {
 	  function logout() {
       currentUser = null;
       apiIdToken = "";
+	  localStorage.removeItem("tranphu_id_token");
       document.getElementById("user-info-bar").classList.add("hidden");
       document.getElementById("nav-guest-box").classList.remove("hidden");
       appData = {
